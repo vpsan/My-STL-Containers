@@ -20,7 +20,7 @@ class Vector
 
         // typedef RandomAccessIterator<value_type>        iterator;
         // typedef RandomAccessIterator<const value_type>  const_iterator;
-		// typedef ReverseIterator<iterator>               reverse_iterator;
+        // typedef ReverseIterator<iterator>               reverse_iterator;
         // typedef ReverseIterator<const_iterator>         const_reverse_iterator;
         typedef typename std::vector<value_type>::iterator               iterator;
         typedef typename std::vector<value_type>::const_iterator         const_iterator;
@@ -41,7 +41,7 @@ class Vector
         {
             begin_ = allocator_.allocate(count);
             for (size_type i = 0; i < size_; ++i){
-                allocator_.construct(begin_ + i, value);
+                allocator_.construct(begin_ + i, value); // FIXME: try catch
             }
         }
 
@@ -65,12 +65,8 @@ class Vector
         {
             if (new_cap < capacity_) return ;
             pointer newbegin = allocator_.allocate(new_cap);
-            
-            try
-            {
-                for (size_type i = 0; i < size_; ++i){
-                    allocator_.construct(newbegin + i, *begin_);
-                }
+            for (size_type i = 0; i < size_; ++i){
+                allocator_.construct(newbegin + i, *begin_); // FIXME: try catch
             }
             catch(const std::exception& e)
             {
