@@ -68,13 +68,6 @@ class Vector
             for (size_type i = 0; i < size_; ++i){
                 allocator_.construct(newbegin + i, *begin_); // FIXME: try catch
             }
-            catch(const std::exception& e)
-            {
-                // std::cerr << e.what() << '\n';
-                allocator_.deallocate(newbegin); // its not correct i think;
-            }
-            
-
             for (size_type i = 0; i < size_; ++i){
                 allocator_.destroy(begin_ + i);
             }
