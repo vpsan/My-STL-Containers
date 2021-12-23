@@ -78,6 +78,37 @@ class Vector
 
         /* * * * * * Modifiers:  * * * * * * * */
 
+        void resize(size_type count, value_type value = value_type())
+        {
+            if (count > size_){
+                reserve(count); // FIXME: maybe not correct
+                std::cout << size_ << " " << value << '\n';
+                for (size_type i = size_; i < count; ++i){
+                    allocator_.construct(begin_ + i, value); // FIXME: try catch
+                }
+                size_ = count;
+            }
+            if (count < size_){
+                for (size_type i = count; i < size_; ++i){
+                    allocator_.destroy(begin_ + i);
+                }
+                size_ = count;
+            }
+        }
+
+        /* * * * * * Non-member functions:  * * * * * */
+        friend std::ostream& operator<<(std::ostream& os, const Vector<T, Allocator>& v)
+        {
+            os << "\033[34m";
+            os << "size = " << v.size_ << std::endl;
+            os << "capacity_ = " << v.capacity_ << std::endl;
+            for (size_t i = 0; i < v.size_; ++i){
+                std::cout << "arr[" << i << "] = " << *v.begin_ << std::endl;
+            }
+            os << "\033[0m";
+            return os;
+        }
+
     private:
         pointer         begin_;
         size_type       size_;
