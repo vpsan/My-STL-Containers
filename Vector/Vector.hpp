@@ -6,22 +6,20 @@
 namespace ft {
 
 template<class T, class Allocator = std::allocator<T> >
-class Vector
-{
+class Vector {
     public:
         typedef Allocator                           allocator_type;
-        typedef typename Allocator::value_type      value_type;
+        typedef T                                   value_type;
         typedef typename Allocator::pointer         pointer;
         typedef typename Allocator::const_pointer   const_pointer;
         typedef typename Allocator::reference       reference;
         typedef typename Allocator::const_reference const_reference;
         typedef typename Allocator::size_type       size_type;
-        // typedef typename Allocator::difference_type difference_type;
 
-        // typedef RandomAccessIterator<value_type>        iterator;
-        // typedef RandomAccessIterator<const value_type>  const_iterator;
-        // typedef ReverseIterator<iterator>               reverse_iterator;
-        // typedef ReverseIterator<const_iterator>         const_reverse_iterator;
+//         typedef RandomAccessIterator<value_type>        iterator;
+//         typedef RandomAccessIterator<const value_type>  const_iterator;
+//         typedef ReverseIterator<iterator>               reverse_iterator;
+//         typedef ReverseIterator<const_iterator>         const_reverse_iterator;
         typedef typename std::vector<value_type>::iterator               iterator;
         typedef typename std::vector<value_type>::const_iterator         const_iterator;
         typedef typename std::vector<value_type>::reverse_iterator       reverse_iterator;
@@ -29,16 +27,17 @@ class Vector
 
         /* * * * * * * * * * * * * * * * * * * */
         explicit Vector(const allocator_type& allctr_obj = allocator_type())
-            : begin_(NULL), size_(), capacity_(0), allocator_(allctr_obj)
-        {
-            
-        }
+                            : begin_(NULL),
+                            size_(),
+                            capacity_(0),
+                            allocator_(allctr_obj) {}
 
         explicit Vector(size_type count,
                         const value_type& value = value_type(),
                         const allocator_type& allctr_obj = allocator_type())
-            : size_(count), capacity_(count), allocator_(allctr_obj) 
-        {
+                            : size_(count),
+                            capacity_(count),
+                            allocator_(allctr_obj){
             begin_ = allocator_.allocate(count);
             for (size_type i = 0; i < size_; ++i){
                 allocator_.construct(begin_ + i, value); // FIXME: try catch
@@ -68,9 +67,8 @@ class Vector
             return *this;
         }
 
-        ~Vector()
-        {
-            if (begin_ == NULL) return ;
+        ~Vector(){
+            if (begin_ == NULL) return;
             for (size_type i = 0; i < size_; ++i){
                 allocator_.destroy(begin_ + i);
             }
@@ -81,7 +79,6 @@ class Vector
         }
 
         /* * * * * * Element access: * * * * * */
-
         reference at(size_type pos){
             if (pos > size_){
                 throw std::out_of_range("std::out_of_range: vector");
@@ -121,7 +118,6 @@ class Vector
         }
 
         /* * * * * * Capacity: * * * * * * * * */
-
         bool empty() const{
             return (size_ == 0 ? true : false);
         }
@@ -138,9 +134,8 @@ class Vector
             return capacity_;
         }
 
-        void reserve(size_type new_cap)
-        {
-            if (new_cap <= capacity_) return ;
+        void reserve(size_type new_cap){
+            if (new_cap <= capacity_) return;
             pointer newbegin = allocator_.allocate(new_cap);
             for (size_type i = 0; i < size_; ++i){
                 allocator_.construct(newbegin + i, *begin_); // FIXME: try catch
@@ -154,9 +149,7 @@ class Vector
         }
 
         /* * * * * * Modifiers:  * * * * * * * */
-
-        void resize(size_type count, value_type value = value_type())
-        {
+        void resize(size_type count, value_type value = value_type()){
             if (count > size_){
                 if (count > capacity_) {
                     reserve(capacity_ * 2 > count ? capacity_ * 2 : count);
@@ -174,8 +167,7 @@ class Vector
             }
         }
 
-        void push_back(const T& value)
-        {
+        void push_back(const T& value){
             if (capacity_ == size_){
                 reserve(capacity_ == 0 ? 1 : 2 * size_);
             }
@@ -183,8 +175,7 @@ class Vector
             size_++;
         }
 
-        void pop_back()
-        {
+        void pop_back(){
             allocator_.destroy(begin_ + (size_ - 1));
             size_--;
         }
@@ -205,8 +196,7 @@ class Vector
         }
 
         /* * * * * * Non-member functions:  * * * * * */
-        friend std::ostream& operator<<(std::ostream& os, const Vector<T, Allocator>& v)
-        {
+        friend std::ostream& operator<<(std::ostream& os, const Vector<T, Allocator>& v){
             os << "\033[34m";
             os << "size = " << v.size_ << std::endl;
             os << "capacity_ = " << v.capacity_ << std::endl;
