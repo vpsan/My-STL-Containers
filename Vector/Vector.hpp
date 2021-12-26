@@ -97,6 +97,21 @@ class Vector
             }
         }
 
+        void push_back(const T& value)
+        {
+            if (capacity_ == size_){
+                reserve(capacity_ == 0 ? 1 : 2 * size_);
+            }
+            allocator_.construct(begin_ + size_, value); // FIXME: try catch
+            size_++;
+        }
+
+        void pop_back()
+        {
+            allocator_.destroy(begin_ + (size_ - 1));
+            size_--;
+        }
+
         /* * * * * * Non-member functions:  * * * * * */
         friend std::ostream& operator<<(std::ostream& os, const Vector<T, Allocator>& v)
         {
