@@ -63,7 +63,7 @@ class Vector
 
         void reserve(size_type new_cap)
         {
-            if (new_cap < capacity_) return ;
+            if (new_cap <= capacity_) return ;
             pointer newbegin = allocator_.allocate(new_cap);
             for (size_type i = 0; i < size_; ++i){
                 allocator_.construct(newbegin + i, *begin_); // FIXME: try catch
@@ -81,8 +81,9 @@ class Vector
         void resize(size_type count, value_type value = value_type())
         {
             if (count > size_){
-                reserve(count); // FIXME: maybe not correct
-                std::cout << size_ << " " << value << '\n';
+                if (count > capacity_) {
+                    reserve(capacity_ * 2 > count ? capacity_ * 2 : count);
+                }
                 for (size_type i = size_; i < count; ++i){
                     allocator_.construct(begin_ + i, value); // FIXME: try catch
                 }
@@ -103,7 +104,7 @@ class Vector
             os << "size = " << v.size_ << std::endl;
             os << "capacity_ = " << v.capacity_ << std::endl;
             for (size_t i = 0; i < v.size_; ++i){
-                std::cout << "arr[" << i << "] = " << *v.begin_ << std::endl;
+                std::cout << "arr[" << i << "] = " << *(v.begin_ + i) << std::endl;
             }
             os << "\033[0m";
             return os;
