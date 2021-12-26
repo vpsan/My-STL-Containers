@@ -59,6 +59,44 @@ class Vector
 
         /* * * * * * Element access: * * * * * */
 
+        reference at(size_type pos){
+            if (pos > size_){
+                throw std::out_of_range("std::out_of_range: vector");
+            }
+            return *(begin_ + pos);
+        }
+
+        const_reference at(size_type pos) const{
+            if (pos > size_){
+                throw std::out_of_range("std::out_of_range: vector");
+            }
+            return *(begin_ + pos);
+        }
+
+        reference operator[](size_type pos){
+            return *(begin_ + pos);
+        }
+
+        const_reference operator[](size_type pos) const{
+            return *(begin_ + pos);
+        }
+
+        reference front(){
+            return *begin_;
+        }
+
+        const_reference front() const{
+            return *begin_;
+        }
+
+        reference back(){
+            return *(begin_ + size_ - 1);
+        }
+
+        const_reference back() const{
+            return *(begin_ + size_ - 1);
+        }
+
         /* * * * * * Capacity: * * * * * * * * */
 
         void reserve(size_type new_cap)
