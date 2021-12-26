@@ -99,6 +99,22 @@ class Vector
 
         /* * * * * * Capacity: * * * * * * * * */
 
+        bool empty() const{
+            return (size_ == 0 ? true : false);
+        }
+
+        size_type size() const{
+            return size_;
+        }
+
+        size_type max_size() const{
+            return allocator_.max_size();
+        }
+
+        size_type capacity() const{
+            return capacity_;
+        }
+
         void reserve(size_type new_cap)
         {
             if (new_cap <= capacity_) return ;
@@ -148,6 +164,21 @@ class Vector
         {
             allocator_.destroy(begin_ + (size_ - 1));
             size_--;
+        }
+
+        void clear(){
+            if (begin_ == NULL) return;
+            for (size_type i = 0; i < size_; ++i){
+                allocator_.destroy(begin_ + i);
+            }
+            size_ = 0;
+        }
+
+        void swap(Vector& other){
+            std::swap(this->begin_, other.begin_);
+            std::swap(this->size_, other.size_);
+            std::swap(this->capacity_, other.capacity_);
+            std::swap(this->allocator_, other.allocator_);
         }
 
         /* * * * * * Non-member functions:  * * * * * */
