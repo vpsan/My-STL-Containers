@@ -45,6 +45,29 @@ class Vector
             }
         }
 
+        Vector(const Vector& other){
+            this->allocator_ = other.allocator_;
+            this->begin_ = allocator_.allocate(other.capacity_);
+            this->capacity_ = other.capacity_;
+            for (size_type i = 0; i < other.size_; ++i){
+                allocator_.construct(begin_ + i, *(other.begin_ + i)); // FIXME: try catch
+            }
+            this->size_ = other.size_;
+        }
+
+        Vector& operator=(const Vector& other) {
+            if (this == &other) return *this;
+            this->~Vector();
+            this->allocator_ = other.allocator_;
+            this->begin_ = allocator_.allocate(other.capacity_);
+            this->capacity_ = other.capacity_;
+            for (size_type i = 0; i < other.size_; ++i){
+                allocator_.construct(begin_ + i, *(other.begin_ + i)); // FIXME: try catch
+            }
+            this->size_ = other.size_;
+            return *this;
+        }
+
         ~Vector()
         {
             if (begin_ == NULL) return ;
