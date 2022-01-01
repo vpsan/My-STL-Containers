@@ -11,7 +11,7 @@ class ReverseIterator {
         /* ********************************************************** */
         ReverseIterator() : iter_() {};
         ReverseIterator(Iterator iter) : iter_(iter) {};
-        ReverseIterator(const ReverseIterator& other) {
+        template <class B> ReverseIterator(const ReverseIterator<B>& other) {
             iter_ = other.getIter();
         };
         ~ReverseIterator() {};
@@ -20,11 +20,6 @@ class ReverseIterator {
             iter_ = other.getIter();
             return *this;
         }
-        // // effect:      const_iter = iter,
-        // // not effect:  iter = const_iter
-        // operator ReverseIterator<true>() const {
-        //     return iter_;
-        // }
         Iterator getIter() const {
             return (iter_);
         }
