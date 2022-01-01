@@ -3,6 +3,8 @@
 
 # include <memory> // std::allocator<T>
 
+# include "../includes/ReverseIterator.hpp"
+
 namespace ft {
 
 template<bool B, class T, class U>
@@ -181,8 +183,8 @@ class Vector {
 
         typedef RandomAccessIterator<false>         iterator;
         typedef RandomAccessIterator<true>          const_iterator;
-        // typedef ReverseIterator<iterator>           reverse_iterator;
-        // typedef ReverseIterator<const_iterator>     const_reverse_iterator;
+        typedef ReverseIterator<iterator>           reverse_iterator;
+        typedef ReverseIterator<const_iterator>     const_reverse_iterator;
 
         /* * * * * * * * * * * * * * * * * * * */
         explicit Vector(const allocator_type& allctr_obj = allocator_type())
