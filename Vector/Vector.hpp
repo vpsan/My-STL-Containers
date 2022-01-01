@@ -295,6 +295,34 @@ class Vector {
             return const_iterator(begin_ + size_);
         }
 
+        reverse_iterator rbegin() {
+            if (size_ == 0) {
+                return reverse_iterator(iterator(begin_));
+            }
+            return reverse_iterator(iterator(begin_ + size_ - 1));
+        }
+
+        reverse_iterator rend() {
+            if (size_ == 0) {
+                return reverse_iterator(iterator(begin_));
+            }
+            return reverse_iterator(iterator(begin_ - 1));
+        }
+
+        const_reverse_iterator rbegin() const {
+            if (size_ == 0) {
+                return const_reverse_iterator(begin_);
+            }
+            return const_reverse_iterator(begin_ + size_ - 1);
+        }
+
+        const_reverse_iterator rend() const {
+            if (size_ == 0) {
+                return reverse_iterator(iterator(begin_));
+            }
+            return reverse_iterator(iterator(begin_ - 1));
+        }
+
         /* * * * * * Capacity: * * * * * * * * */
         bool empty() const{
             return (size_ == 0 ? true : false);
