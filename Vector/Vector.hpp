@@ -239,6 +239,17 @@ class Vector {
             begin_ = NULL;
         }
 
+        void assign(size_type count, const value_type& value){ // FIXME: need testing
+            this->clear();
+            this->reserve(count);
+            for (size_type i = 0; i < count; ++i){
+                allocator_.construct(begin_ + i, value); // FIXME: try catch
+            }
+            size_ = count;
+        }
+        template< class InputIt >
+        void assign(InputIt first, InputIt last);
+
         /* * * * * * Element access: * * * * * */
         reference at(size_type pos){
             if (pos > size_){
@@ -400,6 +411,10 @@ class Vector {
             std::swap(this->capacity_, other.capacity_);
             std::swap(this->allocator_, other.allocator_);
         }
+
+        iterator insert(iterator pos, const value_type& value);
+        void insert( iterator pos, size_type count, const T& value );
+        template< class InputIt > void insert( iterator pos, InputIt first, InputIt last );
 
         /* * * * * * Non-member functions:  * * * * * */
         friend std::ostream& operator<<(std::ostream& os, const Vector<T, Allocator>& v){
