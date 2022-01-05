@@ -85,24 +85,24 @@ class ReverseIterator {
 };
 
 /* LegacyInputIterator effects: iter == iter ************************ */
-template <class Iterator>
+template <class Iterator_l, class Iterator_r>
  bool
-operator==(const ReverseIterator<Iterator>& lhs,
-           const ReverseIterator<Iterator>& rhs) {
+operator==(const ReverseIterator<Iterator_l>& lhs,
+           const ReverseIterator<Iterator_r>& rhs) {
     return lhs.getIter() == rhs.getIter();
 }
 /* LegacyInputIterator effects: iter != iter ************************ */
-template <class Iterator>
+template <class Iterator_l, class Iterator_r>
  bool
-operator!=(const ReverseIterator<Iterator>& lhs,
-           const ReverseIterator<Iterator>& rhs) {
+operator!=(const ReverseIterator<Iterator_l>& lhs,
+           const ReverseIterator<Iterator_r>& rhs) {
     return lhs.getIter() != rhs.getIter();
 }
 /* LegacyRandomAccessIterator effects: "iter - iter" **************** */
-template <class Iterator>
- typename ReverseIterator<Iterator>::difference_type
-operator-(const ReverseIterator<Iterator>& lhs,
-          const ReverseIterator<Iterator>& rhs) {
+template <class Iterator_l, class Iterator_r>
+ typename ReverseIterator<Iterator_l>::difference_type
+operator-(const ReverseIterator<Iterator_l>& lhs,
+          const ReverseIterator<Iterator_r>& rhs) {
     return lhs.getIter() - rhs.getIter();
 }
 /* LegacyRandomAccessIterator effects: "n + iter" ******************* */
@@ -113,31 +113,31 @@ operator+(int n,
     return n + rhs.getIter();
 }
 /* LegacyRandomAccessIterator effects: "iter > iter" **************** */
-template <class Iterator>
+template <class Iterator_l, class Iterator_r>
  bool
-operator>(const ReverseIterator<Iterator>& lhs,
-          const ReverseIterator<Iterator>& rhs) {
+operator>(const ReverseIterator<Iterator_l>& lhs,
+          const ReverseIterator<Iterator_r>& rhs) {
     return lhs.getIter() < rhs.getIter();
 }
 /* LegacyRandomAccessIterator effects: "iter < iter" **************** */
-template <class Iterator>
+template <class Iterator_l, class Iterator_r>
  bool
-operator<(const ReverseIterator<Iterator>& lhs,
-          const ReverseIterator<Iterator>& rhs) {
+operator<(const ReverseIterator<Iterator_l>& lhs,
+          const ReverseIterator<Iterator_r>& rhs) {
     return lhs.getIter() > rhs.getIter();
 }
 /* LegacyRandomAccessIterator effects: "iter >= iter" *************** */
-template <class Iterator>
+template <class Iterator_l, class Iterator_r>
  bool
-operator>=(const ReverseIterator<Iterator>& lhs,
-           const ReverseIterator<Iterator>& rhs) {
+operator>=(const ReverseIterator<Iterator_l>& lhs,
+           const ReverseIterator<Iterator_r>& rhs) {
     return lhs.getIter() <= rhs.getIter();
 }
 /* LegacyRandomAccessIterator effects: "iter <= iter" *************** */
-template <class Iterator>
+template <class Iterator_l, class Iterator_r>
  bool
-operator<=(const ReverseIterator<Iterator>& lhs,
-           const ReverseIterator<Iterator>& rhs) {
+operator<=(const ReverseIterator<Iterator_l>& lhs,
+           const ReverseIterator<Iterator_r>& rhs) {
     return lhs.getIter() >= rhs.getIter();
 }
 

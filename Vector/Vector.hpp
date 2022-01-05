@@ -116,24 +116,24 @@ class Vector {
         };
 
         /* LegacyInputIterator effects: iter == iter ************************ */
-        template <bool IsConst>
+        template <bool IsConst_l, bool IsConst_r>
         friend bool
-                        operator==(const RandomAccessIterator<IsConst>& lhs,
-                                   const RandomAccessIterator<IsConst>& rhs) {
+                        operator==(const RandomAccessIterator<IsConst_l>& lhs,
+                                   const RandomAccessIterator<IsConst_r>& rhs) {
             return lhs.getPtr() == rhs.getPtr();
         }
         /* LegacyInputIterator effects: iter != iter ************************ */
-        template <bool IsConst>
+        template <bool IsConst_l, bool IsConst_r>
         friend bool
-                        operator!=(const RandomAccessIterator<IsConst>& lhs,
-                                   const RandomAccessIterator<IsConst>& rhs) {
+                        operator!=(const RandomAccessIterator<IsConst_l>& lhs,
+                                   const RandomAccessIterator<IsConst_r>& rhs) {
             return lhs.getPtr() != rhs.getPtr();
         }
         /* LegacyRandomAccessIterator effects: "iter - iter" **************** */
-        template <bool IsConst>
-        friend typename RandomAccessIterator<IsConst>::difference_type
-                        operator-(const RandomAccessIterator<IsConst>& lhs,
-                                  const RandomAccessIterator<IsConst>& rhs) {
+        template <bool IsConst_l, bool IsConst_r>
+        friend typename RandomAccessIterator<IsConst_l>::difference_type
+                        operator-(const RandomAccessIterator<IsConst_l>& lhs,
+                                  const RandomAccessIterator<IsConst_r>& rhs) {
             return lhs.getPtr() - rhs.getPtr();
         }
         /* LegacyRandomAccessIterator effects: "n + iter" ******************* */
@@ -144,31 +144,31 @@ class Vector {
             return n + rhs.getPtr();
         }
         /* LegacyRandomAccessIterator effects: "iter > iter" **************** */
-        template <bool IsConst>
+        template <bool IsConst_l, bool IsConst_r>
         friend bool
-                        operator>(const RandomAccessIterator<IsConst>& lhs,
-                                  const RandomAccessIterator<IsConst>& rhs) {
+                        operator>(const RandomAccessIterator<IsConst_l>& lhs,
+                                  const RandomAccessIterator<IsConst_r>& rhs) {
             return lhs.getPtr() > rhs.getPtr();
         }
         /* LegacyRandomAccessIterator effects: "iter < iter" **************** */
-        template <bool IsConst>
+        template <bool IsConst_l, bool IsConst_r>
         friend bool
-                        operator<(const RandomAccessIterator<IsConst>& lhs,
-                                  const RandomAccessIterator<IsConst>& rhs) {
+                        operator<(const RandomAccessIterator<IsConst_l>& lhs,
+                                  const RandomAccessIterator<IsConst_r>& rhs) {
             return lhs.getPtr() < rhs.getPtr();
         }
         /* LegacyRandomAccessIterator effects: "iter >= iter" *************** */
-        template <bool IsConst>
+        template <bool IsConst_l, bool IsConst_r>
         friend bool
-                        operator>=(const RandomAccessIterator<IsConst>& lhs,
-                                   const RandomAccessIterator<IsConst>& rhs) {
+                        operator>=(const RandomAccessIterator<IsConst_l>& lhs,
+                                   const RandomAccessIterator<IsConst_r>& rhs) {
             return lhs.getPtr() >= rhs.getPtr();
         }
         /* LegacyRandomAccessIterator effects: "iter <= iter" *************** */
-        template <bool IsConst>
+        template <bool IsConst_l, bool IsConst_r>
         friend bool
-                        operator<=(const RandomAccessIterator<IsConst>& lhs,
-                                   const RandomAccessIterator<IsConst>& rhs) {
+                        operator<=(const RandomAccessIterator<IsConst_l>& lhs,
+                                   const RandomAccessIterator<IsConst_r>& rhs) {
             return lhs.getPtr() <= rhs.getPtr();
         }
 
