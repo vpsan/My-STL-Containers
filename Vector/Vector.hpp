@@ -23,7 +23,7 @@ struct conditional<false, T, U> {
 };
 
 template<class T, class Allocator = std::allocator<T> >
-class Vector {
+class vector {
 
     public:
         template<bool IsConst>
@@ -188,13 +188,13 @@ class Vector {
         typedef ReverseIterator<const_iterator>     const_reverse_iterator;
 
         /* * * * * * * * * * * * * * * * * * * */
-        explicit Vector(const allocator_type& allctr_obj = allocator_type())
+        explicit vector(const allocator_type& allctr_obj = allocator_type())
                             : begin_(NULL),
                             size_(0),
                             capacity_(0),
                             allocator_(allctr_obj) {}
 
-        explicit Vector(size_type count,
+        explicit vector(size_type count,
                         const value_type& value = value_type(),
                         const allocator_type& allctr_obj = allocator_type())
                             : size_(count),
@@ -207,7 +207,7 @@ class Vector {
         }
 
         template <class InputIt>
-        Vector(InputIt first,
+        vector(InputIt first,
                InputIt last,
                const allocator_type& allctr_obj = allocator_type(),
                typename std::enable_if<!std::is_integral<InputIt>::value, bool>::type* = 0)
@@ -221,7 +221,7 @@ class Vector {
             }
         }
 
-        Vector(const Vector& other){
+        vector(const vector& other){
             this->allocator_ = other.allocator_;
             this->begin_ = allocator_.allocate(other.capacity_);
             this->capacity_ = other.capacity_;
@@ -231,9 +231,9 @@ class Vector {
             this->size_ = other.size_;
         }
 
-        Vector& operator=(const Vector& other) {
+        vector& operator=(const vector& other) {
             if (this == &other) return *this;
-            this->~Vector();
+            this->~vector();
             this->allocator_ = other.allocator_;
             this->begin_ = allocator_.allocate(other.capacity_);
             this->capacity_ = other.capacity_;
@@ -244,7 +244,7 @@ class Vector {
             return *this;
         }
 
-        ~Vector(){
+        ~vector(){
             if (begin_ == NULL) return;
             for (size_type i = 0; i < size_; ++i){
                 allocator_.destroy(begin_ + i);
@@ -436,7 +436,7 @@ class Vector {
             size_ = 0;
         }
 
-        void swap(Vector& other){
+        void swap(vector& other){
             std::swap(this->begin_, other.begin_);
             std::swap(this->size_, other.size_);
             std::swap(this->capacity_, other.capacity_);
@@ -502,7 +502,7 @@ class Vector {
         iterator erase(iterator pos) {
             if (pos < begin() || pos >= end()) throw; // FIXME: my_exception
             difference_type start = pos - begin();
-            Vector tmp(++pos, end());
+            vector tmp(++pos, end());
             for (size_type i = size_; i > start; --i){
                 pop_back();
             }
@@ -516,8 +516,8 @@ class Vector {
             difference_type count = last - first;
             if (count < 0) throw; // FIXME: my_exception
             difference_type start = begin() - first;
-            Vector tmp1(begin() + start, begin() + count);
-            Vector tmp2(begin() + count, end());
+            vector tmp1(begin() + start, begin() + count);
+            vector tmp2(begin() + count, end());
 
             for (size_type i = size_; i > start; --i){
                 pop_back();
@@ -532,7 +532,7 @@ class Vector {
         }
 
         /* * * * * * Non-member functions:  * * * * * */
-        friend std::ostream& operator<<(std::ostream& os, const Vector<T, Allocator>& v){
+        friend std::ostream& operator<<(std::ostream& os, const vector<T, Allocator>& v){
             os << "\033[34m";
             os << "size = " << v.size_ << std::endl;
             os << "capacity_ = " << v.capacity_ << std::endl;
@@ -553,41 +553,41 @@ class Vector {
 /* * * * * * Non-member functions:  * * * * * */
 
 template<class T, class Allocator>
-bool operator==(const std::vector<T,Allocator>& lhs,
-                const std::vector<T,Allocator>& rhs){
+bool operator==(const ft::vector<T,Allocator>& lhs,
+                const ft::vector<T,Allocator>& rhs){
     return (lhs.size() == rhs.size()
             && std::equal( lhs.begin(), lhs.end(), rhs.begin() ));
 }
 
 template<class T, class Allocator>
-bool operator!=(const std::vector<T,Allocator>& lhs,
-                const std::vector<T,Allocator>& rhs){
+bool operator!=(const ft::vector<T,Allocator>& lhs,
+                const ft::vector<T,Allocator>& rhs){
     return !(lhs == rhs);
 }
 
 template<class T, class Allocator>
-bool operator<(const std::vector<T,Allocator>& lhs,
-               const std::vector<T,Allocator>& rhs){
+bool operator<(const ft::vector<T,Allocator>& lhs,
+               const ft::vector<T,Allocator>& rhs){
     return std::lexicographical_compare(lhs.begin(), lhs.end(),
                                         rhs.begin(), rhs.end());
 }
 
 template<class T, class Allocator>
-bool operator<=(const std::vector<T,Allocator>& lhs,
-                const std::vector<T,Allocator>& rhs){
+bool operator<=(const ft::vector<T,Allocator>& lhs,
+                const ft::vector<T,Allocator>& rhs){
     return !(lhs > rhs);
 }
 
 template<class T, class Allocator>
-bool operator>(const std::vector<T,Allocator>& lhs,
-               const std::vector<T,Allocator>& rhs){
+bool operator>(const ft::vector<T,Allocator>& lhs,
+               const ft::vector<T,Allocator>& rhs){
     return !std::lexicographical_compare(lhs.begin(), lhs.end(),
                                          rhs.begin(), rhs.end());
 }
 
 template<class T, class Allocator>
-bool operator>=(const std::vector<T,Allocator>& lhs,
-                const std::vector<T,Allocator>& rhs){
+bool operator>=(const ft::vector<T,Allocator>& lhs,
+                const ft::vector<T,Allocator>& rhs){
     return !(lhs < rhs);
 }
 
