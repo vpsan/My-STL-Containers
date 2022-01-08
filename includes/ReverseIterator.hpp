@@ -103,14 +103,14 @@ template <class Iterator_l, class Iterator_r>
  typename ReverseIterator<Iterator_l>::difference_type
 operator-(const ReverseIterator<Iterator_l>& lhs,
           const ReverseIterator<Iterator_r>& rhs) {
-    return lhs.getIter() - rhs.getIter();
+    return rhs.getIter() - lhs.getIter();
 }
 /* LegacyRandomAccessIterator effects: "n + iter" ******************* */
 template <class Iterator>
  ReverseIterator<Iterator>
 operator+(int n,
           const ReverseIterator<Iterator>& rhs) {
-    return n + rhs.getIter();
+    return rhs.getIter() - n /*+1*/;
 }
 /* LegacyRandomAccessIterator effects: "iter > iter" **************** */
 template <class Iterator_l, class Iterator_r>
@@ -143,4 +143,4 @@ operator<=(const ReverseIterator<Iterator_l>& lhs,
 
 } // namespace ft
 
-#endif // REVERSEITERATOR_HPP
+#endif
