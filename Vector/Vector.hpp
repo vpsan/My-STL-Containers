@@ -1,39 +1,26 @@
-#ifndef Vector_hpp
-# define Vector_hpp
+#ifndef VECTOR_HPP
+# define VECTOR_HPP
 
 # include <memory> // std::allocator<T>
-
 # include "../includes/ReverseIterator.hpp"
+# include "../includes/conditional.hpp"
 
 namespace ft {
-
-template<bool B, class T, class U>
-struct conditional {
-
-};
-
-template<class T, class U>
-struct conditional<true, T, U> {
-    typedef T type;
-};
-
-template<class T, class U>
-struct conditional<false, T, U> {
-    typedef U type;
-};
 
 template<class T, class Allocator = std::allocator<T> >
 class vector {
 
     public:
+
         template<bool IsConst>
         class RandomAccessIterator{
             public:
                 typedef typename
-                    ft::conditional<IsConst, const T, T>::type  value_type;
-                typedef value_type*                             pointer;
-                typedef value_type&                             reference;
-                typedef std::ptrdiff_t                          difference_type;
+                   ft::conditional<IsConst, const T, T>::type value_type;
+                typedef value_type*                           pointer;
+                typedef value_type&                           reference;
+                typedef std::ptrdiff_t                        difference_type;
+                typedef	std::random_access_iterator_tag       iterator_category;
                 /* ********************************************************** */
                 RandomAccessIterator() : ptr_(NULL) {};
                 RandomAccessIterator(pointer ptr) : ptr_(ptr) {};
@@ -187,7 +174,7 @@ class vector {
         typedef ReverseIterator<iterator>           reverse_iterator;
         typedef ReverseIterator<const_iterator>     const_reverse_iterator;
 
-        /* * * * * * * * * * * * * * * * * * * */
+        ////////////////////////////////////////////////////////////////////////
         explicit vector(const allocator_type& allctr_obj = allocator_type())
                             : begin_(NULL),
                             size_(0),
@@ -200,9 +187,17 @@ class vector {
                             : size_(count),
                             capacity_(count),
                             allocator_(allctr_obj){
-            begin_ = allocator_.allocate(count);
+            try {
+                begin_ = allocator_.allocate(count);
+            } catch (std::exception ex) {
+                allocator_.deallocate(begin_, capacity_);
+                capacity_ = 0;
+                size_ = 0;
+                begin_ = NULL;
+                throw ;
+            }
             for (size_type i = 0; i < size_; ++i){
-                allocator_.construct(begin_ + i, value); // FIXME: try catch
+                allocator_.construct(begin_ + i, value);
             }
         }
 
@@ -212,9 +207,17 @@ class vector {
                const allocator_type& allctr_obj = allocator_type(),
                typename std::enable_if<!std::is_integral<InputIt>::value, bool>::type* = 0)
                     : allocator_(allctr_obj) {
-            if (first > last) throw; // FIXME: my_exception
+            // if (first > last) throw;
             size_ = static_cast<size_type>(last - first);
-            begin_ = allocator_.allocate(size_);
+            try {
+                begin_ = allocator_.allocate(size_);
+            } catch (std::exception ex) {
+                allocator_.deallocate(begin_, capacity_);
+                capacity_ = 0;
+                size_ = 0;
+                begin_ = NULL;
+                throw ;
+            }
             capacity_ = size_;
             for (size_type i = 0; i < size_; ++i){
                 allocator_.construct(begin_ + i, *(first + i));
@@ -226,7 +229,7 @@ class vector {
             this->begin_ = allocator_.allocate(other.capacity_);
             this->capacity_ = other.capacity_;
             for (size_type i = 0; i < other.size_; ++i){
-                allocator_.construct(begin_ + i, *(other.begin_ + i)); // FIXME: try catch
+                allocator_.construct(begin_ + i, *(other.begin_ + i));
             }
             this->size_ = other.size_;
         }
@@ -238,7 +241,7 @@ class vector {
             this->begin_ = allocator_.allocate(other.capacity_);
             this->capacity_ = other.capacity_;
             for (size_type i = 0; i < other.size_; ++i){
-                allocator_.construct(begin_ + i, *(other.begin_ + i)); // FIXME: try catch
+                allocator_.construct(begin_ + i, *(other.begin_ + i));
             }
             this->size_ = other.size_;
             return *this;
@@ -271,27 +274,27 @@ class vector {
             difference_type count = last - first;
             this->clear();
             this->reserve(count);
-            for (size_type i = 0; i < count; ++i){
+            for (size_type i = 0; i < static_cast<size_type>(count); ++i){
                 allocator_.construct(begin_ + i, *(first + i));
             }
             size_ = count;
         }
 
         allocator_type get_allocator() const{
-            return allocator_;
+            return this->allocator_;
         }
 
-        /* * * * * * Element access: * * * * * */
+        ///////////// Element access: //////////////////////////////////////////
         reference at(size_type pos){
-            if (pos > size_){
-                throw std::out_of_range("std::out_of_range: vector");
+            if (pos >= size_){
+                throw std::out_of_range("_ft::vector_");
             }
             return *(begin_ + pos);
         }
 
         const_reference at(size_type pos) const{
             if (pos > size_){
-                throw std::out_of_range("std::out_of_range: vector");
+                throw std::out_of_range("_ft::vector_");
             }
             return *(begin_ + pos);
         }
@@ -320,7 +323,7 @@ class vector {
             return *(begin_ + size_ - 1);
         }
 
-        /* * * * * * Iterators:* * * * * * * * */
+        ///////////// Iterators: ///////////////////////////////////////////////
         iterator begin(){
             return iterator(begin_);
         }
@@ -360,14 +363,14 @@ class vector {
 
         const_reverse_iterator rend() const {
             if (size_ == 0) {
-                return reverse_iterator(iterator(begin_));
+                return const_reverse_iterator(iterator(begin_));
             }
-            return reverse_iterator(iterator(begin_ - 1));
+            return const_reverse_iterator(iterator(begin_ - 1));
         }
 
-        /* * * * * * Capacity: * * * * * * * * */
+        ///////////// Capacity: ////////////////////////////////////////////////
         bool empty() const{
-            return (size_ == 0 ? true : false);
+            return size_ == 0;
         }
 
         size_type size() const{
@@ -386,7 +389,7 @@ class vector {
             if (new_cap <= capacity_) return;
             pointer newbegin = allocator_.allocate(new_cap);
             for (size_type i = 0; i < size_; ++i){
-                allocator_.construct(newbegin + i, *begin_); // FIXME: try catch
+                allocator_.construct(newbegin + i, *(begin_ + i));
             }
             for (size_type i = 0; i < size_; ++i){
                 allocator_.destroy(begin_ + i);
@@ -396,14 +399,14 @@ class vector {
             capacity_ = new_cap;
         }
 
-        /* * * * * * Modifiers:  * * * * * * * */
+        ////////////////// Modifiers: //////////////////////////////////////////
         void resize(size_type count, value_type value = value_type()){
             if (count > size_){
                 if (count > capacity_) {
                     reserve(capacity_ * 2 > count ? capacity_ * 2 : count);
                 }
                 for (size_type i = size_; i < count; ++i){
-                    allocator_.construct(begin_ + i, value); // FIXME: try catch
+                    allocator_.construct(begin_ + i, value);
                 }
                 size_ = count;
             }
@@ -419,7 +422,7 @@ class vector {
             if (capacity_ == size_){
                 reserve(capacity_ == 0 ? 1 : 2 * size_);
             }
-            allocator_.construct(begin_ + size_, value); // FIXME: try catch
+            allocator_.construct(begin_ + size_, value);
             size_++;
         }
 
@@ -444,14 +447,14 @@ class vector {
         }
 
         iterator insert(iterator pos, const value_type& value) {
-            if (pos < begin() || pos >= end()) throw; // FIXME: my_exception
+            // if (pos < begin() || pos > end()) throw;
             difference_type start = pos - begin();
             insert(pos, 1, value);
             return iterator(begin_ + start);
         }
 
-        void insert( iterator pos, size_type count, const T& value ) {
-            if (pos < begin() || pos >= end()) return;
+        void insert(iterator pos, size_type count, const T& value) {
+            if (pos < begin() || pos > end()) return;
             difference_type start = pos - begin();
             if (size_ + count > capacity_) {
                 if (capacity_ <= size_) {
@@ -459,13 +462,13 @@ class vector {
                 }
                 reserve(size_ + count);
             }
-            for (size_type i = 0; i < count; ++i) {
+            for (size_type i = 0; i < static_cast<size_type>(count); ++i) {
                 allocator_.construct(begin_ + size_ + i, value);
             }
-            for (int i = size_ - 1; i >= start && i >= 0; --i){
+            for (int i = size_ - 1; i >= static_cast<int>(start) && i >= 0; --i){
                 begin_[i + count] = begin_[i];
             }
-            for (size_type i = start ; i < start + count ; ++i) {
+            for (size_type i = start ; i < static_cast<size_type>(start + count) ; ++i) {
                 begin_[i] = value;
             }
             size_ += count;
@@ -476,7 +479,7 @@ class vector {
                     InputIt first,
                     InputIt last,
                     typename std::enable_if<!std::is_integral<InputIt>::value, bool>::type* = 0) {
-            if (pos < begin() || pos >= end()) return;
+            if (pos < begin() || pos > end()) return;
             difference_type start = pos - begin();
             difference_type count = last - first;
             if (count < 0) return;
@@ -486,24 +489,23 @@ class vector {
                 }
                 reserve(size_ + count);
             }
-            for (size_type i = 0; i < count; ++i){
+            for (size_type i = 0; i < static_cast<size_type>(count); ++i){
                 allocator_.construct(begin_ + size_ + i, *(first + i));
             }
-            for (int i = size_ - 1; i >= start && i >= 0; --i){
+            for (int i = size_ - 1; i >= static_cast<int>(start) && i >= 0; --i){
                 begin_[i + count] = begin_[i];
             }
-            for (size_type i = start ; i < start + count ; ++i) {
-                begin_[i] = *(first + i);
+            for (size_type i = start ; i < static_cast<size_type>(start + count) ; ++i) {
+                begin_[i] = *first++;
             }
             size_ += count;
-            return;
         }
 
         iterator erase(iterator pos) {
-            if (pos < begin() || pos >= end()) throw; // FIXME: my_exception
+            // if (pos < begin() || pos > end()) throw;
             difference_type start = pos - begin();
             vector tmp(++pos, end());
-            for (size_type i = size_; i > start; --i){
+            for (size_type i = size_; i > static_cast<size_type>(start); --i){
                 pop_back();
             }
             for (iterator iter = tmp.begin(); iter != tmp.end(); ++iter){
@@ -513,35 +515,23 @@ class vector {
         }
 
         iterator erase(iterator first, iterator last) {
-            difference_type count = last - first;
-            if (count < 0) throw; // FIXME: my_exception
-            difference_type start = begin() - first;
-            vector tmp1(begin() + start, begin() + count);
-            vector tmp2(begin() + count, end());
-
-            for (size_type i = size_; i > start; --i){
-                pop_back();
+            // if (first > last) throw;
+            for (iterator iter = first; iter != last; ++iter){
+                erase(first);
             }
-            for (iterator iter = tmp1.begin(); iter != tmp1.end(); ++iter){
-                push_back(*iter);
-            }
-            for (iterator iter = tmp2.begin(); iter != tmp2.end(); ++iter){
-                push_back(*iter);
-            }
-            return iterator(begin_ + start);
+            return first;
         }
 
-        /* * * * * * Non-member functions:  * * * * * */
-        friend std::ostream& operator<<(std::ostream& os, const vector<T, Allocator>& v){
-            os << "\033[34m";
-            os << "size = " << v.size_ << std::endl;
-            os << "capacity_ = " << v.capacity_ << std::endl;
-            for (size_t i = 0; i < v.size_; ++i){
-                std::cout << "arr[" << i << "] = " << *(v.begin_ + i) << std::endl;
-            }
-            os << "\033[0m";
-            return os;
-        }
+        // friend std::ostream& operator<<(std::ostream& os, const vector<T, Allocator>& v){
+        //     os << "\033[34m";
+        //     os << "size = " << v.size_ << std::endl;
+        //     os << "capacity_ = " << v.capacity_ << std::endl;
+        //     for (size_t i = 0; i < v.size_; ++i){
+        //         std::cout << "arr[" << i << "] = " << *(v.begin_ + i) << std::endl;
+        //     }
+        //     os << "\033[0m";
+        //     return os;
+        // }
 
     private:
         pointer         begin_;
@@ -550,8 +540,7 @@ class vector {
         allocator_type  allocator_;
 };
 
-/* * * * * * Non-member functions:  * * * * * */
-
+////////////////// Non-member functions: ///////////////////////////////////////
 template<class T, class Allocator>
 bool operator==(const ft::vector<T,Allocator>& lhs,
                 const ft::vector<T,Allocator>& rhs){
