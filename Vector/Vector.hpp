@@ -39,7 +39,7 @@ class vector {
                     return ptr_;
                 }
                 pointer getPtr() const {
-                    return (ptr_);
+                    return ptr_;
                 }
                 /* ********** LegacyInputIterator effects ******************* */
                 /* LegacyInputIterator effects: "*iter" ********************* */
@@ -72,7 +72,7 @@ class vector {
                 RandomAccessIterator operator--(int){
                     RandomAccessIterator tmp(*this);
                     ptr_--;
-                    return (tmp);
+                    return tmp;
                 }
                 /* ********** LegacyRandomAccessIterator effects ************ */
                 /* LegacyRandomAccessIterator effects: "iter+=" ************* */
