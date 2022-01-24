@@ -7,6 +7,8 @@
 # include "../includes/conditional.hpp"
 # include "../includes/ReverseIterator.hpp"
 
+# include "../includes/red_black_tree.hpp"
+
 namespace ft {
 
 template <class Key,
@@ -36,9 +38,9 @@ class map {
 
         ////////////////////////////////////////////////////////////////////////
 
-        // explicit map(const key_compare& compare_obj = key_compare(),
-        //              const allocator_type& allctr_obj = Allocator())
-        //                 : /* FIXME */  {}
+        explicit map(const key_compare& compare_obj = key_compare(),
+                     const allocator_type& allctr_obj = Allocator())
+                        : rb_tree_(compare_obj, allctr_obj) {}
 
         // template<class InputIt>
         // map(InputIt first,
@@ -64,7 +66,8 @@ class map {
         ////////////////// Observers: //////////////////////////////////////////
 
     private:
-
+        typedef red_black_tree<value_type, key_compare, allocator_type> red_black_tree;
+        red_black_tree rb_tree_;
 };
 
 ////////////////// Non-member functions: ///////////////////////////////////////
