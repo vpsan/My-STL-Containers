@@ -34,40 +34,44 @@ int main(void)
     std::cout << "Start!\n";
     std::cout << '\n';
 
-//    typedef ft::pair<int, std::string> pr;
     ft::red_black_tree<int> t = ft::red_black_tree<int>();
-    t.insert(10);
-    t.insert(20);
-    t.insert(30);
-    t.insert(110);
-    t.insert(100);
-    t.insert(90);
-    t.insert(40);
-    t.insert(50);
-    t.insert(70);
-    t.insert(80);
-    t.insert(150);
-    t.insert(120);
+    std::cout << "is_isBalanced = " << t.isBalanced(t.root_) << std::endl;
+
     t.insert(1);
+    t.insert(10);
     t.insert(2);
     t.insert(3);
+    t.insert(4);
+    t.insert(20);
+    t.insert(15);
+    std::cout << "---------\n";
     t.inorder(t.root_);
     std::cout << "---------\n";
-    t.erase(3);
-    t.erase(1);
-    t.erase(120);
+    std::cout << "is_isBalanced = " << t.isBalanced(t.root_) << std::endl;
+    t.erase(2);
+    std::cout << "is_isBalanced = " << t.isBalanced(t.root_) << std::endl;
+    t.erase(10);
+    std::cout << "is_isBalanced = " << t.isBalanced(t.root_) << std::endl;
+    t.erase(15);
+    std::cout << "is_isBalanced = " << t.isBalanced(t.root_) << std::endl;
+    t.erase(4);
+    std::cout << "is_isBalanced = " << t.isBalanced(t.root_) << std::endl;
+    std::cout << "---------\n";
     t.inorder(t.root_);
-
-//    // check for default constructor
-//    std::pair<int, std::string> p = std::pair<int, std::string>();
-//    std::cout << "p.first = " << p.first << '1' << std::endl;
-//    std::cout << "p.second = " << p.second << '1' << std::endl;
-
-//    ft::pair<int, std::string> p = ft::pair<int, std::string>();
-//    std::cout << "p.first = " << p.first << '1' << std::endl;
-//    std::cout << "p.second = " << p.second << '1' << std::endl;
+    std::cout << "---------\n";
+    t.insert(2);
+    t.insert(10);
+    t.insert(15);
+    t.insert(200);
+    t.insert(20);
+    std::cout << "is_isBalanced = " << t.isBalanced(t.root_) << std::endl;
+    std::cout << "---------\n";
+    t.inorder(t.root_);
+    std::cout << "---------\n";
 
     std::cout << '\n';
     std::cout << "Finish\n";
+
+
     return 0;
 }

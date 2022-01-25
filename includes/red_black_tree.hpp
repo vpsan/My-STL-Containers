@@ -2,6 +2,7 @@
 # define RED_BLACK_TREE
 
 # include <memory> // std::allocator<T>
+# include <algorithm> // min max
 # include <iostream> // std::cout debug
 
 
@@ -11,37 +12,76 @@
 namespace ft {
 
 template <class T>
-class tree_node {
-    public:
+struct tree_node {
+//    public:
         typedef tree_node<T>*   node_ptr;
         typedef T               value_type;
 
-    public:
+//    public:
         value_type              value_;
         node_ptr                right_;
         node_ptr                left_;
         node_ptr                parent;
         int                     color;
 
-    public:
-        tree_node(value_type value)
-                : value_(value),
-                  right_(NULL),
-                  left_(NULL),
-                  parent(NULL),
-                  color(Red) {}
+//    public:
+//        tree_node(value_type value)
+//                : value_(value),
+//                  right_(NULL),
+//                  left_(NULL),
+//                  parent(NULL),
+//                  color(Red) {}
+//
+//        tree_node(value_type value,
+//                  node_ptr right_,
+//                  node_ptr left_,
+//                  node_ptr parent,
+//                  int color)
+//                : value_(value),
+//                  right_(right_),
+//                  left_(left_),
+//                  parent(parent),
+//                  color(color) {}
+};
 
-        tree_node(value_type value,
-                  node_ptr right_,
-                  node_ptr left_,
-                  node_ptr parent,
-                  int color)
-                : value_(value),
-                  right_(right_),
-                  left_(left_),
-                  parent(parent),
-                  color(color) {}
-    };
+//template <class T, class U_node_ptr>
+//class RedBlackTreeBidirectionalIterator {
+//    public:
+//        typedef T                                     value_type;
+//        typedef value_type*                           pointer;
+//        typedef value_type&                           reference;
+//        typedef U_node_ptr                            node_ptr;
+//        typedef std::ptrdiff_t                        difference_type;
+//        typedef	std::bidirectional_iterator_tag       iterator_category;
+//    public:
+//        RedBlackTreeBidirectionalIterator() : ptr_(NULL) {};
+//        // RedBlackTreeBidirectionalIterator(pointer ptr) : ptr_(ptr) {};
+//        RedBlackTreeBidirectionalIterator(const RedBlackTreeBidirectionalIterator& other) {
+//            ptr_ = other.getPtr();
+//        }
+//
+//        /* ********** LegacyInputIterator effects ******************* */
+//        /* LegacyInputIterator effects: "*iter" ********************* */
+//        reference operator*() const {
+//            return ptr_->value_;
+//        }
+//        /* LegacyInputIterator effects: "iter->m" ******************* */
+//        pointer operator->(){
+//            return &(ptr_->value_);
+//        }
+//        /* LegacyInputIterator effects: "++iter" ******************** */
+//        RedBlackTreeBidirectionalIterator& operator++(){
+//            ++ptr_;
+//            return *this;
+//        }
+//
+//        pointer getPtr() const {
+//            return ptr_;
+//        }
+//
+//    private:
+//        node_ptr ptr_;
+//};
 
 
     template <class T,
@@ -58,14 +98,100 @@ class tree_node {
         typedef typename node::node_ptr             node_ptr;
     public:
 
+        ////////////////////////////////////////////////////////////////////////////
+        //////////////////////////////////////////////////////////////////////////// start
+        ////////////////////////////////////////////////////////////////////////////
 
-        explicit red_black_tree(const value_comapre& compare_obj,
-                                const allocator_type& allctr_obj)
-                : compare_(compare_obj),
-                  allocator_(allctr_obj),
-                  root_(NULL),
-                  nil_(NULL),
-                  size_(0) {}
+//        class RedBlackTreeBidirectionalIterator {
+//        public:
+//            typedef value_type*                           pointer;
+//            typedef value_type&                           reference;
+//            typedef std::ptrdiff_t                        difference_type;
+//            typedef	std::bidirectional_iterator_tag       iterator_category;
+//        public:
+//            RedBlackTreeBidirectionalIterator(node_ptr nil = NULL) : ptr_(NULL), nil_in_iter_(nil) {}
+//            RedBlackTreeBidirectionalIterator(pointer ptr, node_ptr rb_nil) : ptr_(ptr), nil_in_iter_(rb_nil) {};
+//            RedBlackTreeBidirectionalIterator(const RedBlackTreeBidirectionalIterator& other) {
+//                ptr_ = other.getPtr();
+//                nil_in_iter_ = other.getNil();
+//            }
+//
+//            /* ********** LegacyInputIterator effects ******************* */
+//            /* LegacyInputIterator effects: "*iter" ********************* */
+//            reference operator*() const {
+//                return ptr_->value_;
+//            }
+//            /* LegacyInputIterator effects: "iter->m" ******************* */
+//            pointer operator->(){
+//                return &(ptr_->value_);
+//            }
+//            /* LegacyInputIterator effects: "++iter" ******************** */
+//            RedBlackTreeBidirectionalIterator& operator++(){
+//                if (ptr_->right_ != nil_in_iter_) {
+//                    ptr_ = rb_iter_minimum(ptr_);
+//                    return *this;
+//                }
+//                node_ptr x = ptr_;
+//                node_ptr y = ptr_->parent;
+//                while (y != nil_in_iter_ && x == y->right_){
+//                    x = y;
+//                    y = y->parent;
+//                }
+//                ptr_ = y;
+//                return *this;
+//            }
+//
+//            RedBlackTreeBidirectionalIterator& operator--(){
+//                if (ptr_->left_ != nil_in_iter_) {
+//                    ptr_ = rb_iter_maximum(ptr_);
+//                    return *this;
+//                }
+//                node_ptr x = ptr_;
+//                node_ptr y = ptr_->parent;
+//                while (y != nil_in_iter_ && x == y->left_){
+//                    x = y;
+//                    y = y->parent;
+//                }
+//                ptr_ = y;
+//                return *this;
+//            }
+//
+//            pointer getPtr() const {
+//                return ptr_;
+//            }
+//
+//            pointer getNil() const {
+//                return nil_in_iter_;
+//            }
+//
+//        private:
+//            node_ptr ptr_;
+//            node_ptr nil_in_iter_;
+//
+//            node_ptr rb_iter_maximum(node_ptr x) {
+//                while(x->right_ != nil_in_iter_)
+//                    x = x->right_;
+//                return x;
+//            }
+//
+//            node_ptr rb_iter_minimum(node_ptr x) {
+//                while(x->left_ != nil_in_iter_)
+//                    x = x->left_;
+//                return x;
+//            }
+//        };
+        ////////////////////////////////////////////////////////////////////////////
+        //////////////////////////////////////////////////////////////////////////// end
+        ////////////////////////////////////////////////////////////////////////////
+
+
+//        explicit red_black_tree(const value_comapre& compare_obj,
+//                                const allocator_type& allctr_obj)
+//                : compare_(compare_obj),
+//                  allocator_(allctr_obj),
+//                  root_(NULL),
+//                  nil_(NULL),
+//                  size_(0) {}
 
 //        red_black_tree(const red_black_tree& other)
 //                : compare_(value_comapre()),
@@ -74,18 +200,25 @@ class tree_node {
 //                  nil_(NULL),
 //                  size_(0) {}
 
+//        red_black_tree()
+//                : compare_(value_comapre()),
+//                allocator_(allocator_type()),
+//                size_(0) {
+//            this->nil_ = NULL;//reinterpret_cast<node_ptr>(allocator_.allocate(sizeof(node)));
+//            nil_->left_ = NULL;
+//            nil_->right_ = NULL;
+//            nil_->parent = NULL;
+//            nil_->color = Black;
+//            nil_->value_ = value_type();// FIXME default(value_type). Not shure that defualt is ok for all types
+//            root_ = nil_;
+//        }
+
         red_black_tree()
                 : compare_(value_comapre()),
-                allocator_(allocator_type()),
-                size_(0) {
-            this->nil_ = reinterpret_cast<node_ptr>(allocator_.allocate(sizeof(node)));
-            nil_->left_ = NULL;
-            nil_->right_ = NULL;
-            nil_->parent = NULL;
-            nil_->color = Black;
-            nil_->value_ = value_type();// FIXME default(value_type). Not shure that defualt is ok for all types
-            root_ = nil_;
-        }
+                  allocator_(allocator_type()),
+                  root_(NULL),
+                  nil_(NULL),
+                  size_(0) {}
 
         ~red_black_tree() {
             // FIXME
@@ -149,29 +282,28 @@ class tree_node {
         }
 
         void rb_insertion_fixup(node_ptr z){
-            while(z->parent->color == Red) {
+            while(z != NULL && z->parent != NULL && z->parent->color == Red) {
                 if(z->parent == z->parent->parent->left_) { //1. z.parent is the left_ child
                     node_ptr y = z->parent->parent->right_; //   Y = uncle of z
 
 
-                    if(y->color == Red) { //case 1: (if uncle RED)
+                    if(y!= NULL && y->color == Red) { //case 1: (if uncle RED)
                         z->parent->color = Black;
                         y->color = Black;
                         z->parent->parent->color = Red;
                         z = z->parent->parent; // z is a grandparent now
-                        std::cout << "here1\n";
+                        std::cout << "here-i-11\n";
                     }
                     else { //case2 or case3
                         if (z == z->parent->right_) { //case2: (if z is right_ child) - make it left_ child
                             z = z->parent; //marked z.parent as new z
                             rb_left_rotate(z);
-                            std::cout << "here2\n";
                         }
                         //case3: (if z is left_ child)
                         z->parent->color = Black; //made parent black
                         z->parent->parent->color = Red; //made parent red
                         rb_right_rotate(z->parent->parent);
-                        std::cout << "here3\n";
+                        std::cout << "here-i-12\n";
                     }
                 }
                 else if (/*z->parent->parent != NULL &&*/ z->parent == z->parent->parent->right_) { //z.parent is the right_ child
@@ -182,8 +314,10 @@ class tree_node {
                         y->color = Black;
                         z->parent->parent->color = Red;
                         z = z->parent->parent;
+                        std::cout << "here-i-21\n";
                     }
                     else {
+                        std::cout << "here-i-22\n";
                         if (z == z->parent->left_) {
                             z = z->parent; //marked z.parent as new z
                             rb_right_rotate(z);
@@ -249,8 +383,14 @@ class tree_node {
             // 3. Если U правый сын ...
             else
                 u->parent->right_ = v;
-            // if (v == NULL || u == NULL) return;
+            if (v == NULL || u == NULL) return;
             v->parent = u->parent;
+        }
+
+        node_ptr rb_maximum(node_ptr x) {
+            while(x->right_ != nil_)
+                x = x->right_;
+            return x;
         }
 
         node_ptr rb_minimum(node_ptr x) {
@@ -322,6 +462,7 @@ class tree_node {
                     }
                 }
             }
+            if (x == NULL) return;
             x->color = Black;
         }
 
@@ -354,10 +495,11 @@ class tree_node {
                 //     Сохраняем его правого ребенка и цвет.
                 y = rb_minimum(z->right_);
                 y_orignal_color = y->color;
-                x = y->right_;
+                x = y->right_; //x = (y->right_ == NULL) ? y : y->right_; // +
                 // 3.2 Если Y - ребенок Z
-                if (y->parent == z) {
-                    x->parent = z;
+                if (/*x != NULL &&*/ y->parent == z) {
+                    x->parent = y;//+
+                    // y->parent = y;//+
                 }
                 // 3.3 Если Y - не ребенок Z
                 //     - Вытаскиваем Y и на его место вставляем y->right_
@@ -374,8 +516,8 @@ class tree_node {
                 y->left_->parent = y;
                 y->color = z->color;
             }
-            // FIXUP - если у заменяемого элемента цвет был черный,
-            //         то придется менять цвет у него и его ребенка.
+            // rb_delete_fixup - если у заменяемого элемента цвет был черный,
+            //                   то придется менять цвет у него и его ребенка.
             if (y_orignal_color == Black)
                 rb_delete_fixup(x);
         }
@@ -404,6 +546,52 @@ class tree_node {
             }
         }
 
+        ////////////////////////////////////////////////////////////////////////////
+        //////// isBalanced ////////////////////////////////////////////////////////
+        ////////////////////////////////////////////////////////////////////////////
+
+        // Returns returns tree if the Binary tree is balanced like a Red-Black
+        // tree. This function also sets value in maxh and minh (passed by
+        // reference). maxh and minh are set as maximum and minimum heights of root.
+        bool isBalancedUtil(node_ptr root, int &maxh, int &minh)
+        {
+            // Base case
+            if (root == NULL)
+            {
+                maxh = minh = 0;
+                return true;
+            }
+
+            int lmxh, lmnh; // To store max and min heights of left subtree
+            int rmxh, rmnh; // To store max and min heights of right subtree
+
+            // Check if left subtree is balanced, also set lmxh and lmnh
+            if (isBalancedUtil(root->left_, lmxh, lmnh) == false)
+                return false;
+
+            // Check if right subtree is balanced, also set rmxh and rmnh
+            if (isBalancedUtil(root->right_, rmxh, rmnh) == false)
+                return false;
+
+            // Set the max and min heights of this node for the parent call
+            maxh = std::max(lmxh, rmxh) + 1;
+            minh = std::min(lmnh, rmnh) + 1;
+
+            // See if this node is balanced
+            if (maxh <= 2*minh)
+                return true;
+
+            return false;
+        }
+
+        // A wrapper over isBalancedUtil()
+        bool isBalanced(node_ptr root)
+        {
+            int maxh, minh;
+            return isBalancedUtil(root, maxh, minh);
+        }
+        ////////////////////////////////////////////////////////////////////////////
+        ////////////////////////////////////////////////////////////////////////////
 
     public:
         value_comapre       compare_;
