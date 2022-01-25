@@ -83,7 +83,7 @@ class tree_node {
             nil_->right_ = NULL;
             nil_->parent = NULL;
             nil_->color = Black;
-            nil_->value_ = static_cast<value_type>(0);// FIXME // default(value_type)
+            nil_->value_ = value_type();// FIXME default(value_type). Not shure that defualt is ok for all types
             root_ = nil_;
         }
 
@@ -92,19 +92,19 @@ class tree_node {
         }
 
 
-        // void left_rotate(red_black_tree *t, node_ptr x)
-        // void right_rotate(red_black_tree *t, node_ptr x)
+        // void rb_left_rotate(red_black_tree *t, node_ptr x)
+        // void rb_right_rotate(red_black_tree *t, node_ptr x)
 
-        // void insertion_fixup(red_black_tree *t, node_ptr z)
-        // void insert(red_black_tree *t, node_ptr z)
+        // void rb_insertion_fixup(red_black_tree *t, node_ptr z)
+        // void rb_insert(red_black_tree *t, node_ptr z)
 
         // void rb_transplant(red_black_tree *t, node_ptr u, node_ptr v)
-        // node_ptr minimum(red_black_tree *t, node_ptr x)
+        // node_ptr rb_minimum(red_black_tree *t, node_ptr x)
         // void rb_delete_fixup(red_black_tree *t, node_ptr x)
         // void rb_delete(red_black_tree *t, node_ptr z)
 
 
-        void left_rotate(node_ptr x){
+        void rb_left_rotate(node_ptr x){
             node_ptr y = x->right_; // 1. Обозначаем правого ребенка Y
             x->right_ = y->left_;   // 1. Теперь левый ребенок Y - правый ребенок X
             if (y->left_ != nil_) { // 1. Если ребенок "левый ребенок Y" не NIL - то меняем у "левый ребенок Y" родителя на Х
@@ -127,7 +127,7 @@ class tree_node {
         }
 
 
-        void right_rotate(node_ptr x){
+        void rb_right_rotate(node_ptr x){
             node_ptr y = x->left_;
 
             x->left_ = y->right_;
@@ -148,7 +148,7 @@ class tree_node {
             x->parent = y;
         }
 
-        void insertion_fixup(node_ptr z){
+        void rb_insertion_fixup(node_ptr z){
             while(z->parent->color == Red) {
                 if(z->parent == z->parent->parent->left_) { //1. z.parent is the left_ child
                     node_ptr y = z->parent->parent->right_; //   Y = uncle of z
@@ -164,13 +164,13 @@ class tree_node {
                     else { //case2 or case3
                         if (z == z->parent->right_) { //case2: (if z is right_ child) - make it left_ child
                             z = z->parent; //marked z.parent as new z
-                            left_rotate(z);
+                            rb_left_rotate(z);
                             std::cout << "here2\n";
                         }
                         //case3: (if z is left_ child)
                         z->parent->color = Black; //made parent black
                         z->parent->parent->color = Red; //made parent red
-                        right_rotate(z->parent->parent);
+                        rb_right_rotate(z->parent->parent);
                         std::cout << "here3\n";
                     }
                 }
@@ -186,23 +186,18 @@ class tree_node {
                     else {
                         if (z == z->parent->left_) {
                             z = z->parent; //marked z.parent as new z
-                            right_rotate(z);
+                            rb_right_rotate(z);
                         }
                         z->parent->color = Black; //made parent black
                         z->parent->parent->color = Red; //made parent red
-                        left_rotate(z->parent->parent);
+                        rb_left_rotate(z->parent->parent);
                     }
                 }
             }
             root_->color = Black;
         }
 
-        void insert(const value_type& value){
-
-            node_ptr z = reinterpret_cast<node_ptr>(allocator_.allocate(sizeof(node)));
-            z->color = Red;
-            allocator_.construct(&(z->value_), value);
-
+        void rb_insert(node_ptr z){
             // 1. Итерируемся от root.
             //    tmp - итератор.
             //    Y после итераций окажется родителем новой ноды Z.
@@ -232,7 +227,15 @@ class tree_node {
             z->right_ = nil_;
             z->left_ = nil_;
 
-            insertion_fixup(z);
+            rb_insertion_fixup(z);
+        }
+
+        void insert(const value_type& value) {
+            node_ptr z = reinterpret_cast<node_ptr>(allocator_.allocate(sizeof(node)));
+            z->color = Red;
+            allocator_.construct(&(z->value_), value);
+
+            rb_insert(z);
         }
 
         void rb_transplant(node_ptr u, node_ptr v) {
@@ -250,7 +253,7 @@ class tree_node {
             v->parent = u->parent;
         }
 
-        node_ptr minimum(node_ptr x) {
+        node_ptr rb_minimum(node_ptr x) {
             // Мин элемент - элемент без левого потомка в заданном поддерев
             // (если говорить про удаление - то рассматриваем правое поддерево)
             while(x->left_ != nil_)
@@ -266,7 +269,7 @@ class tree_node {
                         std::cout << "here11\n";
                         w->color = Black;
                         x->parent->color = Red;
-                        left_rotate(x->parent);
+                        rb_left_rotate(x->parent);
                         w = x->parent->right_;
                     }
                     if(w->left_->color == Black && w->right_->color == Black) {
@@ -278,14 +281,14 @@ class tree_node {
                         if (w->right_->color == Black) {
                             w->left_->color = Black;
                             w->color = Red;
-                            right_rotate(w);
+                            rb_right_rotate(w);
                             w = x->parent->right_;
                         }
                         std::cout << "here13\n";
                         w->color = x->parent->color;
                         x->parent->color = Black;
                         w->right_->color = Black;
-                        left_rotate(x->parent);
+                        rb_left_rotate(x->parent);
                         x = root_;
                     }
                 }
@@ -295,7 +298,7 @@ class tree_node {
                         std::cout << "here21\n";
                         w->color = Black;
                         x->parent->color = Red;
-                        right_rotate(x->parent);
+                        rb_right_rotate(x->parent);
                         w = x->parent->left_;
                     }
                     if (w->right_->color == Black && w->left_->color == Black) {
@@ -307,14 +310,14 @@ class tree_node {
                         if(w->left_->color == Black) {
                             w->right_->color = Black;
                             w->color = Red;
-                            left_rotate(w);
+                            rb_left_rotate(w);
                             w = x->parent->left_;
                         }
                         std::cout << "here23\n";
                         w->color = x->parent->color;
                         x->parent->color = Black;
                         w->left_->color = Black;
-                        right_rotate(x->parent);
+                        rb_right_rotate(x->parent);
                         x = root_;
                     }
                 }
@@ -349,7 +352,7 @@ class tree_node {
             else {
                 // 3.1 Пусть Y - это минимальный такой элемент справа от Z
                 //     Сохраняем его правого ребенка и цвет.
-                y = minimum(z->right_);
+                y = rb_minimum(z->right_);
                 y_orignal_color = y->color;
                 x = y->right_;
                 // 3.2 Если Y - ребенок Z

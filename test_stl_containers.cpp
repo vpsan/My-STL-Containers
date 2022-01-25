@@ -4,6 +4,8 @@
 #include <vector>
 #include <map>
 
+#include <string>
+
 #include "Stack/Stack.hpp"
 #include "Vector/Vector.hpp"
 #include "Map/Map.hpp"
@@ -32,7 +34,7 @@ int main(void)
     std::cout << "Start!\n";
     std::cout << '\n';
 
-//    ft::pair<int, int>
+//    typedef ft::pair<int, std::string> pr;
     ft::red_black_tree<int> t = ft::red_black_tree<int>();
     t.insert(10);
     t.insert(20);
@@ -49,15 +51,6 @@ int main(void)
     t.insert(1);
     t.insert(2);
     t.insert(3);
-
-//    std::cout << "1\n";
-//    t.insert(10);
-//    std::cout << "2\n";
-//    t.insert(1);
-//    std::cout << "3\n";
-//    t.insert(20);
-//    std::cout << "4\n";
-//    t.insert(2);
     t.inorder(t.root_);
     std::cout << "---------\n";
     t.erase(3);
@@ -65,6 +58,14 @@ int main(void)
     t.erase(120);
     t.inorder(t.root_);
 
+//    // check for default constructor
+//    std::pair<int, std::string> p = std::pair<int, std::string>();
+//    std::cout << "p.first = " << p.first << '1' << std::endl;
+//    std::cout << "p.second = " << p.second << '1' << std::endl;
+
+//    ft::pair<int, std::string> p = ft::pair<int, std::string>();
+//    std::cout << "p.first = " << p.first << '1' << std::endl;
+//    std::cout << "p.second = " << p.second << '1' << std::endl;
 
     std::cout << '\n';
     std::cout << "Finish\n";
