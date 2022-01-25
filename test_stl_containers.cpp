@@ -32,7 +32,8 @@ int main(void)
     std::cout << "Start!\n";
     std::cout << '\n';
 
-    ft::red_black_tree<int> t;
+//    ft::pair<int, int>
+    ft::red_black_tree<int> t = ft::red_black_tree<int>();
     t.insert(10);
     t.insert(20);
     t.insert(30);
@@ -45,7 +46,25 @@ int main(void)
     t.insert(80);
     t.insert(150);
     t.insert(120);
+    t.insert(1);
+    t.insert(2);
+    t.insert(3);
+
+//    std::cout << "1\n";
+//    t.insert(10);
+//    std::cout << "2\n";
+//    t.insert(1);
+//    std::cout << "3\n";
+//    t.insert(20);
+//    std::cout << "4\n";
+//    t.insert(2);
     t.inorder(t.root_);
+    std::cout << "---------\n";
+    t.erase(3);
+    t.erase(1);
+    t.erase(120);
+    t.inorder(t.root_);
+
 
     std::cout << '\n';
     std::cout << "Finish\n";
