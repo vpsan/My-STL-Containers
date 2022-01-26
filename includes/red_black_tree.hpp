@@ -228,9 +228,10 @@ struct tree_node {
 
 
     public:
-        typedef RedBlackTreeBidirectionalIterator<false> iterator;
-        typedef RedBlackTreeBidirectionalIterator<true>  const_iterator;
-
+        typedef RedBlackTreeBidirectionalIterator<false>          iterator;
+        typedef RedBlackTreeBidirectionalIterator<true>           const_iterator;
+        typedef ReverseIterator<iterator>                         reverse_iterator;
+        typedef ReverseIterator<const_iterator>                   const_reverse_iterator;
 
 //        explicit red_black_tree(const value_comapre& compare_obj,
 //                                const allocator_type& allctr_obj)
@@ -291,12 +292,12 @@ struct tree_node {
         void rb_left_rotate(node_ptr x){
             node_ptr y = x->right_; // 1. Обозначаем правого ребенка Y
             x->right_ = y->left_;   // 1. Теперь левый ребенок Y - правый ребенок X
-            if (y->left_ != nil_) { // 1. Если ребенок "левый ребенок Y" не NIL - то меняем у "левый ребенок Y" родителя на Х
+            if (/*y->left_ != nil_*/is_nil(y->left_) == false) { // 1. Если ребенок "левый ребенок Y" не NIL - то меняем у "левый ребенок Y" родителя на Х
                 y->left_->parent = x;
             }
 
             y->parent = x->parent;  // 2. Меняем родителя y на родителя Х
-            if (x->parent == nil_) {// 3. Если X был - root, то переобозначим Y на root
+            if (/*x->parent == nil_*/is_nil(x->parent) == true) {// 3. Если X был - root, то переобозначим Y на root
                 root_ = y;
             }
             else if (x == x->parent->left_) {// 3. Если X не был - root, то он был либо правым либо левым ребенком. Делаем Y либо правым либо левым ребенком "X.отца"
@@ -315,11 +316,11 @@ struct tree_node {
             node_ptr y = x->left_;
 
             x->left_ = y->right_;
-            if(y->right_ != nil_) {
+            if(/*y->right_ != nil_*/ is_nil(y->right_) == false) {
                 y->right_->parent = x;
             }
             y->parent = x->parent;
-            if(x->parent == nil_) { //x is root
+            if(/*x->parent == nil_*/is_nil(x->parent) == true) { //x is root
                 root_ = y;
             }
             else if(x == x->parent->right_) { //x is left_ child
@@ -391,7 +392,7 @@ struct tree_node {
             node_ptr  temp = root_;
             node_ptr  y = nil_;
 
-            while(temp != nil_) {
+            while(/*temp != nil_*/is_nil(temp) == false) {
                 y = temp;
                 if(z->value_ < temp->value_)
                     temp = temp->left_;
@@ -400,7 +401,7 @@ struct tree_node {
             }
             z->parent = y;
             // 2. Если Дерево было пустым. То новый узел Z - root
-            if(y == nil_) {
+            if(/*y == nil_*/is_nil(y) == true) {
                 root_ = z;
             }
             // 3. Если нет, определяем станет Z правым или левым ребенком
@@ -419,15 +420,20 @@ struct tree_node {
             node_ptr z = reinterpret_cast<node_ptr>(allocator_.allocate(sizeof(node)));
             z->color = Red;
             allocator_.construct(&(z->value_), value);
-
+            delete_iter_end();
+            delete_iter_rend();
             rb_insert(z);
             size_++;
+             iter_end_ = init_iter_end();
+             iter_rend_ = init_iter_rend();
+             iter_begin_ = rb_minimum(root_);
+             iter_rbegin_ = rb_maximum(root_);
         }
 
         void rb_transplant(node_ptr u, node_ptr v) {
             // 1. Является U ли корнем?
             //    - если да, то V - корень
-            if(u->parent == nil_)
+            if(/*u->parent == nil_*/is_nil(u->parent) == true)
                 root_ = v;
             // 2. Если U левый сын ...
             else if(u == u->parent->left_)
@@ -440,15 +446,63 @@ struct tree_node {
         }
 
         node_ptr rb_maximum(node_ptr x) {
-            while(x->right_ != nil_)
+            while(/*x->right_ != nil_*/is_nil(x->right_) == false)
                 x = x->right_;
             return x;
+        }
+
+        node_ptr init_iter_end(void) {
+            if (iter_end_ != NULL) return NULL;
+            node_ptr x = rb_maximum(root_);
+
+            iter_end_ = reinterpret_cast<node_ptr>(allocator_.allocate(sizeof(node)));
+            iter_end_->color = Black;
+            allocator_.construct(&(iter_end_->value_), value_type ());
+            iter_end_->right_ = nil_;
+            iter_end_->left_ = nil_;
+            iter_end_->parent = x;
+            x->right_ = iter_end_;
+            return iter_end_;
+        }
+
+        void delete_iter_end(void) {
+            if (iter_end_ == NULL) return;
+            node_ptr x = rb_maximum(root_);
+
+            iter_end_->parent = NULL;
+            x->right_ = nil_;
+            allocator_.destroy(&iter_end_->value_);
+            allocator_.deallocate(reinterpret_cast<value_type *>(iter_end_), 1);
+        }
+
+        node_ptr init_iter_rend(void) {
+            if (iter_rend_ != NULL) return NULL;
+            node_ptr x = rb_minimum(root_);
+
+            iter_rend_ = reinterpret_cast<node_ptr>(allocator_.allocate(sizeof(node)));
+            iter_rend_->color = Black;
+            allocator_.construct(&(iter_rend_->value_), value_type ());
+            iter_rend_->right_ = nil_;
+            iter_rend_->left_ = nil_;
+            iter_rend_->parent = x;
+            x->left_ = iter_rend_;
+            return iter_rend_;
+        }
+
+        void delete_iter_rend(void) {
+            if (iter_rend_ == NULL) return;
+            node_ptr x = rb_minimum(root_);
+
+            iter_rend_->parent = NULL;
+            x->left_ = nil_;
+            allocator_.destroy(&iter_rend_->value_);
+            allocator_.deallocate(reinterpret_cast<value_type *>(iter_rend_), 1);
         }
 
         node_ptr rb_minimum(node_ptr x) {
             // Мин элемент - элемент без левого потомка в заданном поддерев
             // (если говорить про удаление - то рассматриваем правое поддерево)
-            while(x->left_ != nil_)
+            while(/*x->left_ != nil_*/is_nil(x->left_) == false)
                 x = x->left_;
             return x;
         }
@@ -527,14 +581,14 @@ struct tree_node {
             //    - Case 1. no children or only right
             //    - Значит он имеет правого ребенка/не имеет детей.
             //    - Тогда просто Z заменяем его правым ребенком, (сохранив его)
-            if (z->left_ == nil_) {
+            if (/*z->left_ == nil_*/is_nil(z->left_) == true) {
                 x = z->right_;
                 rb_transplant(z, z->right_);
             }
             // 2. У Z левый ребенка !=NIL, но правый ребенок - NILL?
             //    - Case 2. only left child
             //    - Если да, тогда просто Z заменяем его левым ребенком, (сохранив его)
-            else if(z->right_ == nil_) {
+            else if(/*z->right_ == nil_*/is_nil(z->right_) == true) {
                 x = z->left_;
                 rb_transplant(z, z->left_);
             }
@@ -589,16 +643,26 @@ struct tree_node {
             }
             if (!p)
                 return;
+            delete_iter_end();
+            delete_iter_rend();
             rb_delete(p);
             size_--;
+             iter_end_ = init_iter_end();
+             iter_rend_ = init_iter_rend();
+             iter_begin_ = rb_minimum(root_);
+             iter_rbegin_ = rb_maximum(root_);
         }
 
         void inorder(node_ptr n) {
-            if( n != nil_) {
+            if( /*n != nil_*/ is_nil(n) == false) {
                 inorder(n->left_);
                 std::cout << "value = " << n->value_ << std::endl;
                 inorder(n->right_);
             }
+        }
+
+        bool is_nil(node_ptr n) {
+            return n == nil_ || n == iter_end_ || n == iter_rend_;
         }
 
         ////////////////////////////////////////////////////////////////////////////
@@ -659,7 +723,7 @@ struct tree_node {
         }
         iterator end() {
             if (iter_end_ == NULL) {
-                iter_end_ = rb_maximum(root_);
+                iter_end_ = init_iter_end();
                 return iterator(iter_end_);
             }
             else {
@@ -668,10 +732,62 @@ struct tree_node {
         }
 
         const_iterator begin() const {
-
+            if (iter_begin_ == NULL) {
+                iter_begin_ = rb_minimum(root_);
+                return const_iterator(iter_begin_);
+            }
+            else {
+                return const_iterator(iter_begin_);
+            }
         }
         const_iterator end() const {
+            if (iter_end_ == NULL) {
+                iter_end_ = init_iter_end();
+                return const_iterator(iter_end_);
+            }
+            else {
+                return const_iterator(iter_end_);
+            }
+        }
 
+        reverse_iterator rbegin() {
+            if (iter_rbegin_ == NULL) {
+                iter_rbegin_ = rb_maximum(root_);
+                return reverse_iterator(iterator(iter_rbegin_));;
+            }
+            else {
+                return reverse_iterator(iterator(iter_rbegin_));;
+            }
+        }
+
+        reverse_iterator rend() {
+            if (iter_rend_ == NULL) {
+                iter_rend_ = init_iter_rend();
+                return reverse_iterator(iterator(iter_rend_));;
+            }
+            else {
+                return reverse_iterator(iterator(iter_rend_));;
+            }
+        }
+
+        const_reverse_iterator rbegin() const {
+            if (iter_rbegin_ == NULL) {
+                iter_rbegin_ = rb_maximum(root_);
+                return const_reverse_iterator(iterator(iter_rbegin_));;
+            }
+            else {
+                return const_reverse_iterator(iterator(iter_rbegin_));;
+            }
+        }
+
+        const_reverse_iterator rend() const {
+            if (iter_rend_ == NULL) {
+                iter_rend_ = init_iter_rend();
+                return const_reverse_iterator(iterator(iter_rend_));;
+            }
+            else {
+                return const_reverse_iterator(iterator(iter_rend_));;
+            }
         }
 
     public:
