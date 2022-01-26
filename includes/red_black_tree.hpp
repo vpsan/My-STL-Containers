@@ -102,87 +102,134 @@ struct tree_node {
         //////////////////////////////////////////////////////////////////////////// start
         ////////////////////////////////////////////////////////////////////////////
 
-//        class RedBlackTreeBidirectionalIterator {
-//        public:
-//            typedef value_type*                           pointer;
-//            typedef value_type&                           reference;
-//            typedef std::ptrdiff_t                        difference_type;
-//            typedef	std::bidirectional_iterator_tag       iterator_category;
-//        public:
-//            RedBlackTreeBidirectionalIterator(node_ptr nil = NULL) : ptr_(NULL), nil_in_iter_(nil) {}
-//            RedBlackTreeBidirectionalIterator(pointer ptr, node_ptr rb_nil) : ptr_(ptr), nil_in_iter_(rb_nil) {};
-//            RedBlackTreeBidirectionalIterator(const RedBlackTreeBidirectionalIterator& other) {
-//                ptr_ = other.getPtr();
-//                nil_in_iter_ = other.getNil();
-//            }
-//
-//            /* ********** LegacyInputIterator effects ******************* */
-//            /* LegacyInputIterator effects: "*iter" ********************* */
-//            reference operator*() const {
-//                return ptr_->value_;
-//            }
-//            /* LegacyInputIterator effects: "iter->m" ******************* */
-//            pointer operator->(){
-//                return &(ptr_->value_);
-//            }
-//            /* LegacyInputIterator effects: "++iter" ******************** */
-//            RedBlackTreeBidirectionalIterator& operator++(){
-//                if (ptr_->right_ != nil_in_iter_) {
-//                    ptr_ = rb_iter_minimum(ptr_);
-//                    return *this;
-//                }
-//                node_ptr x = ptr_;
-//                node_ptr y = ptr_->parent;
-//                while (y != nil_in_iter_ && x == y->right_){
-//                    x = y;
-//                    y = y->parent;
-//                }
-//                ptr_ = y;
-//                return *this;
-//            }
-//
-//            RedBlackTreeBidirectionalIterator& operator--(){
-//                if (ptr_->left_ != nil_in_iter_) {
-//                    ptr_ = rb_iter_maximum(ptr_);
-//                    return *this;
-//                }
-//                node_ptr x = ptr_;
-//                node_ptr y = ptr_->parent;
-//                while (y != nil_in_iter_ && x == y->left_){
-//                    x = y;
-//                    y = y->parent;
-//                }
-//                ptr_ = y;
-//                return *this;
-//            }
-//
-//            pointer getPtr() const {
-//                return ptr_;
-//            }
-//
-//            pointer getNil() const {
-//                return nil_in_iter_;
-//            }
-//
-//        private:
-//            node_ptr ptr_;
-//            node_ptr nil_in_iter_;
-//
-//            node_ptr rb_iter_maximum(node_ptr x) {
-//                while(x->right_ != nil_in_iter_)
-//                    x = x->right_;
-//                return x;
-//            }
-//
-//            node_ptr rb_iter_minimum(node_ptr x) {
-//                while(x->left_ != nil_in_iter_)
-//                    x = x->left_;
-//                return x;
-//            }
-//        };
+        template<bool IsConst>
+        class RedBlackTreeBidirectionalIterator {
+        public:
+            typedef typename
+                ft::conditional<IsConst, const T, T>::type  value_type;
+            typedef value_type*                             pointer;
+            typedef value_type&                             reference;
+            typedef std::ptrdiff_t                          difference_type;
+            typedef	std::bidirectional_iterator_tag         iterator_category;
+
+        public:
+            RedBlackTreeBidirectionalIterator() : ptr_(NULL), nil_(NULL) {}
+            RedBlackTreeBidirectionalIterator(node_ptr ptr) : ptr_(ptr), nil_(NULL) {};
+            RedBlackTreeBidirectionalIterator(const RedBlackTreeBidirectionalIterator& other) {
+                ptr_ = other.getPtr();
+                nil_ = NULL;
+            }
+
+            RedBlackTreeBidirectionalIterator& operator=(const RedBlackTreeBidirectionalIterator& other) {
+                if (this == &other) return *this;
+                ptr_ = other.getPtr();
+                return *this;
+            }
+
+            // effect:      const_iter = iter,
+            // not effect:  iter = const_iter
+            operator RedBlackTreeBidirectionalIterator<true>() const {
+                return ptr_;
+            }
+
+            node_ptr getPtr() const {
+                return ptr_;
+            }
+
+            /* ********** LegacyInputIterator effects ******************* */
+            /* LegacyInputIterator effects: "*iter" ********************* */
+            reference operator*() const {
+                return ptr_->value_;
+            }
+            /* LegacyInputIterator effects: "iter->m" ******************* */
+            pointer operator->(){
+                return &(ptr_->value_);
+            }
+            /* LegacyInputIterator effects: "++iter" ******************** */
+            RedBlackTreeBidirectionalIterator& operator++(){
+                if (ptr_->right_ != nil_) {
+                    ptr_ = rb_iter_minimum(ptr_->right_);
+                    return *this;
+                }
+                node_ptr x = ptr_;
+                node_ptr y = ptr_->parent;
+                while (y != nil_ && x == y->right_){
+                    x = y;
+                    y = y->parent;
+                }
+                ptr_ = y;
+                return *this;
+            }
+            /* ********** LegacyForwardIterator effects ***************** */
+            /* LegacyForwardIterator effects: "iter++" ****************** */
+            RedBlackTreeBidirectionalIterator operator++(int){
+                RedBlackTreeBidirectionalIterator tmp(*this);
+                ptr_++;
+                return tmp;
+            }
+            /* ********** LegacyBidirectionalIterator effects *********** */
+            /* LegacyBidirectionalIterator effects: "--iter" ************ */
+            RedBlackTreeBidirectionalIterator& operator--(){
+                if (ptr_->left_ != nil_) {
+                    ptr_ = rb_iter_maximum(ptr_->left_);
+                    return *this;
+                }
+                node_ptr x = ptr_;
+                node_ptr y = ptr_->parent;
+                while (y != nil_ && x == y->left_){
+                    x = y;
+                    y = y->parent;
+                }
+                ptr_ = y;
+                return *this;
+            }
+            /* LegacyBidirectionalIterator effects: "iter--" ************ */
+            RedBlackTreeBidirectionalIterator operator--(int){
+                RedBlackTreeBidirectionalIterator tmp(*this);
+                ptr_--;
+                return tmp;
+            }
+
+        private:
+            node_ptr ptr_;
+            node_ptr nil_;
+
+            node_ptr rb_iter_maximum(node_ptr x) {
+                while(x->right_ != nil_)
+                    x = x->right_;
+                return x;
+            }
+
+            node_ptr rb_iter_minimum(node_ptr x) {
+                while(x->left_ != nil_)
+                    x = x->left_;
+                return x;
+            }
+        };
+
+        /* LegacyInputIterator effects: iter == iter ************************ */
+        template <bool IsConst_l, bool IsConst_r>
+        friend bool
+        operator==(const RedBlackTreeBidirectionalIterator<IsConst_l>& lhs,
+                   const RedBlackTreeBidirectionalIterator<IsConst_r>& rhs) {
+            return lhs.getPtr() == rhs.getPtr();
+        }
+        /* LegacyInputIterator effects: iter != iter ************************ */
+        template <bool IsConst_l, bool IsConst_r>
+        friend bool
+        operator!=(const RedBlackTreeBidirectionalIterator<IsConst_l>& lhs,
+                   const RedBlackTreeBidirectionalIterator<IsConst_r>& rhs) {
+            return lhs.getPtr() != rhs.getPtr();
+        }
+
         ////////////////////////////////////////////////////////////////////////////
         //////////////////////////////////////////////////////////////////////////// end
         ////////////////////////////////////////////////////////////////////////////
+
+
+    public:
+        typedef RedBlackTreeBidirectionalIterator<false> iterator;
+        typedef RedBlackTreeBidirectionalIterator<true>  const_iterator;
 
 
 //        explicit red_black_tree(const value_comapre& compare_obj,
@@ -218,6 +265,10 @@ struct tree_node {
                   allocator_(allocator_type()),
                   root_(NULL),
                   nil_(NULL),
+                  iter_begin_(NULL),
+                  iter_end_(NULL),
+                  iter_rbegin_(NULL),
+                  iter_rend_(NULL),
                   size_(0) {}
 
         ~red_black_tree() {
@@ -370,6 +421,7 @@ struct tree_node {
             allocator_.construct(&(z->value_), value);
 
             rb_insert(z);
+            size_++;
         }
 
         void rb_transplant(node_ptr u, node_ptr v) {
@@ -520,6 +572,8 @@ struct tree_node {
             //                   то придется менять цвет у него и его ребенка.
             if (y_orignal_color == Black)
                 rb_delete_fixup(x);
+            allocator_.destroy(&z->value_);
+            allocator_.deallocate(reinterpret_cast<value_type *>(z), 1);
         }
 
         void erase(const value_type &value)
@@ -536,6 +590,7 @@ struct tree_node {
             if (!p)
                 return;
             rb_delete(p);
+            size_--;
         }
 
         void inorder(node_ptr n) {
@@ -550,7 +605,7 @@ struct tree_node {
         //////// isBalanced ////////////////////////////////////////////////////////
         ////////////////////////////////////////////////////////////////////////////
 
-        // Returns returns tree if the Binary tree is balanced like a Red-Black
+        // Returns true if the Binary tree is balanced like a Red-Black
         // tree. This function also sets value in maxh and minh (passed by
         // reference). maxh and minh are set as maximum and minimum heights of root.
         bool isBalancedUtil(node_ptr root, int &maxh, int &minh)
@@ -593,11 +648,41 @@ struct tree_node {
         ////////////////////////////////////////////////////////////////////////////
         ////////////////////////////////////////////////////////////////////////////
 
+        iterator begin() {
+            if (iter_begin_ == NULL) {
+                iter_begin_ = rb_minimum(root_);
+                return iterator(iter_begin_);
+            }
+            else {
+                return iterator(iter_begin_);
+            }
+        }
+        iterator end() {
+            if (iter_end_ == NULL) {
+                iter_end_ = rb_maximum(root_);
+                return iterator(iter_end_);
+            }
+            else {
+                return iterator(iter_end_);
+            }
+        }
+
+        const_iterator begin() const {
+
+        }
+        const_iterator end() const {
+
+        }
+
     public:
         value_comapre       compare_;
         allocator_type      allocator_;
         node_ptr            root_;
         node_ptr            nil_;
+        node_ptr            iter_begin_;
+        node_ptr            iter_end_;
+        node_ptr            iter_rbegin_;
+        node_ptr            iter_rend_;
         size_type           size_;
     };
 

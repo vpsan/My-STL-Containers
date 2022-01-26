@@ -44,34 +44,63 @@ int main(void)
     t.insert(4);
     t.insert(20);
     t.insert(15);
+
     std::cout << "---------\n";
     t.inorder(t.root_);
     std::cout << "---------\n";
+//    std::cout << "is_isBalanced = " << t.isBalanced(t.root_) << std::endl;
+//    t.erase(2);
+//    std::cout << "is_isBalanced = " << t.isBalanced(t.root_) << std::endl;
+//    t.erase(10);
+//    std::cout << "is_isBalanced = " << t.isBalanced(t.root_) << std::endl;
+//    t.erase(15);
+//    std::cout << "is_isBalanced = " << t.isBalanced(t.root_) << std::endl;
+//    t.erase(4);
+//    std::cout << "is_isBalanced = " << t.isBalanced(t.root_) << std::endl;
+//    std::cout << "---------\n";
+//    t.inorder(t.root_);
+//    std::cout << "---------\n";
+//    t.insert(2);
+//    t.insert(10);
+//    t.insert(15);
+//    t.insert(200);
+//    t.insert(20);
+//    std::cout << "is_isBalanced = " << t.isBalanced(t.root_) << std::endl;
+//    std::cout << "---------\n";
+//    t.inorder(t.root_);
+//    std::cout << "---------\n";
+
+    ft::red_black_tree<int>::RedBlackTreeBidirectionalIterator<false> it = t.begin();
+
+    for (; it != t.end(); ++it){
+        std::cout<< *it << std::endl;
+    }
     std::cout << "is_isBalanced = " << t.isBalanced(t.root_) << std::endl;
-    t.erase(2);
-    std::cout << "is_isBalanced = " << t.isBalanced(t.root_) << std::endl;
-    t.erase(10);
-    std::cout << "is_isBalanced = " << t.isBalanced(t.root_) << std::endl;
-    t.erase(15);
-    std::cout << "is_isBalanced = " << t.isBalanced(t.root_) << std::endl;
-    t.erase(4);
-    std::cout << "is_isBalanced = " << t.isBalanced(t.root_) << std::endl;
-    std::cout << "---------\n";
-    t.inorder(t.root_);
-    std::cout << "---------\n";
-    t.insert(2);
-    t.insert(10);
-    t.insert(15);
-    t.insert(200);
-    t.insert(20);
-    std::cout << "is_isBalanced = " << t.isBalanced(t.root_) << std::endl;
-    std::cout << "---------\n";
-    t.inorder(t.root_);
-    std::cout << "---------\n";
+
 
     std::cout << '\n';
     std::cout << "Finish\n";
 
+//    std::vector<int> v(5);
+//    for (int i = 0; i != 5; i++){
+//        v[i] = i;
+//    }
+//    std::cout << "rb = " << *(v.rbegin()) << std::endl;
+//    std::cout << "re = " << *(v.rend()) << std::endl;
+//    for (std::vector<int>::reverse_iterator it = v.rbegin(); it != v.rend(); it++){
+//        std::cout << *it << std::endl;
+//    }
+//
+//    std::map<int, std::string> m;
+//    for (int i = 0; i != 5; i++){
+//        m[i] = "my_str";
+//    }
+//    std::cout << "rb = " << (m.rbegin()->first) << std::endl;
+//    // std::cout << "re = " << (m.rend()->first) << std::endl;
+//    std::cout << "--re = " << ((--m.rend())->first) << std::endl;
+//    for (std::map<int, std::string>::reverse_iterator it = m.rbegin(); it != m.rend(); it++){
+//        std::cout << (it->first) << std::endl;
+//    }
 
     return 0;
 }
