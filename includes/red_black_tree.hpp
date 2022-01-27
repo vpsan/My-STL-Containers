@@ -1,15 +1,17 @@
 #ifndef RED_BLACK_TREE
 # define RED_BLACK_TREE
 
-# include <memory> // std::allocator<T>
-# include <algorithm> // min max
-# include <iostream> // std::cout debug
+# include <memory>      // std::allocator<T>
+# include <algorithm>   // min max for IsBalanced
+# include <iostream>    // std::cout for debug
 
 
 # define Red    1
 # define Black  0
 
 namespace ft {
+
+///////////// struct tree_node: ////////////////////////////////////////////////
 
 template <class T>
 struct tree_node {
@@ -44,11 +46,15 @@ struct tree_node {
 //                  color(color) {}
 };
 
-    template <class T,
-            class Compare = std::less<T>,
-            class Allocator = std::allocator<T> >
-    class red_black_tree {
+///////////// class red_black_tree: ////////////////////////////////////////////
+
+template <class T,
+        class Compare = std::less<T>,
+        class Allocator = std::allocator<T> >
+class red_black_tree {
+
     public:
+        ///////////// typedef part 1: //////////////////////////////////////////
         typedef T                                   value_type;
         typedef Compare                             value_comapre;
         typedef Allocator                           allocator_type;
@@ -56,12 +62,9 @@ struct tree_node {
 
         typedef tree_node<T>                        node;
         typedef typename node::node_ptr             node_ptr;
+
     public:
-
-        ////////////////////////////////////////////////////////////////////////////
-        //////////////////////////////////////////////////////////////////////////// start
-        ////////////////////////////////////////////////////////////////////////////
-
+        ///////////// Iterators: ///////////////////////////////////////////////
         template<bool IsConst>
         class RedBlackTreeBidirectionalIterator {
         public:
@@ -96,16 +99,16 @@ struct tree_node {
                 return ptr_;
             }
 
-            /* ********** LegacyInputIterator effects ******************* */
-            /* LegacyInputIterator effects: "*iter" ********************* */
+            /* ********** LegacyInputIterator effects *********************** */
+            /* LegacyInputIterator effects: "*iter" ************************* */
             reference operator*() const {
                 return ptr_->value_;
             }
-            /* LegacyInputIterator effects: "iter->m" ******************* */
+            /* LegacyInputIterator effects: "iter->m" *********************** */
             pointer operator->(){
                 return &(ptr_->value_);
             }
-            /* LegacyInputIterator effects: "++iter" ******************** */
+            /* LegacyInputIterator effects: "++iter" ************************ */
             RedBlackTreeBidirectionalIterator& operator++(){
                 if (ptr_->right_ != nil_) {
                     ptr_ = rb_iter_minimum(ptr_->right_);
@@ -120,15 +123,15 @@ struct tree_node {
                 ptr_ = y;
                 return *this;
             }
-            /* ********** LegacyForwardIterator effects ***************** */
-            /* LegacyForwardIterator effects: "iter++" ****************** */
+            /* ********** LegacyForwardIterator effects ********************* */
+            /* LegacyForwardIterator effects: "iter++" ********************** */
             RedBlackTreeBidirectionalIterator operator++(int){
                 RedBlackTreeBidirectionalIterator tmp(*this);
                 ptr_++;
                 return tmp;
             }
-            /* ********** LegacyBidirectionalIterator effects *********** */
-            /* LegacyBidirectionalIterator effects: "--iter" ************ */
+            /* ********** LegacyBidirectionalIterator effects *************** */
+            /* LegacyBidirectionalIterator effects: "--iter" **************** */
             RedBlackTreeBidirectionalIterator& operator--(){
                 if (ptr_->left_ != nil_) {
                     ptr_ = rb_iter_maximum(ptr_->left_);
@@ -143,7 +146,7 @@ struct tree_node {
                 ptr_ = y;
                 return *this;
             }
-            /* LegacyBidirectionalIterator effects: "iter--" ************ */
+            /* LegacyBidirectionalIterator effects: "iter--" **************** */
             RedBlackTreeBidirectionalIterator operator--(int){
                 RedBlackTreeBidirectionalIterator tmp(*this);
                 ptr_--;
@@ -182,44 +185,33 @@ struct tree_node {
             return lhs.getPtr() != rhs.getPtr();
         }
 
-        ////////////////////////////////////////////////////////////////////////////
-        //////////////////////////////////////////////////////////////////////////// end
-        ////////////////////////////////////////////////////////////////////////////
-
-
     public:
+        ///////////// typedef part 2: //////////////////////////////////////////
         typedef RedBlackTreeBidirectionalIterator<false>          iterator;
         typedef RedBlackTreeBidirectionalIterator<true>           const_iterator;
         typedef ReverseIterator<iterator>                         reverse_iterator;
         typedef ReverseIterator<const_iterator>                   const_reverse_iterator;
 
-//        explicit red_black_tree(const value_comapre& compare_obj,
-//                                const allocator_type& allctr_obj)
-//                : compare_(compare_obj),
-//                  allocator_(allctr_obj),
-//                  root_(NULL),
-//                  nil_(NULL),
-//                  size_(0) {}
+        ////////////////////////////////////////////////////////////////////////
 
-//        red_black_tree(const red_black_tree& other)
-//                : compare_(value_comapre()),
-//                  allocator_(allocator_type()),
-//                  root_(NULL),
-//                  nil_(NULL),
-//                  size_(0) {}
+        explicit red_black_tree(const value_comapre& compare_obj,
+                                const allocator_type& allctr_obj)
+                : compare_(compare_obj),
+                  allocator_(allctr_obj),
+                  root_(NULL),
+                  nil_(NULL),
+                  iter_end_(NULL),
+                  iter_rend_(NULL),
+                  size_(0) {}
 
-//        red_black_tree()
-//                : compare_(value_comapre()),
-//                allocator_(allocator_type()),
-//                size_(0) {
-//            this->nil_ = NULL;//reinterpret_cast<node_ptr>(allocator_.allocate(sizeof(node)));
-//            nil_->left_ = NULL;
-//            nil_->right_ = NULL;
-//            nil_->parent = NULL;
-//            nil_->color = Black;
-//            nil_->value_ = value_type();// FIXME default(value_type). Not shure that defualt is ok for all types
-//            root_ = nil_;
-//        }
+        red_black_tree(const red_black_tree& other)
+                : compare_(other.compare_),
+                  allocator_(other.allocator_),
+                  root_(NULL),
+                  nil_(NULL),
+                  iter_end_(NULL),
+                  iter_rend_(NULL),
+                  size_(0) {}
 
         red_black_tree()
                 : compare_(value_comapre()),
@@ -234,18 +226,7 @@ struct tree_node {
             // FIXME
         }
 
-
-        // void rb_left_rotate(red_black_tree *t, node_ptr x)
-        // void rb_right_rotate(red_black_tree *t, node_ptr x)
-
-        // void rb_insertion_fixup(red_black_tree *t, node_ptr z)
-        // void rb_insert(red_black_tree *t, node_ptr z)
-
-        // void rb_transplant(red_black_tree *t, node_ptr u, node_ptr v)
-        // node_ptr rb_minimum(red_black_tree *t, node_ptr x)
-        // void rb_delete_fixup(red_black_tree *t, node_ptr x)
-        // void rb_delete(red_black_tree *t, node_ptr z)
-
+        ///////////// RedBlackTree /////////////////////////////////////////////
 
         void rb_left_rotate(node_ptr x){
             node_ptr y = x->right_; // 1. Обозначаем правого ребенка Y
@@ -374,18 +355,6 @@ struct tree_node {
             rb_insertion_fixup(z);
         }
 
-        void insert(const value_type& value) {
-            node_ptr z = reinterpret_cast<node_ptr>(allocator_.allocate(sizeof(node)));
-            z->color = Red;
-            allocator_.construct(&(z->value_), value);
-            delete_iter_end();
-            delete_iter_rend();
-            rb_insert(z);
-            size_++;
-            iter_end_ = init_iter_end();
-            iter_rend_ = init_iter_rend();
-        }
-
         void rb_transplant(node_ptr u, node_ptr v) {
             // 1. Является U ли корнем?
             //    - если да, то V - корень
@@ -405,80 +374,6 @@ struct tree_node {
             while(/*x->right_ != nil_*/is_nil(x->right_) == false)
                 x = x->right_;
             return x;
-        }
-
-        node_ptr init_iter_end(void) {
-            if (iter_end_ != NULL) return iter_end_;
-            iter_end_ = reinterpret_cast<node_ptr>(allocator_.allocate(sizeof(node)));
-            iter_end_->color = Black;
-            allocator_.construct(&(iter_end_->value_), value_type());
-            iter_end_->right_ = nil_;
-            iter_end_->left_ = nil_;
-            node_ptr x;
-            if (root_ == NULL){
-                x = root_;
-            } else {
-                x =  rb_maximum(root_);
-            }
-            iter_end_->parent = x;
-            x->right_ = iter_end_;
-            return iter_end_;
-        }
-
-        void delete_iter_end(void) {
-            if (iter_end_ == NULL) return;
-            node_ptr x;
-            if (root_ == NULL) {
-                x = root_;
-            } else {
-                x = rb_maximum(root_);
-            }
-
-            iter_end_->parent = NULL;
-            iter_end_->left_ = NULL;
-            iter_end_->right_ = NULL;
-            x->right_ = nil_;
-            allocator_.destroy(&iter_end_->value_);
-            allocator_.deallocate(reinterpret_cast<value_type *>(iter_end_), 1);
-            iter_end_ = NULL;
-        }
-
-        node_ptr init_iter_rend(void) {
-            if (iter_rend_ != NULL) return iter_rend_;
-            iter_rend_ = reinterpret_cast<node_ptr>(allocator_.allocate(sizeof(node)));
-            iter_rend_->color = Black;
-            allocator_.construct(&(iter_rend_->value_), value_type());
-            iter_rend_->right_ = nil_;
-            iter_rend_->left_ = nil_;
-
-            node_ptr x;
-            if (root_ == NULL) {
-                x = root_;
-            } else {
-                x = rb_minimum(root_);
-            }
-
-            iter_rend_->parent = x;
-            x->left_ = iter_rend_;
-            return iter_rend_;
-        }
-
-        void delete_iter_rend(void) {
-            if (iter_rend_ == NULL) return;
-            node_ptr x;
-            if (root_ == NULL) {
-                x = root_;
-            } else {
-                x = rb_minimum(root_);
-            }
-
-            iter_rend_->parent = NULL;
-            iter_rend_->left_ = NULL;
-            iter_rend_->right_ = NULL;
-            x->left_ = nil_;
-            allocator_.destroy(&iter_rend_->value_);
-            allocator_.deallocate(reinterpret_cast<value_type *>(iter_rend_), 1);
-            iter_rend_ = NULL;
         }
 
         node_ptr rb_minimum(node_ptr x) {
@@ -612,6 +507,110 @@ struct tree_node {
             allocator_.deallocate(reinterpret_cast<value_type *>(z), 1);
         }
 
+        void inorder(node_ptr n) {
+            // delete_iter_end();
+            // delete_iter_rend();
+            if( /*n != nil_*/ is_nil(n) == false) {
+                inorder(n->left_);
+                std::cout << "value = " << n->value_ << std::endl;
+                inorder(n->right_);
+            }
+            // iter_end_ = init_iter_end();
+            // iter_rend_ = init_iter_rend();
+        }
+
+        bool is_nil(node_ptr n) {
+            return n == nil_ || n == iter_end_ || n == iter_rend_;
+        }
+
+        ///////////// Wrappers over RedBlackTree ///////////////////////////////
+
+        node_ptr init_iter_end() {
+            if (iter_end_ != NULL) return iter_end_;
+            iter_end_ = reinterpret_cast<node_ptr>(allocator_.allocate(sizeof(node)));
+            iter_end_->color = Black;
+            allocator_.construct(&(iter_end_->value_), value_type());
+            iter_end_->right_ = nil_;
+            iter_end_->left_ = nil_;
+            node_ptr x;
+            if (root_ == NULL){
+                x = root_;
+            } else {
+                x =  rb_maximum(root_);
+            }
+            iter_end_->parent = x;
+            x->right_ = iter_end_;
+            return iter_end_;
+        }
+
+        void delete_iter_end() {
+            if (iter_end_ == NULL) return;
+            node_ptr x;
+            if (root_ == NULL) {
+                x = root_;
+            } else {
+                x = rb_maximum(root_);
+            }
+
+            iter_end_->parent = NULL;
+            iter_end_->left_ = NULL;
+            iter_end_->right_ = NULL;
+            x->right_ = nil_;
+            allocator_.destroy(&iter_end_->value_);
+            allocator_.deallocate(reinterpret_cast<value_type *>(iter_end_), 1);
+            iter_end_ = NULL;
+        }
+
+        node_ptr init_iter_rend() {
+            if (iter_rend_ != NULL) return iter_rend_;
+            iter_rend_ = reinterpret_cast<node_ptr>(allocator_.allocate(sizeof(node)));
+            iter_rend_->color = Black;
+            allocator_.construct(&(iter_rend_->value_), value_type());
+            iter_rend_->right_ = nil_;
+            iter_rend_->left_ = nil_;
+
+            node_ptr x;
+            if (root_ == NULL) {
+                x = root_;
+            } else {
+                x = rb_minimum(root_);
+            }
+
+            iter_rend_->parent = x;
+            x->left_ = iter_rend_;
+            return iter_rend_;
+        }
+
+        void delete_iter_rend() {
+            if (iter_rend_ == NULL) return;
+            node_ptr x;
+            if (root_ == NULL) {
+                x = root_;
+            } else {
+                x = rb_minimum(root_);
+            }
+
+            iter_rend_->parent = NULL;
+            iter_rend_->left_ = NULL;
+            iter_rend_->right_ = NULL;
+            x->left_ = nil_;
+            allocator_.destroy(&iter_rend_->value_);
+            allocator_.deallocate(reinterpret_cast<value_type *>(iter_rend_), 1);
+            iter_rend_ = NULL;
+        }
+
+        void insert(const value_type& value) {
+            node_ptr z = reinterpret_cast<node_ptr>(allocator_.allocate(sizeof(node)));
+            z->color = Red;
+            allocator_.construct(&(z->value_), value);
+            delete_iter_end();
+            delete_iter_rend();
+            rb_insert(z);
+            size_++;
+            iter_end_ = init_iter_end();
+            iter_rend_ = init_iter_rend();
+        }
+
         void erase(const value_type &value)
         {
             node_ptr p = root_;
@@ -633,29 +632,19 @@ struct tree_node {
             iter_rend_ = init_iter_rend();
         }
 
-        void inorder(node_ptr n) {
+        void print_sorted_tree(){
             delete_iter_end();
             delete_iter_rend();
-            if( /*n != nil_*/ is_nil(n) == false) {
-                inorder(n->left_);
-                std::cout << "value = " << n->value_ << std::endl;
-                inorder(n->right_);
-            }
+            inorder(root_);
             // iter_end_ = init_iter_end();
             // iter_rend_ = init_iter_rend();
         }
 
-        bool is_nil(node_ptr n) {
-            return n == nil_ || n == iter_end_ || n == iter_rend_;
-        }
+        ///////////// isBalanced ///////////////////////////////////////////////
 
-        ////////////////////////////////////////////////////////////////////////////
-        //////// isBalanced ////////////////////////////////////////////////////////
-        ////////////////////////////////////////////////////////////////////////////
-
-        // Returns true if the Binary tree is balanced like a Red-Black
-        // tree. This function also sets value in maxh and minh (passed by
-        // reference). maxh and minh are set as maximum and minimum heights of root.
+        // Returns true if the Binary tree is balanced like a Red-Black tree.
+        // This function also sets value in maxh and minh (passed by reference).
+        // "maxh" and "minh" are set as maximum and minimum heights of root.
         bool isBalancedUtil(node_ptr root, int &maxh, int &minh)
         {
             // Base case
@@ -688,13 +677,15 @@ struct tree_node {
         }
 
         // A wrapper over isBalancedUtil()
-        bool isBalanced(node_ptr root)
+        bool isBalanced()
         {
+            delete_iter_end();
+            delete_iter_rend();
             int maxh, minh;
-            return isBalancedUtil(root, maxh, minh);
+            return isBalancedUtil(root_, maxh, minh);
         }
-        ////////////////////////////////////////////////////////////////////////////
-        ////////////////////////////////////////////////////////////////////////////
+
+        ///////////// Iterators: ///////////////////////////////////////////////
 
         iterator begin() {
             return iterator( size_ == 0 ? root_ : rb_minimum(root_) );
@@ -750,7 +741,7 @@ struct tree_node {
             }
         }
 
-    public:
+    private:
         value_comapre       compare_;
         allocator_type      allocator_;
         node_ptr            root_;
