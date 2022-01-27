@@ -44,46 +44,6 @@ struct tree_node {
 //                  color(color) {}
 };
 
-//template <class T, class U_node_ptr>
-//class RedBlackTreeBidirectionalIterator {
-//    public:
-//        typedef T                                     value_type;
-//        typedef value_type*                           pointer;
-//        typedef value_type&                           reference;
-//        typedef U_node_ptr                            node_ptr;
-//        typedef std::ptrdiff_t                        difference_type;
-//        typedef	std::bidirectional_iterator_tag       iterator_category;
-//    public:
-//        RedBlackTreeBidirectionalIterator() : ptr_(NULL) {};
-//        // RedBlackTreeBidirectionalIterator(pointer ptr) : ptr_(ptr) {};
-//        RedBlackTreeBidirectionalIterator(const RedBlackTreeBidirectionalIterator& other) {
-//            ptr_ = other.getPtr();
-//        }
-//
-//        /* ********** LegacyInputIterator effects ******************* */
-//        /* LegacyInputIterator effects: "*iter" ********************* */
-//        reference operator*() const {
-//            return ptr_->value_;
-//        }
-//        /* LegacyInputIterator effects: "iter->m" ******************* */
-//        pointer operator->(){
-//            return &(ptr_->value_);
-//        }
-//        /* LegacyInputIterator effects: "++iter" ******************** */
-//        RedBlackTreeBidirectionalIterator& operator++(){
-//            ++ptr_;
-//            return *this;
-//        }
-//
-//        pointer getPtr() const {
-//            return ptr_;
-//        }
-//
-//    private:
-//        node_ptr ptr_;
-//};
-
-
     template <class T,
             class Compare = std::less<T>,
             class Allocator = std::allocator<T> >
@@ -266,9 +226,7 @@ struct tree_node {
                   allocator_(allocator_type()),
                   root_(NULL),
                   nil_(NULL),
-                  iter_begin_(NULL),
                   iter_end_(NULL),
-                  iter_rbegin_(NULL),
                   iter_rend_(NULL),
                   size_(0) {}
 
@@ -424,10 +382,8 @@ struct tree_node {
             delete_iter_rend();
             rb_insert(z);
             size_++;
-             iter_end_ = init_iter_end();
-             iter_rend_ = init_iter_rend();
-             iter_begin_ = rb_minimum(root_);
-             iter_rbegin_ = rb_maximum(root_);
+            iter_end_ = init_iter_end();
+            iter_rend_ = init_iter_rend();
         }
 
         void rb_transplant(node_ptr u, node_ptr v) {
@@ -452,14 +408,18 @@ struct tree_node {
         }
 
         node_ptr init_iter_end(void) {
-            if (iter_end_ != NULL) return NULL;
-            node_ptr x = rb_maximum(root_);
-
+            if (iter_end_ != NULL) return iter_end_;
             iter_end_ = reinterpret_cast<node_ptr>(allocator_.allocate(sizeof(node)));
             iter_end_->color = Black;
-            allocator_.construct(&(iter_end_->value_), value_type ());
+            allocator_.construct(&(iter_end_->value_), value_type());
             iter_end_->right_ = nil_;
             iter_end_->left_ = nil_;
+            node_ptr x;
+            if (root_ == NULL){
+                x = root_;
+            } else {
+                x =  rb_maximum(root_);
+            }
             iter_end_->parent = x;
             x->right_ = iter_end_;
             return iter_end_;
@@ -467,23 +427,37 @@ struct tree_node {
 
         void delete_iter_end(void) {
             if (iter_end_ == NULL) return;
-            node_ptr x = rb_maximum(root_);
+            node_ptr x;
+            if (root_ == NULL) {
+                x = root_;
+            } else {
+                x = rb_maximum(root_);
+            }
 
             iter_end_->parent = NULL;
+            iter_end_->left_ = NULL;
+            iter_end_->right_ = NULL;
             x->right_ = nil_;
             allocator_.destroy(&iter_end_->value_);
             allocator_.deallocate(reinterpret_cast<value_type *>(iter_end_), 1);
+            iter_end_ = NULL;
         }
 
         node_ptr init_iter_rend(void) {
-            if (iter_rend_ != NULL) return NULL;
-            node_ptr x = rb_minimum(root_);
-
+            if (iter_rend_ != NULL) return iter_rend_;
             iter_rend_ = reinterpret_cast<node_ptr>(allocator_.allocate(sizeof(node)));
             iter_rend_->color = Black;
-            allocator_.construct(&(iter_rend_->value_), value_type ());
+            allocator_.construct(&(iter_rend_->value_), value_type());
             iter_rend_->right_ = nil_;
             iter_rend_->left_ = nil_;
+
+            node_ptr x;
+            if (root_ == NULL) {
+                x = root_;
+            } else {
+                x = rb_minimum(root_);
+            }
+
             iter_rend_->parent = x;
             x->left_ = iter_rend_;
             return iter_rend_;
@@ -491,12 +465,20 @@ struct tree_node {
 
         void delete_iter_rend(void) {
             if (iter_rend_ == NULL) return;
-            node_ptr x = rb_minimum(root_);
+            node_ptr x;
+            if (root_ == NULL) {
+                x = root_;
+            } else {
+                x = rb_minimum(root_);
+            }
 
             iter_rend_->parent = NULL;
+            iter_rend_->left_ = NULL;
+            iter_rend_->right_ = NULL;
             x->left_ = nil_;
             allocator_.destroy(&iter_rend_->value_);
             allocator_.deallocate(reinterpret_cast<value_type *>(iter_rend_), 1);
+            iter_rend_ = NULL;
         }
 
         node_ptr rb_minimum(node_ptr x) {
@@ -603,7 +585,7 @@ struct tree_node {
                 y_orignal_color = y->color;
                 x = y->right_; //x = (y->right_ == NULL) ? y : y->right_; // +
                 // 3.2 Если Y - ребенок Z
-                if (/*x != NULL &&*/ y->parent == z) {
+                if (x != NULL && y->parent == z) {
                     x->parent = y;//+
                     // y->parent = y;//+
                 }
@@ -647,18 +629,20 @@ struct tree_node {
             delete_iter_rend();
             rb_delete(p);
             size_--;
-             iter_end_ = init_iter_end();
-             iter_rend_ = init_iter_rend();
-             iter_begin_ = rb_minimum(root_);
-             iter_rbegin_ = rb_maximum(root_);
+            iter_end_ = init_iter_end();
+            iter_rend_ = init_iter_rend();
         }
 
         void inorder(node_ptr n) {
+            delete_iter_end();
+            delete_iter_rend();
             if( /*n != nil_*/ is_nil(n) == false) {
                 inorder(n->left_);
                 std::cout << "value = " << n->value_ << std::endl;
                 inorder(n->right_);
             }
+            // iter_end_ = init_iter_end();
+            // iter_rend_ = init_iter_rend();
         }
 
         bool is_nil(node_ptr n) {
@@ -713,13 +697,7 @@ struct tree_node {
         ////////////////////////////////////////////////////////////////////////////
 
         iterator begin() {
-            if (iter_begin_ == NULL) {
-                iter_begin_ = rb_minimum(root_);
-                return iterator(iter_begin_);
-            }
-            else {
-                return iterator(iter_begin_);
-            }
+            return iterator( size_ == 0 ? root_ : rb_minimum(root_) );
         }
         iterator end() {
             if (iter_end_ == NULL) {
@@ -732,13 +710,7 @@ struct tree_node {
         }
 
         const_iterator begin() const {
-            if (iter_begin_ == NULL) {
-                iter_begin_ = rb_minimum(root_);
-                return const_iterator(iter_begin_);
-            }
-            else {
-                return const_iterator(iter_begin_);
-            }
+            return iterator( size_ == 0 ? root_ : rb_minimum(root_) );
         }
         const_iterator end() const {
             if (iter_end_ == NULL) {
@@ -751,13 +723,7 @@ struct tree_node {
         }
 
         reverse_iterator rbegin() {
-            if (iter_rbegin_ == NULL) {
-                iter_rbegin_ = rb_maximum(root_);
-                return reverse_iterator(iterator(iter_rbegin_));;
-            }
-            else {
-                return reverse_iterator(iterator(iter_rbegin_));;
-            }
+            return iterator( size_ == 0 ? root_ : rb_maximum(root_) );
         }
 
         reverse_iterator rend() {
@@ -771,13 +737,7 @@ struct tree_node {
         }
 
         const_reverse_iterator rbegin() const {
-            if (iter_rbegin_ == NULL) {
-                iter_rbegin_ = rb_maximum(root_);
-                return const_reverse_iterator(iterator(iter_rbegin_));;
-            }
-            else {
-                return const_reverse_iterator(iterator(iter_rbegin_));;
-            }
+            return iterator( size_ == 0 ? root_ : rb_maximum(root_) );
         }
 
         const_reverse_iterator rend() const {
@@ -795,9 +755,7 @@ struct tree_node {
         allocator_type      allocator_;
         node_ptr            root_;
         node_ptr            nil_;
-        node_ptr            iter_begin_;
         node_ptr            iter_end_;
-        node_ptr            iter_rbegin_;
         node_ptr            iter_rend_;
         size_type           size_;
     };
