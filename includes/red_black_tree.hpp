@@ -11,7 +11,7 @@
 
 namespace ft {
 
-///////////// struct tree_node: ////////////////////////////////////////////////
+///////////////////// struct tree_node: ////////////////////////////////////////
 
 template <class T>
 struct tree_node {
@@ -46,8 +46,7 @@ struct tree_node {
 //                  color(color) {}
 };
 
-///////////// class red_black_tree: ////////////////////////////////////////////
-
+///////////////////// class red_black_tree: ////////////////////////////////////
 template <class T,
         class Compare = std::less<T>,
         class Allocator = std::allocator<T> >
@@ -223,7 +222,7 @@ class red_black_tree {
                   size_(0) {}
 
         ~red_black_tree() {
-            // FIXME
+            clear();
         }
 
         ///////////// RedBlackTree /////////////////////////////////////////////
@@ -505,6 +504,7 @@ class red_black_tree {
                 rb_delete_fixup(x);
             allocator_.destroy(&z->value_);
             allocator_.deallocate(reinterpret_cast<value_type *>(z), 1);
+            z = NULL;
         }
 
         void inorder(node_ptr n) {
@@ -611,25 +611,74 @@ class red_black_tree {
             iter_rend_ = init_iter_rend();
         }
 
-        void erase(const value_type &value)
-        {
-            node_ptr p = root_;
+        void insert(iterator first, iterator last) {
+            for (; first != last; ++first)
+                insert(*first); // FIXME: if it = end() then *it is not defined
+        }
 
-            while (p && p->value_ != value)
-            {
-                if (p->value_ < value)
-                    p = p->right_;
-                else
-                    p = p->left_;
-            }
-            if (!p)
-                return;
+        void erase(const value_type &value) {
+            if (root_ == NULL) return ;
+            node_ptr z = root_;
+
             delete_iter_end();
             delete_iter_rend();
-            rb_delete(p);
+            while (z != NULL && z->value_ != value)
+            {
+                if (z->value_ < value)
+                    z = z->right_;
+                else
+                    z = z->left_;
+            }
+//            if (z == NULL) {
+//                return;
+//                iter_end_ = init_iter_end();
+//                iter_rend_ = init_iter_rend();
+//            }
+            rb_delete(z);
             size_--;
             iter_end_ = init_iter_end();
             iter_rend_ = init_iter_rend();
+        }
+
+        void erase(iterator it) {
+            if (root_ == NULL) return ;
+            node_ptr z = root_;
+            value_type value = *it; // FIXME: if it = end() then *it is not defined
+
+            delete_iter_end();
+            delete_iter_rend();
+            while (z != NULL && z->value_ != value)
+            {
+                if (z->value_ < value)
+                    z = z->right_;
+                else
+                    z = z->left_;
+            }
+//            if (z == NULL) {
+//                return;
+//                iter_end_ = init_iter_end();
+//                iter_rend_ = init_iter_rend();
+//            }
+            rb_delete(z);
+            size_--;
+            iter_end_ = init_iter_end();
+            iter_rend_ = init_iter_rend();
+        }
+
+        void clear_node(node_ptr z) {
+            if (z == NULL || is_nil(z) == true) return;
+            clear_node(z->left_);
+            clear_node(z->right_);
+            z->parent = NULL;
+            z->right_ = NULL;
+            z->left_ = NULL;
+            allocator_.destroy(&z->value_);
+            allocator_.deallocate(reinterpret_cast<value_type *>(z), 1);
+            z = NULL;
+        }
+
+        void clear() {
+            clear_node(root_);
         }
 
         void print_sorted_tree(){
@@ -640,13 +689,34 @@ class red_black_tree {
             // iter_rend_ = init_iter_rend();
         }
 
+        ///////////// Trivial helpers //////////////////////////////////////////
+
+        size_type size() const {
+            return size_;
+        }
+
+        bool empty() const {
+            return size_ == 0;
+        }
+
+        size_type max_size() const {
+            return allocator_.max_size();
+        }
+
+        value_comapre get_value_compare() const {
+            return compare_;
+        }
+
+        allocator_type get_allocator() const {
+            return allocator_;
+        }
+
         ///////////// isBalanced ///////////////////////////////////////////////
 
         // Returns true if the Binary tree is balanced like a Red-Black tree.
         // This function also sets value in maxh and minh (passed by reference).
         // "maxh" and "minh" are set as maximum and minimum heights of root.
-        bool isBalancedUtil(node_ptr root, int &maxh, int &minh)
-        {
+        bool isBalancedUtil(node_ptr root, int &maxh, int &minh) {
             // Base case
             if (root == NULL)
             {
@@ -677,8 +747,7 @@ class red_black_tree {
         }
 
         // A wrapper over isBalancedUtil()
-        bool isBalanced()
-        {
+        bool isBalanced() {
             delete_iter_end();
             delete_iter_rend();
             int maxh, minh;

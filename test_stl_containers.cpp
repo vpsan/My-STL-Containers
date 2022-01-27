@@ -48,13 +48,12 @@ int main()
     t.insert(15);
     std::cout << "is_isBalanced = " << t.isBalanced() << std::endl;
     std::cout << "--Start-Print--\n"; t.print_sorted_tree(); std::cout << "--End-Print--\n";
-//    t.insert(2);
-//    t.insert(10);
-//    t.insert(15);
-//    t.insert(200);
-//    t.insert(20);
-//    std::cout << "is_isBalanced = " << t.isBalanced() << std::endl;
-//    std::cout << "--Start-Print--\n"; t.print_sorted_tree(); std::cout << "--End-Print--\n";
+    t.insert(2);
+    t.insert(10);
+    t.insert(15);
+    t.insert(200);
+    std::cout << "is_isBalanced = " << t.isBalanced() << std::endl;
+    std::cout << "--Start-Print--\n"; t.print_sorted_tree(); std::cout << "--End-Print--\n";
     t.erase(2);
     std::cout << "is_isBalanced = " << t.isBalanced() << std::endl;
     t.erase(10);
@@ -64,13 +63,8 @@ int main()
     t.erase(3);
     std::cout << "is_isBalanced = " << t.isBalanced() << std::endl;
     std::cout << "--Start-Print--\n"; t.print_sorted_tree(); std::cout << "--End-Print--\n";
-//    t.insert(2);
-//    t.insert(10);
-//    t.insert(15);
-//    t.insert(200);
-//    t.insert(20);
-//    std::cout << "is_isBalanced = " << t.isBalanced() << std::endl;
-//    std::cout << "--Start-Print--\n"; t.print_sorted_tree(); std::cout << "--End-Print--\n";
+    std::cout << "is_isBalanced = " << t.isBalanced() << std::endl;
+    std::cout << "--Start-Print--\n"; t.print_sorted_tree(); std::cout << "--End-Print--\n";
 
     ft::red_black_tree<int>::RedBlackTreeBidirectionalIterator<false> it = t.begin();
     ft::red_black_tree<int>::RedBlackTreeBidirectionalIterator<true> c_it = t.begin();
@@ -86,6 +80,30 @@ int main()
     }
     std::cout << "is_isBalanced = " << t.isBalanced() << std::endl;
 
+    ft::red_black_tree<int>::RedBlackTreeBidirectionalIterator<false> iter = t.begin();
+    t.erase(iter);
+    std::cout << "is_isBalanced = " << t.isBalanced() << std::endl;
+    std::cout << "--Start-Print--\n"; t.print_sorted_tree(); std::cout << "--End-Print--\n";
+
+
+    // test for insert other iter elements
+    ft::red_black_tree<int> h = ft::red_black_tree<int>();
+    h.insert(-1);
+    h.insert(1000);
+    h.insert(2000);
+    h.insert(3000);
+    h.insert(4000);
+    ft::red_black_tree<int>::RedBlackTreeBidirectionalIterator<false> iter1 = h.begin();
+    ft::red_black_tree<int>::RedBlackTreeBidirectionalIterator<false> iter2 = (--h.end());
+    t.insert(iter1, iter2);
+    std::cout << "is_isBalanced = " << t.isBalanced() << std::endl;
+    std::cout << "--Start-Print--\n"; t.print_sorted_tree(); std::cout << "--End-Print--\n";
+
+//    ft::red_black_tree<int>::RedBlackTreeBidirectionalIterator<false> iter1 = t.begin();
+//    ft::red_black_tree<int>::RedBlackTreeBidirectionalIterator<false> iter2 = (--t.end());
+//    t.insert(iter1, iter2);
+//    std::cout << "is_isBalanced = " << t.isBalanced() << std::endl;
+//    std::cout << "--Start-Print--\n"; t.print_sorted_tree(); std::cout << "--End-Print--\n";
 
     std::cout << '\n';
     std::cout << "Finish\n";
