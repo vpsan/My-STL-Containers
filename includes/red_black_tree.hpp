@@ -526,6 +526,7 @@ class red_black_tree {
         ///////////// Wrappers over RedBlackTree ///////////////////////////////
 
         node_ptr init_iter_end() {
+            if (root_ == NULL) return root_; // FIXME: bottom code
             if (iter_end_ != NULL) return iter_end_;
             iter_end_ = reinterpret_cast<node_ptr>(allocator_.allocate(sizeof(node)));
             iter_end_->color = Black;
@@ -539,7 +540,7 @@ class red_black_tree {
                 x =  rb_maximum(root_);
             }
             iter_end_->parent = x;
-            x->right_ = iter_end_;
+            x->right_ = iter_end_; // FIXME: code from above
             return iter_end_;
         }
 
@@ -548,6 +549,7 @@ class red_black_tree {
             node_ptr x;
             if (root_ == NULL) {
                 x = root_;
+                return; // FIXME: code from above
             } else {
                 x = rb_maximum(root_);
             }
@@ -562,6 +564,7 @@ class red_black_tree {
         }
 
         node_ptr init_iter_rend() {
+            if (root_ == NULL) return root_; // FIXME: bottom code
             if (iter_rend_ != NULL) return iter_rend_;
             iter_rend_ = reinterpret_cast<node_ptr>(allocator_.allocate(sizeof(node)));
             iter_rend_->color = Black;
@@ -577,7 +580,7 @@ class red_black_tree {
             }
 
             iter_rend_->parent = x;
-            x->left_ = iter_rend_;
+            x->left_ = iter_rend_;  // FIXME: code from above
             return iter_rend_;
         }
 
@@ -586,6 +589,7 @@ class red_black_tree {
             node_ptr x;
             if (root_ == NULL) {
                 x = root_;
+                return; // FIXME: code from above
             } else {
                 x = rb_minimum(root_);
             }
@@ -678,7 +682,11 @@ class red_black_tree {
         }
 
         void clear() {
+            delete_iter_end();
+            delete_iter_rend();
             clear_node(root_);
+            root_ = NULL; // FIXME: why needed?
+            size_ = 0;
         }
 
         void print_sorted_tree(){
@@ -687,6 +695,72 @@ class red_black_tree {
             inorder(root_);
             // iter_end_ = init_iter_end();
             // iter_rend_ = init_iter_rend();
+        }
+
+        ///////////// Key methods / Map Lookup /////////////////////////////////
+
+    template <class Key>
+        iterator get_upper_bound(const Key &key, node_ptr root, node_ptr result) {
+            while (root != NULL)
+            {
+                if (compare_(key, root->value.first) == true)
+                {
+                    result = root;
+                    root = root->left_;
+                }
+                else
+                    root = root->right_;
+            }
+            return (iterator)(result);
+        }
+
+        template <class Key>
+        iterator get_lower_bound(const Key &key, node_ptr root, node_ptr result) {
+            while (root != NULL)
+            {
+                if (compare_(root->value_.first, key) == false)
+                {
+                    result = root;
+                    root = root->left_;
+                }
+                else
+                    root = root->right_;
+            }
+            return (iterator)(result);
+        }
+
+        template<class Key>
+        iterator upper_bound(const Key& key)
+        {
+            return get_upper_bound(key, root_, iter_end_);
+        }
+
+        template<class Key>
+        iterator lower_bound(const Key& key) {
+            return get_lower_bound(key, root_, iter_end_);
+        }
+
+        template <class Key>
+        iterator find(const Key &key) {
+            iterator p = get_lower_bound(key, root_, iter_end_);
+            if (p != end() && compare_(key, (*p).first) == false)
+                return p;
+            return end();
+        }
+
+        template <class Key>
+        size_type count(const Key &key) const {
+            node_ptr r = root_;
+            while (r != NULL)
+            {
+                if (compare_(key, r->value.first))
+                    r = r->left_;
+                else if (compare_(r->value.first, key))
+                    r = r->right_;
+                else
+                    return 1;
+            }
+            return 0;
         }
 
         ///////////// Trivial helpers //////////////////////////////////////////
@@ -709,6 +783,16 @@ class red_black_tree {
 
         allocator_type get_allocator() const {
             return allocator_;
+        }
+
+        void swap(red_black_tree& other) {
+            std::swap(this->compare_, other.compare_);
+            std::swap(this->allocator_, other.allocator_);
+            std::swap(this->root_, other.root_);
+            std::swap(this->nil_, other.nil_);
+            std::swap(this->iter_end_, other.iter_end_);
+            std::swap(this->iter_rend_, other.iter_rend_);
+            std::swap(this->size_, other.size_);
         }
 
         ///////////// isBalanced ///////////////////////////////////////////////

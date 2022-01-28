@@ -32,72 +32,72 @@ std::ostream& operator<<(std::ostream& os, const std::vector<T>& v)
 
 int main()
 {
-    std::cout << "Start!\n";
-    std::cout << '\n';
-
-    ft::red_black_tree<int> t = ft::red_black_tree<int>();
-    std::cout << "is_isBalanced = " << t.isBalanced() << std::endl;
-    std::cout << "--Start-Print--\n"; t.print_sorted_tree(); std::cout << "--End-Print--\n";
-
-    t.insert(1);
-    t.insert(10);
-    t.insert(2);
-    t.insert(3);
-    t.insert(4);
-    t.insert(20);
-    t.insert(15);
-    std::cout << "is_isBalanced = " << t.isBalanced() << std::endl;
-    std::cout << "--Start-Print--\n"; t.print_sorted_tree(); std::cout << "--End-Print--\n";
-    t.insert(2);
-    t.insert(10);
-    t.insert(15);
-    t.insert(200);
-    std::cout << "is_isBalanced = " << t.isBalanced() << std::endl;
-    std::cout << "--Start-Print--\n"; t.print_sorted_tree(); std::cout << "--End-Print--\n";
-    t.erase(2);
-    std::cout << "is_isBalanced = " << t.isBalanced() << std::endl;
-    t.erase(10);
-    std::cout << "is_isBalanced = " << t.isBalanced() << std::endl;
-    t.erase(15);
-    std::cout << "is_isBalanced = " << t.isBalanced() << std::endl;
-    t.erase(3);
-    std::cout << "is_isBalanced = " << t.isBalanced() << std::endl;
-    std::cout << "--Start-Print--\n"; t.print_sorted_tree(); std::cout << "--End-Print--\n";
-    std::cout << "is_isBalanced = " << t.isBalanced() << std::endl;
-    std::cout << "--Start-Print--\n"; t.print_sorted_tree(); std::cout << "--End-Print--\n";
-
-    ft::red_black_tree<int>::RedBlackTreeBidirectionalIterator<false> it = t.begin();
-    ft::red_black_tree<int>::RedBlackTreeBidirectionalIterator<true> c_it = t.begin();
-    c_it = it;
-    for (; it != t.end(); ++it){
-        std::cout<< *it << std::endl;
-    }
-    std::cout << "is_isBalanced = " << t.isBalanced() << std::endl;
-
-    ft::red_black_tree<int>::reverse_iterator rit = t.rbegin();
-    for (; rit != t.rend(); ++rit){
-        std::cout<< *rit << std::endl;
-    }
-    std::cout << "is_isBalanced = " << t.isBalanced() << std::endl;
-
-    ft::red_black_tree<int>::RedBlackTreeBidirectionalIterator<false> iter = t.begin();
-    t.erase(iter);
-    std::cout << "is_isBalanced = " << t.isBalanced() << std::endl;
-    std::cout << "--Start-Print--\n"; t.print_sorted_tree(); std::cout << "--End-Print--\n";
-
-
-    // test for insert other iter elements
-    ft::red_black_tree<int> h = ft::red_black_tree<int>();
-    h.insert(-1);
-    h.insert(1000);
-    h.insert(2000);
-    h.insert(3000);
-    h.insert(4000);
-    ft::red_black_tree<int>::RedBlackTreeBidirectionalIterator<false> iter1 = h.begin();
-    ft::red_black_tree<int>::RedBlackTreeBidirectionalIterator<false> iter2 = (--h.end());
-    t.insert(iter1, iter2);
-    std::cout << "is_isBalanced = " << t.isBalanced() << std::endl;
-    std::cout << "--Start-Print--\n"; t.print_sorted_tree(); std::cout << "--End-Print--\n";
+//    std::cout << "Start!\n";
+//    std::cout << '\n';
+//
+//    ft::red_black_tree<int> t = ft::red_black_tree<int>();
+//    std::cout << "is_isBalanced = " << t.isBalanced() << std::endl;
+//    std::cout << "--Start-Print--\n"; t.print_sorted_tree(); std::cout << "--End-Print--\n";
+//
+//    t.insert(1);
+//    t.insert(10);
+//    t.insert(2);
+//    t.insert(3);
+//    t.insert(4);
+//    t.insert(20);
+//    t.insert(15);
+//    std::cout << "is_isBalanced = " << t.isBalanced() << std::endl;
+//    std::cout << "--Start-Print--\n"; t.print_sorted_tree(); std::cout << "--End-Print--\n";
+//    t.insert(2);
+//    t.insert(10);
+//    t.insert(15);
+//    t.insert(200);
+//    std::cout << "is_isBalanced = " << t.isBalanced() << std::endl;
+//    std::cout << "--Start-Print--\n"; t.print_sorted_tree(); std::cout << "--End-Print--\n";
+//    t.erase(2);
+//    std::cout << "is_isBalanced = " << t.isBalanced() << std::endl;
+//    t.erase(10);
+//    std::cout << "is_isBalanced = " << t.isBalanced() << std::endl;
+//    t.erase(15);
+//    std::cout << "is_isBalanced = " << t.isBalanced() << std::endl;
+//    t.erase(3);
+//    std::cout << "is_isBalanced = " << t.isBalanced() << std::endl;
+//    std::cout << "--Start-Print--\n"; t.print_sorted_tree(); std::cout << "--End-Print--\n";
+//    std::cout << "is_isBalanced = " << t.isBalanced() << std::endl;
+//    std::cout << "--Start-Print--\n"; t.print_sorted_tree(); std::cout << "--End-Print--\n";
+//
+//    ft::red_black_tree<int>::RedBlackTreeBidirectionalIterator<false> it = t.begin();
+//    ft::red_black_tree<int>::RedBlackTreeBidirectionalIterator<true> c_it = t.begin();
+//    c_it = it;
+//    for (; it != t.end(); ++it){
+//        std::cout<< *it << std::endl;
+//    }
+//    std::cout << "is_isBalanced = " << t.isBalanced() << std::endl;
+//
+//    ft::red_black_tree<int>::reverse_iterator rit = t.rbegin();
+//    for (; rit != t.rend(); ++rit){
+//        std::cout<< *rit << std::endl;
+//    }
+//    std::cout << "is_isBalanced = " << t.isBalanced() << std::endl;
+//
+//    ft::red_black_tree<int>::RedBlackTreeBidirectionalIterator<false> iter = t.begin();
+//    t.erase(iter);
+//    std::cout << "is_isBalanced = " << t.isBalanced() << std::endl;
+//    std::cout << "--Start-Print--\n"; t.print_sorted_tree(); std::cout << "--End-Print--\n";
+//
+//
+//    // test for insert other iter elements
+//    ft::red_black_tree<int> h = ft::red_black_tree<int>();
+//    h.insert(-1);
+//    h.insert(1000);
+//    h.insert(2000);
+//    h.insert(3000);
+//    h.insert(4000);
+//    ft::red_black_tree<int>::RedBlackTreeBidirectionalIterator<false> iter1 = h.begin();
+//    ft::red_black_tree<int>::RedBlackTreeBidirectionalIterator<false> iter2 = (--h.end());
+//    t.insert(iter1, iter2);
+//    std::cout << "is_isBalanced = " << t.isBalanced() << std::endl;
+//    std::cout << "--Start-Print--\n"; t.print_sorted_tree(); std::cout << "--End-Print--\n";
 
 //    ft::red_black_tree<int>::RedBlackTreeBidirectionalIterator<false> iter1 = t.begin();
 //    ft::red_black_tree<int>::RedBlackTreeBidirectionalIterator<false> iter2 = (--t.end());
@@ -128,6 +128,29 @@ int main()
 //    for (std::map<int, std::string>::reverse_iterator it = m.rbegin(); it != m.rend(); it++){
 //        std::cout << (it->first) << std::endl;
 //    }
+
+    ft::map<int, std::string> m;
+    m.insert({161, "Hinata1"});
+    std::cout << "size = " << m.size() << std::endl;
+    m.insert({162, "Hinata2"});
+    std::cout << "size = " << m.size() << std::endl;
+    m.insert({161, "Hinata0"});
+    std::cout << "size = " << m.size() << std::endl;
+    for (ft::map<int, std::string>::iterator it = m.begin(); it != m.end(); ++it){
+        std::cout << "iter_i = " << (it->second) << std::endl;
+    }
+    m.erase(160);
+    m.erase(161);
+    m.erase(161);
+    std::cout << "size = " << m.size() << std::endl;
+    for (ft::map<int, std::string>::iterator it = m.begin(); it != m.end(); ++it){
+        std::cout << "iter_i = " << (it->second) << std::endl;
+    }
+    m.clear();
+    std::cout << "size = " << m.size() << std::endl;
+    for (ft::map<int, std::string>::iterator it = m.begin(); it != m.end(); ++it){
+        std::cout << "iter_i = " << (it->second) << std::endl;
+    }
 
 //    sleep(10);
 
