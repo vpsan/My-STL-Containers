@@ -132,8 +132,7 @@ class map {
             rb_tree_.clear();
         }
 
-        pair<iterator,bool> insert (const value_type& value)
-        {
+        pair<iterator,bool> insert (const value_type& value) {
             iterator i = find(value.first);
             bool is_exist = false;
 
@@ -145,8 +144,19 @@ class map {
             return pair<iterator, bool>(find(value.first), is_exist);
         }
 
-        size_type erase(const key_type& key)
-        {
+        iterator insert (iterator hint, const value_type& value) {
+            (void)hint;
+            insert(value);
+            return find(value.first);
+        }
+
+        template <class InputIterator>
+        void insert (InputIterator first, InputIterator last) {
+            for (; first != last; ++first)
+                insert(*first);
+        }
+
+        size_type erase(const key_type& key) {
             iterator position = find(key);
             if (position == end())
                 return 0;
@@ -154,10 +164,40 @@ class map {
             return 1;
         }
 
+        void erase(iterator position) {
+            rb_tree_.erase(position);
+        }
+
+        void erase(iterator first, iterator last) {
+            iterator tmp;
+            while (first != last)
+            {
+                tmp = first;
+                ++first;
+                rb_tree_.erase(tmp);
+            }
+        }
+
         ////////////////// Lookup: /////////////////////////////////////////////
 
         iterator find (const key_type& key) {
             return rb_tree_.find(key);
+        }
+
+        iterator lower_bound (const key_type& key) {
+            return rb_tree_.lower_bound(key);
+        }
+
+        const_iterator lower_bound (const key_type& key) const {
+            rb_tree_.lower_bound(key);
+        }
+
+        iterator upper_bound (const key_type& key) {
+            return rb_tree_.upper_bound(key);
+        }
+
+        const_iterator upper_bound (const key_type& key) const {
+            return rb_tree_.upper_bound(key);
         }
 
         ////////////////// Observers: //////////////////////////////////////////

@@ -615,7 +615,8 @@ class red_black_tree {
             iter_rend_ = init_iter_rend();
         }
 
-        void insert(iterator first, iterator last) {
+        template<class InputIterator>
+        void insert(InputIterator first, InputIterator last) {
             for (; first != last; ++first)
                 insert(*first); // FIXME: if it = end() then *it is not defined
         }
@@ -644,7 +645,8 @@ class red_black_tree {
             iter_rend_ = init_iter_rend();
         }
 
-        void erase(iterator it) {
+        template<class InputIterator>
+        void erase(InputIterator it) {
             if (root_ == NULL) return ;
             node_ptr z = root_;
             value_type value = *it; // FIXME: if it = end() then *it is not defined
@@ -699,7 +701,7 @@ class red_black_tree {
 
         ///////////// Key methods / Map Lookup /////////////////////////////////
 
-    template <class Key>
+        template <class Key>
         iterator get_upper_bound(const Key &key, node_ptr root, node_ptr result) {
             while (root != NULL)
             {
@@ -729,14 +731,53 @@ class red_black_tree {
             return (iterator)(result);
         }
 
+        template <class Key>
+        const_iterator get_upper_bound(const Key &key, node_ptr root, node_ptr result) const {
+            while (root != NULL)
+            {
+                if (compare_(key, root->value.first) == true)
+                {
+                    result = root;
+                    root = root->left_;
+                }
+                else
+                    root = root->right_;
+            }
+            return (iterator)(result);
+        }
+
+        template <class Key>
+        const_iterator get_lower_bound(const Key &key, node_ptr root, node_ptr result) const {
+            while (root != NULL)
+            {
+                if (compare_(root->value_.first, key) == false)
+                {
+                    result = root;
+                    root = root->left_;
+                }
+                else
+                    root = root->right_;
+            }
+            return (iterator)(result);
+        }
+
         template<class Key>
-        iterator upper_bound(const Key& key)
-        {
+        iterator upper_bound(const Key& key) {
             return get_upper_bound(key, root_, iter_end_);
         }
 
         template<class Key>
         iterator lower_bound(const Key& key) {
+            return get_lower_bound(key, root_, iter_end_);
+        }
+
+        template<class Key>
+        const_iterator upper_bound(const Key& key) const {
+            return get_upper_bound(key, root_, iter_end_);
+        }
+
+        template<class Key>
+        const_iterator lower_bound(const Key& key) const {
             return get_lower_bound(key, root_, iter_end_);
         }
 
@@ -795,49 +836,6 @@ class red_black_tree {
             std::swap(this->size_, other.size_);
         }
 
-        ///////////// isBalanced ///////////////////////////////////////////////
-
-        // Returns true if the Binary tree is balanced like a Red-Black tree.
-        // This function also sets value in maxh and minh (passed by reference).
-        // "maxh" and "minh" are set as maximum and minimum heights of root.
-        bool isBalancedUtil(node_ptr root, int &maxh, int &minh) {
-            // Base case
-            if (root == NULL)
-            {
-                maxh = minh = 0;
-                return true;
-            }
-
-            int lmxh, lmnh; // To store max and min heights of left subtree
-            int rmxh, rmnh; // To store max and min heights of right subtree
-
-            // Check if left subtree is balanced, also set lmxh and lmnh
-            if (isBalancedUtil(root->left_, lmxh, lmnh) == false)
-                return false;
-
-            // Check if right subtree is balanced, also set rmxh and rmnh
-            if (isBalancedUtil(root->right_, rmxh, rmnh) == false)
-                return false;
-
-            // Set the max and min heights of this node for the parent call
-            maxh = std::max(lmxh, rmxh) + 1;
-            minh = std::min(lmnh, rmnh) + 1;
-
-            // See if this node is balanced
-            if (maxh <= 2*minh)
-                return true;
-
-            return false;
-        }
-
-        // A wrapper over isBalancedUtil()
-        bool isBalanced() {
-            delete_iter_end();
-            delete_iter_rend();
-            int maxh, minh;
-            return isBalancedUtil(root_, maxh, minh);
-        }
-
         ///////////// Iterators: ///////////////////////////////////////////////
 
         iterator begin() {
@@ -893,6 +891,51 @@ class red_black_tree {
                 return const_reverse_iterator(iterator(iter_rend_));;
             }
         }
+
+        ///////////// isBalanced ///////////////////////////////////////////////
+
+        // Returns true if the Binary tree is balanced like a Red-Black tree.
+        // This function also sets value in maxh and minh (passed by reference).
+        // "maxh" and "minh" are set as maximum and minimum heights of root.
+        bool isBalancedUtil(node_ptr root, int &maxh, int &minh) {
+            // Base case
+            if (root == NULL)
+            {
+                maxh = minh = 0;
+                return true;
+            }
+
+            int lmxh, lmnh; // To store max and min heights of left subtree
+            int rmxh, rmnh; // To store max and min heights of right subtree
+
+            // Check if left subtree is balanced, also set lmxh and lmnh
+            if (isBalancedUtil(root->left_, lmxh, lmnh) == false)
+                return false;
+
+            // Check if right subtree is balanced, also set rmxh and rmnh
+            if (isBalancedUtil(root->right_, rmxh, rmnh) == false)
+                return false;
+
+            // Set the max and min heights of this node for the parent call
+            maxh = std::max(lmxh, rmxh) + 1;
+            minh = std::min(lmnh, rmnh) + 1;
+
+            // See if this node is balanced
+            if (maxh <= 2*minh)
+                return true;
+
+            return false;
+        }
+
+        // A wrapper over isBalancedUtil()
+        bool isBalanced() {
+            delete_iter_end();
+            delete_iter_rend();
+            int maxh, minh;
+            return isBalancedUtil(root_, maxh, minh);
+        }
+
+        ////////////////////////////////////////////////////////////////////////
 
     private:
         value_comapre       compare_;
