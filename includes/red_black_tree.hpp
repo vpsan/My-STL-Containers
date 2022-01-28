@@ -126,7 +126,7 @@ class red_black_tree {
             /* LegacyForwardIterator effects: "iter++" ********************** */
             RedBlackTreeBidirectionalIterator operator++(int){
                 RedBlackTreeBidirectionalIterator tmp(*this);
-                ptr_++;
+                ++(*this);
                 return tmp;
             }
             /* ********** LegacyBidirectionalIterator effects *************** */
@@ -148,7 +148,7 @@ class red_black_tree {
             /* LegacyBidirectionalIterator effects: "iter--" **************** */
             RedBlackTreeBidirectionalIterator operator--(int){
                 RedBlackTreeBidirectionalIterator tmp(*this);
-                ptr_--;
+                --(*this);
                 return tmp;
             }
 
