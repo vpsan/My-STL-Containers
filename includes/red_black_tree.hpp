@@ -282,18 +282,19 @@ class red_black_tree {
                         y->color = Black;
                         z->parent->parent->color = Red;
                         z = z->parent->parent; // z is a grandparent now
-                        std::cout << "here-i-11\n";
+                        // std::cout << "insert-case-11\n";
                     }
                     else { //case2 or case3
                         if (z == z->parent->right_) { //case2: (if z is right_ child) - make it left_ child
                             z = z->parent; //marked z.parent as new z
                             rb_left_rotate(z);
+                            // std::cout << "insert-case-12\n";
                         }
                         //case3: (if z is left_ child)
                         z->parent->color = Black; //made parent black
                         z->parent->parent->color = Red; //made parent red
                         rb_right_rotate(z->parent->parent);
-                        std::cout << "here-i-12\n";
+                        // std::cout << "insert-case-13\n";
                     }
                 }
                 else if (/*z->parent->parent != NULL &&*/ z->parent == z->parent->parent->right_) { //z.parent is the right_ child
@@ -304,17 +305,18 @@ class red_black_tree {
                         y->color = Black;
                         z->parent->parent->color = Red;
                         z = z->parent->parent;
-                        std::cout << "here-i-21\n";
+                        // std::cout << "insert-case-21\n";
                     }
                     else {
-                        std::cout << "here-i-22\n";
                         if (z == z->parent->left_) {
                             z = z->parent; //marked z.parent as new z
                             rb_right_rotate(z);
+                            // std::cout << "insert-case-22\n";
                         }
                         z->parent->color = Black; //made parent black
                         z->parent->parent->color = Red; //made parent red
                         rb_left_rotate(z->parent->parent);
+                        // std::cout << "insert-case-23\n";
                     }
                 }
             }
@@ -388,14 +390,14 @@ class red_black_tree {
                 if (x == x->parent->left_) {
                     node_ptr w = x->parent->right_;
                     if (w->color == Red) {
-                        std::cout << "here11\n";
+                        // std::cout << "delete-case-11\n";
                         w->color = Black;
                         x->parent->color = Red;
                         rb_left_rotate(x->parent);
                         w = x->parent->right_;
                     }
                     if(w->left_->color == Black && w->right_->color == Black) {
-                        std::cout << "here12\n";
+                        // std::cout << "delete-case-12\n";
                         w->color = Red;
                         x = x->parent;
                     }
@@ -406,7 +408,7 @@ class red_black_tree {
                             rb_right_rotate(w);
                             w = x->parent->right_;
                         }
-                        std::cout << "here13\n";
+                        // std::cout << "delete-case-13\n";
                         w->color = x->parent->color;
                         x->parent->color = Black;
                         w->right_->color = Black;
@@ -417,14 +419,14 @@ class red_black_tree {
                 else {
                     node_ptr w = x->parent->left_;
                     if (w->color == Red) {
-                        std::cout << "here21\n";
+                        // std::cout << "delete-case-21\n";
                         w->color = Black;
                         x->parent->color = Red;
                         rb_right_rotate(x->parent);
                         w = x->parent->left_;
                     }
                     if (w->right_->color == Black && w->left_->color == Black) {
-                        std::cout << "here22\n";
+                        // std::cout << "delete-case-22\n";
                         w->color = Red;
                         x = x->parent;
                     }
@@ -435,7 +437,7 @@ class red_black_tree {
                             rb_left_rotate(w);
                             w = x->parent->left_;
                         }
-                        std::cout << "here23\n";
+                        // std::cout << "delete-case-23\n";
                         w->color = x->parent->color;
                         x->parent->color = Black;
                         w->left_->color = Black;
@@ -705,7 +707,7 @@ class red_black_tree {
         iterator get_upper_bound(const Key &key, node_ptr root, node_ptr result) {
             while (root != NULL)
             {
-                if (compare_(key, root->value.first) == true)
+                if (compare_(key, root->value_.first) == true)
                 {
                     result = root;
                     root = root->left_;

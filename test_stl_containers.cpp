@@ -30,206 +30,177 @@ std::ostream& operator<<(std::ostream& os, const std::vector<T>& v)
     return os;
 }
 
+void rbtree_test_insert_erase_isbalanced();
+void rbtree_test_iterators();
+void map_test_iterators();
+void map_test_base();
 void map_test_insert_el();
 void map_test_insert_iter();
 void map_test_insert_iter_range();
 void map_test_erase();
+void map_test_lower_upper_bound();
 
 int main()
 {
-//    std::cout << "Start!\n";
-//    std::cout << '\n';
-//
-//    ft::red_black_tree<int> t = ft::red_black_tree<int>();
-//    std::cout << "is_isBalanced = " << t.isBalanced() << std::endl;
-//    std::cout << "--Start-Print--\n"; t.print_sorted_tree(); std::cout << "--End-Print--\n";
-//
-//    t.insert(1);
-//    t.insert(10);
-//    t.insert(2);
-//    t.insert(3);
-//    t.insert(4);
-//    t.insert(20);
-//    t.insert(15);
-//    std::cout << "is_isBalanced = " << t.isBalanced() << std::endl;
-//    std::cout << "--Start-Print--\n"; t.print_sorted_tree(); std::cout << "--End-Print--\n";
-//    t.insert(2);
-//    t.insert(10);
-//    t.insert(15);
-//    t.insert(200);
-//    std::cout << "is_isBalanced = " << t.isBalanced() << std::endl;
-//    std::cout << "--Start-Print--\n"; t.print_sorted_tree(); std::cout << "--End-Print--\n";
-//    t.erase(2);
-//    std::cout << "is_isBalanced = " << t.isBalanced() << std::endl;
-//    t.erase(10);
-//    std::cout << "is_isBalanced = " << t.isBalanced() << std::endl;
-//    t.erase(15);
-//    std::cout << "is_isBalanced = " << t.isBalanced() << std::endl;
-//    t.erase(3);
-//    std::cout << "is_isBalanced = " << t.isBalanced() << std::endl;
-//    std::cout << "--Start-Print--\n"; t.print_sorted_tree(); std::cout << "--End-Print--\n";
-//    std::cout << "is_isBalanced = " << t.isBalanced() << std::endl;
-//    std::cout << "--Start-Print--\n"; t.print_sorted_tree(); std::cout << "--End-Print--\n";
-//
-//    ft::red_black_tree<int>::RedBlackTreeBidirectionalIterator<false> it = t.begin();
-//    ft::red_black_tree<int>::RedBlackTreeBidirectionalIterator<true> c_it = t.begin();
-//    c_it = it;
-//    for (; it != t.end(); ++it){
-//        std::cout<< *it << std::endl;
-//    }
-//    std::cout << "is_isBalanced = " << t.isBalanced() << std::endl;
-//
-//    ft::red_black_tree<int>::reverse_iterator rit = t.rbegin();
-//    for (; rit != t.rend(); ++rit){
-//        std::cout<< *rit << std::endl;
-//    }
-//    std::cout << "is_isBalanced = " << t.isBalanced() << std::endl;
-//
-//    ft::red_black_tree<int>::RedBlackTreeBidirectionalIterator<false> iter = t.begin();
-//    t.erase(iter);
-//    std::cout << "is_isBalanced = " << t.isBalanced() << std::endl;
-//    std::cout << "--Start-Print--\n"; t.print_sorted_tree(); std::cout << "--End-Print--\n";
-//
-//
-//    // test for insert other iter elements
-//    ft::red_black_tree<int> h = ft::red_black_tree<int>();
-//    h.insert(-1);
-//    h.insert(1000);
-//    h.insert(2000);
-//    h.insert(3000);
-//    h.insert(4000);
-//    ft::red_black_tree<int>::RedBlackTreeBidirectionalIterator<false> iter1 = h.begin();
-//    ft::red_black_tree<int>::RedBlackTreeBidirectionalIterator<false> iter2 = (--h.end());
-//    t.insert(iter1, iter2);
-//    std::cout << "is_isBalanced = " << t.isBalanced() << std::endl;
-//    std::cout << "--Start-Print--\n"; t.print_sorted_tree(); std::cout << "--End-Print--\n";
 
-//    ft::red_black_tree<int>::RedBlackTreeBidirectionalIterator<false> iter1 = t.begin();
-//    ft::red_black_tree<int>::RedBlackTreeBidirectionalIterator<false> iter2 = (--t.end());
-//    t.insert(iter1, iter2);
-//    std::cout << "is_isBalanced = " << t.isBalanced() << std::endl;
-//    std::cout << "--Start-Print--\n"; t.print_sorted_tree(); std::cout << "--End-Print--\n";
-
-//    std::cout << '\n';
-//    std::cout << "Finish\n";
-
-//    std::vector<int> v(5);
-//    for (int i = 0; i != 5; i++){
-//        v[i] = i;
-//    }
-//    std::cout << "rb = " << *(v.rbegin()) << std::endl;
-//    std::cout << "re = " << *(v.rend()) << std::endl;
-//    for (std::vector<int>::reverse_iterator it = v.rbegin(); it != v.rend(); it++){
-//        std::cout << *it << std::endl;
-//    }
-//
-//    std::map<int, std::string> m;
-//    for (int i = 0; i != 5; i++){
-//        m[i] = "my_str";
-//    }
-//    std::cout << "rb = " << (m.rbegin()->first) << std::endl;
-//    // std::cout << "re = " << (m.rend()->first) << std::endl;
-//    std::cout << "--re = " << ((--m.rend())->first) << std::endl;
-//    for (std::map<int, std::string>::reverse_iterator it = m.rbegin(); it != m.rend(); it++){
-//        std::cout << (it->first) << std::endl;
-//    }
-
-// test map
-//    ft::map<int, std::string> m;
-//    m.insert({161, "Hinata1"});
-//    std::cout << "size = " << m.size() << std::endl;
-//    m.insert({162, "Hinata2"});
-//    std::cout << "size = " << m.size() << std::endl;
-//    m.insert({161, "Hinata0"});
-//    std::cout << "size = " << m.size() << std::endl;
-//    for (ft::map<int, std::string>::iterator it = m.begin(); it != m.end(); ++it){
-//        std::cout << "iter_i = " << (it->second) << std::endl;
-//    }
-//    m.erase(160);
-//    m.erase(161);
-//    m.erase(161);
-//    std::cout << "size = " << m.size() << std::endl;
-//    for (ft::map<int, std::string>::iterator it = m.begin(); it != m.end(); ++it){
-//        std::cout << "iter_i = " << (it->second) << std::endl;
-//    }
-//    m.clear();
-//    std::cout << "size = " << m.size() << std::endl;
-//    for (ft::map<int, std::string>::iterator it = m.begin(); it != m.end(); ++it){
-//        std::cout << "iter_i = " << (it->second) << std::endl;
-//    }
-//    sleep(10);
-
+//    rbtree_test_insert_erase_isbalanced();
+//    rbtree_test_iterators();
+//    map_test_iterators();
+//    map_test_base();
 //    map_test_insert_el();
 //    map_test_insert_iter();
 //    map_test_insert_iter_range();
 //    map_test_erase();
+//    map_test_lower_upper_bound();
 
+//    sleep(10);
+
+    return 0;
+}
+
+void rbtree_test_insert_erase_isbalanced(){
     {
-        // ft::red_black_tree<int> t = ft::red_black_tree<int>();
-        // t.insert(1);
-        // t.insert(2);
-        // t.insert(3);
-        // t.insert(4);
-        // t.insert(20);
-        // t.insert(15);
+//        ft::red_black_tree<int> t = ft::red_black_tree<int>();
+//        std::cout << "is_isBalanced = " << t.isBalanced() << std::endl;
+//        std::cout << "--Start-Print--\n"; t.print_sorted_tree(); std::cout << "--End-Print--\n";
+//
+//        t.insert(1);
+//        t.insert(10);
+//        t.insert(2);
+//        t.insert(3);
+//        t.insert(4);
+//        t.insert(20);
+//        t.insert(15);
+//        std::cout << "is_isBalanced = " << t.isBalanced() << std::endl;
+//        std::cout << "--Start-Print--\n"; t.print_sorted_tree(); std::cout << "--End-Print--\n";
+//
+//        t.insert(2);
+//        t.insert(10);
+//        t.insert(15);
+//        t.insert(200);
+//        std::cout << "is_isBalanced = " << t.isBalanced() << std::endl;
+//        std::cout << "--Start-Print--\n"; t.print_sorted_tree(); std::cout << "--End-Print--\n";
+//
+//        t.erase(2);
+//        std::cout << "is_isBalanced = " << t.isBalanced() << std::endl;
+//        t.erase(10);
+//        std::cout << "is_isBalanced = " << t.isBalanced() << std::endl;
+//        t.erase(15);
+//        std::cout << "is_isBalanced = " << t.isBalanced() << std::endl;
+//        t.erase(3);
+//        std::cout << "is_isBalanced = " << t.isBalanced() << std::endl;
+//        std::cout << "--Start-Print--\n"; t.print_sorted_tree(); std::cout << "--End-Print--\n";
+//
+//        ft::red_black_tree<int>::RedBlackTreeBidirectionalIterator<false> it = t.begin();
+//        ft::red_black_tree<int>::RedBlackTreeBidirectionalIterator<true> c_it = t.begin();
+//        c_it = it;
+//        for (; it != t.end(); ++it){
+//            std::cout<< *it << std::endl;
+//        }
+//
+//        ft::red_black_tree<int>::reverse_iterator rit = t.rbegin();
+//        for (; rit != t.rend(); ++rit){
+//            std::cout<< *rit << std::endl;
+//        }
+//
+//        ft::red_black_tree<int>::RedBlackTreeBidirectionalIterator<false> iter = t.begin();
+//        t.erase(iter);
+//        std::cout << "is_isBalanced = " << t.isBalanced() << std::endl;
+//        std::cout << "--Start-Print--\n"; t.print_sorted_tree(); std::cout << "--End-Print--\n";
+    }
+    {
+        // test for insert other iter elements
+        ft::red_black_tree<int> h = ft::red_black_tree<int>();
+        h.insert(-1);
+        h.insert(1000);
+        h.insert(2000);
+        h.insert(3000);
+        h.insert(4000);
+        ft::red_black_tree<int>::RedBlackTreeBidirectionalIterator<false> iter_11 = h.begin();
+        ft::red_black_tree<int>::RedBlackTreeBidirectionalIterator<false> iter_12 = (--h.end());
 
-        // t.print_sorted_tree();
+        ft::red_black_tree<int> t = ft::red_black_tree<int>();
+        t.insert(iter_11, iter_12);
+        std::cout << "is_isBalanced = " << t.isBalanced() << std::endl;
+        std::cout << "--Start-Print--\n"; t.print_sorted_tree(); std::cout << "--End-Print--\n";
 
-        // std::cout << "---iterator---\n";
-        // for (ft::red_black_tree<int>::iterator it = t.begin(); it!=t.end(); ++it)
-        //     std::cout << *it << std::endl;
-        // std::cout << "---const_iterator---\n";
-        // for (ft::red_black_tree<int>::const_iterator it = t.begin(); it!=t.end(); ++it)
-        //     std::cout << *it << std::endl;
-        // std::cout << "---reverse_iterator---\n";
-        // for (ft::red_black_tree<int>::reverse_iterator it = t.rbegin(); it!=t.rend(); ++it)
-        //     std::cout << *it << std::endl;
-        // std::cout << "---const_reverse_iterator---\n";
-        // for (ft::red_black_tree<int>::const_reverse_iterator it = t.rbegin(); it!=t.rend(); ++it)
-        //     std::cout << *it << std::endl;
-        // std::cout << "size = " << t.size() << std::endl;
+        ft::red_black_tree<int>::RedBlackTreeBidirectionalIterator<false> iter_21 = t.begin();
+        ft::red_black_tree<int>::RedBlackTreeBidirectionalIterator<false> iter_22 = (--t.end()); // t.end()
+        std::cout << "1\n";
+        t.insert(iter_21, iter_22);
+        std::cout << "2\n";
+        std::cout << "is_isBalanced = " << t.isBalanced() << std::endl;
+        std::cout << "--Start-Print--\n"; t.print_sorted_tree(); std::cout << "--End-Print--\n";
+    }
+}
 
-        // std::cout << "---iterator---\n";
-        // for (ft::red_black_tree<int>::iterator it = t.begin(); it!=t.end(); it++)
-        //     std::cout << *it << std::endl;
-        // std::cout << "---const_iterator---\n";
-        // for (ft::red_black_tree<int>::const_iterator it = t.begin(); it!=t.end(); it++)
-        //     std::cout << *it << std::endl;
-        // std::cout << "---reverse_iterator---\n";
-        // for (ft::red_black_tree<int>::reverse_iterator it = t.rbegin(); it!=t.rend(); it++)
-        //     std::cout << *it << std::endl;
-        // std::cout << "---const_reverse_iterator---\n";
-        // for (ft::red_black_tree<int>::const_reverse_iterator it = t.rbegin(); it!=t.rend(); it++)
-        //     std::cout << *it << std::endl;
-        // std::cout << "size = " << t.size() << std::endl;
+void rbtree_test_iterators(){
+    {
+         ft::red_black_tree<int> t = ft::red_black_tree<int>();
+         t.insert(1);
+         t.insert(2);
+         t.insert(3);
+         t.insert(4);
+         t.insert(20);
+         t.insert(15);
 
-        // std::cout << "---iterator---\n";
-        // for (ft::red_black_tree<int>::iterator it = --t.end(); it!=t.begin(); --it)
-        //     std::cout << *it << std::endl;
-        // std::cout << "---const_iterator---\n";
-        // for (ft::red_black_tree<int>::const_iterator it = --t.end(); it!=t.begin(); --it)
-        //     std::cout << *it << std::endl;
-        // std::cout << "---reverse_iterator---\n";
-        // for (ft::red_black_tree<int>::reverse_iterator it = --t.rend(); it!=t.rbegin(); --it)
-        //     std::cout << *it << std::endl;
-        // std::cout << "---const_reverse_iterator---\n";
-        // for (ft::red_black_tree<int>::const_reverse_iterator it = --t.rend(); it!=t.rbegin(); --it)
-        //     std::cout << *it << std::endl;
-        // std::cout << "size = " << t.size() << std::endl;
+         t.print_sorted_tree();
 
-        // std::cout << "---iterator---\n";
-        // for (ft::red_black_tree<int>::iterator it = --t.end(); it!=t.begin(); it--)
-        //     std::cout << *it << std::endl;
-        // std::cout << "---const_iterator---\n";
-        // for (ft::red_black_tree<int>::const_iterator it = --t.end(); it!=t.begin(); it--)
-        //     std::cout << *it << std::endl;
-        // std::cout << "---reverse_iterator---\n";
-        // for (ft::red_black_tree<int>::reverse_iterator it = --t.rend(); it!=t.rbegin(); it--)
-        //     std::cout << *it << std::endl;
-        // std::cout << "---const_reverse_iterator---\n";
-        // for (ft::red_black_tree<int>::const_reverse_iterator it = --t.rend(); it!=t.rbegin(); it--)
-        //     std::cout << *it << std::endl;
-        // std::cout << "size = " << t.size() << std::endl;
+         std::cout << "---iterator---\n";
+         for (ft::red_black_tree<int>::iterator it = t.begin(); it!=t.end(); ++it)
+             std::cout << *it << std::endl;
+         std::cout << "---const_iterator---\n";
+         for (ft::red_black_tree<int>::const_iterator it = t.begin(); it!=t.end(); ++it)
+             std::cout << *it << std::endl;
+         std::cout << "---reverse_iterator---\n";
+         for (ft::red_black_tree<int>::reverse_iterator it = t.rbegin(); it!=t.rend(); ++it)
+             std::cout << *it << std::endl;
+         std::cout << "---const_reverse_iterator---\n";
+         for (ft::red_black_tree<int>::const_reverse_iterator it = t.rbegin(); it!=t.rend(); ++it)
+             std::cout << *it << std::endl;
+         std::cout << "size = " << t.size() << std::endl;
+
+         std::cout << "---iterator---\n";
+         for (ft::red_black_tree<int>::iterator it = t.begin(); it!=t.end(); it++)
+             std::cout << *it << std::endl;
+         std::cout << "---const_iterator---\n";
+         for (ft::red_black_tree<int>::const_iterator it = t.begin(); it!=t.end(); it++)
+             std::cout << *it << std::endl;
+         std::cout << "---reverse_iterator---\n";
+         for (ft::red_black_tree<int>::reverse_iterator it = t.rbegin(); it!=t.rend(); it++)
+             std::cout << *it << std::endl;
+         std::cout << "---const_reverse_iterator---\n";
+         for (ft::red_black_tree<int>::const_reverse_iterator it = t.rbegin(); it!=t.rend(); it++)
+             std::cout << *it << std::endl;
+         std::cout << "size = " << t.size() << std::endl;
+
+         std::cout << "---iterator---\n";
+         for (ft::red_black_tree<int>::iterator it = --t.end(); it!=t.begin(); --it)
+             std::cout << *it << std::endl;
+         std::cout << "---const_iterator---\n";
+         for (ft::red_black_tree<int>::const_iterator it = --t.end(); it!=t.begin(); --it)
+             std::cout << *it << std::endl;
+         std::cout << "---reverse_iterator---\n";
+         for (ft::red_black_tree<int>::reverse_iterator it = --t.rend(); it!=t.rbegin(); --it)
+             std::cout << *it << std::endl;
+         std::cout << "---const_reverse_iterator---\n";
+         for (ft::red_black_tree<int>::const_reverse_iterator it = --t.rend(); it!=t.rbegin(); --it)
+             std::cout << *it << std::endl;
+         std::cout << "size = " << t.size() << std::endl;
+
+         std::cout << "---iterator---\n";
+         for (ft::red_black_tree<int>::iterator it = --t.end(); it!=t.begin(); it--)
+             std::cout << *it << std::endl;
+         std::cout << "---const_iterator---\n";
+         for (ft::red_black_tree<int>::const_iterator it = --t.end(); it!=t.begin(); it--)
+             std::cout << *it << std::endl;
+         std::cout << "---reverse_iterator---\n";
+         for (ft::red_black_tree<int>::reverse_iterator it = --t.rend(); it!=t.rbegin(); it--)
+             std::cout << *it << std::endl;
+         std::cout << "---const_reverse_iterator---\n";
+         for (ft::red_black_tree<int>::const_reverse_iterator it = --t.rend(); it!=t.rbegin(); it--)
+             std::cout << *it << std::endl;
+         std::cout << "size = " << t.size() << std::endl;
     }
     {
         // ft::red_black_tree<ft::pair<char, int> > t = ft::red_black_tree<ft::pair<char, int> >();
@@ -256,170 +227,263 @@ int main()
         //     std::cout << *it << std::endl;
         // std::cout << "size = " << t.size() << std::endl;
     }
-
-    return 0;
 }
 
+void map_test_iterators(){
+    {
+        ft::map<char, int> mymap;
+        mymap.insert(ft::pair<char, int>('a', 10));
+        mymap.insert(ft::pair<char, int>('b', 20));
+        mymap.insert(ft::pair<char, int>('c', 30));
+        mymap.insert(ft::pair<char, int>('d', 40));
+        mymap.insert(ft::pair<char, int>('e', 50));
 
-// void map_test_insert_el(){
-//     {
-//         std::map<char,int> mymap;
-//         // first insert function version (single parameter):
-//         mymap.insert ( std::pair<char,int>('a',100) );
-//         mymap.insert ( std::pair<char,int>('z',200) );
+        // print content:
+        for (ft::map<char, int>::const_reverse_iterator it = mymap.rbegin();
+             it != mymap.rend(); ++it)
+            std::cout << it->first << " => " << it->second << '\n';
+    }
+}
 
-//         std::pair<std::map<char,int>::iterator,bool> ret;
-//         ret = mymap.insert ( std::pair<char,int>('z',500) );
-//         if (ret.second==false) {
-//             std::cout << "element 'z' already existed";
-//             std::cout << " with a value of " << ret.first->second << '\n';
-//         }
-//     }
-//     {
-//         ft::map<char, int> mymap;
-//         // first insert function version (single parameter):
-//         mymap.insert(ft::pair<char, int>('a', 100));
-//         mymap.insert(ft::pair<char, int>('z', 200));
+void map_test_base(){
+    {
+        ft::map<int, std::string> m;
+        m.insert(ft::pair<int, std::string>(161, "Hinata1"));
+        std::cout << "size = " << m.size() << std::endl;
+        m.insert(ft::pair<int, std::string>(162, "Hinata2"));
+        std::cout << "size = " << m.size() << std::endl;
+        m.insert(ft::pair<int, std::string>(161, "Hinata0"));
+        std::cout << "size = " << m.size() << std::endl;
+        for (ft::map<int, std::string>::iterator it = m.begin(); it != m.end(); ++it){
+            std::cout << "iter_i = " << (it->second) << std::endl;
+        }
+        m.erase(160);
+        m.erase(161);
+        m.erase(161);
+        std::cout << "size = " << m.size() << std::endl;
+        for (ft::map<int, std::string>::iterator it = m.begin(); it != m.end(); ++it){
+            std::cout << "iter_i = " << (it->second) << std::endl;
+        }
+        m.clear();
+        std::cout << "size = " << m.size() << std::endl;
+        for (ft::map<int, std::string>::iterator it = m.begin(); it != m.end(); ++it){
+            std::cout << "iter_i = " << (it->second) << std::endl;
+        }
+    }
+}
 
-//         ft::pair<ft::map<char, int>::iterator, bool> ret;
-//         ret = mymap.insert(ft::pair<char, int>('z', 500));
-//         if (ret.second == false) {
-//             std::cout << "element 'z' already existed";
-//             std::cout << " with a value of " << ret.first->second << '\n';
-//         }
-//     }
-// }
+ void map_test_insert_el(){
+     {
+         std::map<char,int> mymap;
+         // first insert function version (single parameter):
+         mymap.insert ( std::pair<char,int>('a',100) );
+         mymap.insert ( std::pair<char,int>('z',200) );
 
-// void map_test_insert_iter(){
-//     {
-//         std::map<char,int> mymap;
-//         // second insert function version (with hint position):
-//         std::map<char,int>::iterator it = mymap.begin();
-//         mymap.insert (it, std::pair<char,int>('b',300));  // max efficiency inserting
-//         mymap.insert (it, std::pair<char,int>('c',400));  // no max efficiency inserting
-//         mymap.insert (it, std::pair<char,int>('b',300));  // max efficiency inserting
-//         std::cout << "size = " << mymap.size() << std::endl;
-//     }
-//     {
-//         ft::map<char,int> mymap;
-//         // second insert function version (with hint position):
-//         ft::map<char,int>::iterator it = mymap.begin();
-//         mymap.insert (it, ft::pair<char,int>('b',300));  // max efficiency inserting
-//         mymap.insert (it, ft::pair<char,int>('c',400));  // no max efficiency inserting
-//         mymap.insert (it, ft::pair<char,int>('b',300));  // max efficiency inserting
-//         std::cout << "size = " << mymap.size() << std::endl;
-//     }
-// }
+         std::pair<std::map<char,int>::iterator,bool> ret;
+         ret = mymap.insert ( std::pair<char,int>('z',500) );
+         if (ret.second==false) {
+             std::cout << "element 'z' already existed";
+             std::cout << " with a value of " << ret.first->second << '\n';
+         }
+     }
+     {
+         ft::map<char, int> mymap;
+         // first insert function version (single parameter):
+         mymap.insert(ft::pair<char, int>('a', 100));
+         mymap.insert(ft::pair<char, int>('z', 200));
 
-// void map_test_insert_iter_range(){
-//     {
-//         std::map<char,int> mymap;
+         ft::pair<ft::map<char, int>::iterator, bool> ret;
+         ret = mymap.insert(ft::pair<char, int>('z', 500));
+         if (ret.second == false) {
+             std::cout << "element 'z' already existed";
+             std::cout << " with a value of " << ret.first->second << '\n';
+         }
+     }
+ }
 
-//         // first insert function version (single parameter):
-//         mymap.insert ( std::pair<char,int>('a',100) );
-//         mymap.insert ( std::pair<char,int>('z',200) );
+ void map_test_insert_iter(){
+     {
+         std::map<char,int> mymap;
+         // second insert function version (with hint position):
+         std::map<char,int>::iterator it = mymap.begin();
+         mymap.insert (it, std::pair<char,int>('b',300));  // max efficiency inserting
+         mymap.insert (it, std::pair<char,int>('c',400));  // no max efficiency inserting
+         mymap.insert (it, std::pair<char,int>('b',300));  // max efficiency inserting
+         std::cout << "size = " << mymap.size() << std::endl;
+     }
+     {
+         ft::map<char,int> mymap;
+         // second insert function version (with hint position):
+         ft::map<char,int>::iterator it = mymap.begin();
+         mymap.insert (it, ft::pair<char,int>('b',300));  // max efficiency inserting
+         mymap.insert (it, ft::pair<char,int>('c',400));  // no max efficiency inserting
+         mymap.insert (it, ft::pair<char,int>('b',300));  // max efficiency inserting
+         std::cout << "size = " << mymap.size() << std::endl;
+     }
+ }
 
-//         std::pair<std::map<char,int>::iterator,bool> ret;
-//         ret = mymap.insert ( std::pair<char,int>('z',500) );
+ void map_test_insert_iter_range(){
+     {
+         std::map<char,int> mymap;
 
-//         // second insert function version (with hint position):
-//         std::map<char,int>::iterator it = mymap.begin();
-//         mymap.insert (it, std::pair<char,int>('b',300));  // max efficiency inserting
-//         mymap.insert (it, std::pair<char,int>('c',400));  // no max efficiency inserting
+         // first insert function version (single parameter):
+         mymap.insert ( std::pair<char,int>('a',100) );
+         mymap.insert ( std::pair<char,int>('z',200) );
 
-//         // third insert function version (range insertion):
-//         std::map<char,int> anothermap;
-//         anothermap.insert(mymap.begin(),mymap.find('c'));
+         std::pair<std::map<char,int>::iterator,bool> ret;
+         ret = mymap.insert ( std::pair<char,int>('z',500) );
 
-//         // showing contents:
-//         std::cout << "mymap contains:\n";
-//         for (it=mymap.begin(); it!=mymap.end(); ++it)
-//             std::cout << it->first << " => " << it->second << '\n';
+         // second insert function version (with hint position):
+         std::map<char,int>::iterator it = mymap.begin();
+         mymap.insert (it, std::pair<char,int>('b',300));  // max efficiency inserting
+         mymap.insert (it, std::pair<char,int>('c',400));  // no max efficiency inserting
 
-//         std::cout << "anothermap contains:\n";
-//         for (it=anothermap.begin(); it!=anothermap.end(); ++it)
-//             std::cout << it->first << " => " << it->second << '\n';
-//     }
-//     {
+         // third insert function version (range insertion):
+         std::map<char,int> anothermap;
+         anothermap.insert(mymap.begin(),mymap.find('c'));
 
-//         ft::map<char,int> mymap;
+         // showing contents:
+         std::cout << "mymap contains:\n";
+         for (it=mymap.begin(); it!=mymap.end(); ++it)
+             std::cout << it->first << " => " << it->second << '\n';
 
-//         // first insert function version (single parameter):
-//         mymap.insert ( ft::pair<char,int>('a',100) );
-//         mymap.insert ( ft::pair<char,int>('z',200) );
+         std::cout << "anothermap contains:\n";
+         for (it=anothermap.begin(); it!=anothermap.end(); ++it)
+             std::cout << it->first << " => " << it->second << '\n';
+     }
+     {
 
-//         ft::pair<ft::map<char,int>::iterator,bool> ret;
-//         ret = mymap.insert ( ft::pair<char,int>('z',500) );
+         ft::map<char,int> mymap;
 
-//         // second insert function version (with hint position):
-//         ft::map<char,int>::iterator it = mymap.begin();
-//         mymap.insert (it, ft::pair<char,int>('b',300));  // max efficiency inserting
-//         mymap.insert (it, ft::pair<char,int>('c',400));  // no max efficiency inserting
+         // first insert function version (single parameter):
+         mymap.insert ( ft::pair<char,int>('a',100) );
+         mymap.insert ( ft::pair<char,int>('z',200) );
 
-//         // third insert function version (range insertion):
-//         ft::map<char,int> anothermap;
-//         anothermap.insert(mymap.begin(),mymap.find('c'));
+         ft::pair<ft::map<char,int>::iterator,bool> ret;
+         ret = mymap.insert ( ft::pair<char,int>('z',500) );
 
-//         // showing contents:
-//         std::cout << "mymap contains:\n";
-//         for (it=mymap.begin(); it!=mymap.end(); ++it)
-//             std::cout << it->first << " => " << it->second << '\n';
+         // second insert function version (with hint position):
+         ft::map<char,int>::iterator it = mymap.begin();
+         mymap.insert (it, ft::pair<char,int>('b',300));  // max efficiency inserting
+         mymap.insert (it, ft::pair<char,int>('c',400));  // no max efficiency inserting
 
-//         std::cout << "anothermap contains:\n";
-//         for (it=anothermap.begin(); it!=anothermap.end(); ++it)
-//             std::cout << it->first << " => " << it->second << '\n';
-//     }
-// }
+         // third insert function version (range insertion):
+         ft::map<char,int> anothermap;
+         anothermap.insert(mymap.begin(),mymap.find('c'));
 
-// void map_test_erase(){
-//     {
-//         std::map<char,int> mymap;
-//         std::map<char,int>::iterator it;
+         // showing contents:
+         std::cout << "mymap contains:\n";
+         for (it=mymap.begin(); it!=mymap.end(); ++it)
+             std::cout << it->first << " => " << it->second << '\n';
 
-//         // insert some values:
-//         mymap.insert({'a', 10});
-//         mymap.insert({'b', 20});
-//         mymap.insert({'c', 30});
-//         mymap.insert({'d', 40});
-//         mymap.insert({'e', 50});
-//         mymap.insert({'f', 60});
+         std::cout << "anothermap contains:\n";
+         for (it=anothermap.begin(); it!=anothermap.end(); ++it)
+             std::cout << it->first << " => " << it->second << '\n';
+     }
+ }
 
-//         it=mymap.find('b');
-//         mymap.erase (it);                   // erasing by iterator
+ void map_test_erase(){
+     {
+         std::map<char,int> mymap;
+         std::map<char,int>::iterator it;
 
-//         mymap.erase ('c');                  // erasing by key
+         // insert some values:
+        mymap.insert(std::pair<char, int>('a', 10));
+        mymap.insert(std::pair<char, int>('b', 20));
+        mymap.insert(std::pair<char, int>('c', 30));
+        mymap.insert(std::pair<char, int>('d', 40));
+        mymap.insert(std::pair<char, int>('e', 50));
 
-//         it=mymap.find ('e');
-// //        mymap.erase ( it, mymap.end() );    // erasing by range
+         // erasing by iterator
+         it=mymap.find('b');
+         mymap.erase (it);
 
-//         // show content:
-//         for (it=mymap.begin(); it!=mymap.end(); ++it)
-//             std::cout << it->first << " => " << it->second << '\n';
-//         std::cout << "size = " << mymap.size() << std::endl;
-//     }
-//     {
-//         ft::map<char,int> mymap;
-//         ft::map<char,int>::iterator it;
+         // erasing by key
+         mymap.erase ('c');
 
-//         // insert some values:
-//         mymap.insert({'a', 10});
-//         mymap.insert({'b', 20});
-//         mymap.insert({'c', 30});
-//         mymap.insert({'d', 40});
-//         mymap.insert({'e', 50});
-//         mymap.insert({'f', 60});
+         // erasing by range
+         it=mymap.find ('e');
+         mymap.erase ( it, mymap.end() );
 
-//         it=mymap.find('b');
-//         mymap.erase (it);                // erasing by iterator
+         // show content:
+         for (it=mymap.begin(); it!=mymap.end(); ++it)
+             std::cout << it->first << " => " << it->second << '\n';
+         std::cout << "size = " << mymap.size() << std::endl;
+     }
+     {
+         ft::map<char,int> mymap;
+         ft::map<char,int>::iterator it;
 
-//         mymap.erase ('c');                  // erasing by key
+         // insert some values:
+        mymap.insert(ft::pair<char, int>('a', 10));
+        mymap.insert(ft::pair<char, int>('b', 20));
+        mymap.insert(ft::pair<char, int>('c', 30));
+        mymap.insert(ft::pair<char, int>('d', 40));
+        mymap.insert(ft::pair<char, int>('e', 50));
 
-//         it=mymap.find ('e');
-// //        mymap.erase ( it, mymap.end() );    // erasing by range
+         // erasing by iterator
+         it=mymap.find('b');
+         mymap.erase (it);
 
-//         // show content:
-//         for (it=mymap.begin(); it!=mymap.end(); ++it)
-//             std::cout << it->first << " => " << it->second << '\n';
-//         std::cout << "size = " << mymap.size() << std::endl;
-//     }
-// }
+         // erasing by key
+         mymap.erase ('c');
+
+         // erasing by range
+         it=mymap.find ('e');
+         mymap.erase ( it, mymap.end() );
+
+         // show content:
+         for (it=mymap.begin(); it!=mymap.end(); ++it)
+             std::cout << it->first << " => " << it->second << '\n';
+         std::cout << "size = " << mymap.size() << std::endl;
+     }
+ }
+
+void map_test_lower_upper_bound() {
+    {
+        std::map<char,int> mymap;
+        std::map<char,int>::iterator itlow,itup;
+
+        // insert some values:
+        mymap.insert(std::pair<char, int>('a', 10));
+        mymap.insert(std::pair<char, int>('b', 20));
+        mymap.insert(std::pair<char, int>('c', 30));
+        mymap.insert(std::pair<char, int>('d', 40));
+        mymap.insert(std::pair<char, int>('e', 50));
+
+        itlow=mymap.lower_bound ('b');  // itlow points to b
+        itup=mymap.upper_bound ('d');   // itup points to e (not d!)
+
+        // erases [itlow,itup)
+        // mymap.erase(itlow, itup);
+        mymap.erase(itlow);
+        mymap.erase(itup);
+
+        // print content:
+        for (std::map<char,int>::iterator it=mymap.begin(); it!=mymap.end(); ++it)
+            std::cout << it->first << " => " << it->second << '\n';
+    }
+    {
+        ft::map<char,int> mymap;
+        ft::map<char,int>::iterator itlow,itup;
+
+        // insert some values:
+        mymap.insert(ft::pair<char, int>('a', 10));
+        mymap.insert(ft::pair<char, int>('b', 20));
+        mymap.insert(ft::pair<char, int>('c', 30));
+        mymap.insert(ft::pair<char, int>('d', 40));
+        mymap.insert(ft::pair<char, int>('e', 50));
+
+        itlow=mymap.lower_bound ('b');  // itlow points to b
+        itup=mymap.upper_bound ('d');   // itup points to e (not d!)
+
+        // erases [itlow,itup)
+        // mymap.erase(itlow, itup);
+        mymap.erase(itlow);
+        mymap.erase(itup);
+
+        // print content:
+        for (ft::map<char,int>::iterator it=mymap.begin(); it!=mymap.end(); ++it)
+            std::cout << it->first << " => " << it->second << '\n';
+    }
+}
