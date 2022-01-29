@@ -30,7 +30,7 @@ class ReverseIterator {
         }
         /* LegacyInputIterator effects: "iter->m" ******************* */
         typename Iterator::pointer operator->(){
-            return iter_;
+            return &(operator*());
         }
         /* LegacyInputIterator effects: "++iter" ******************** */
         ReverseIterator& operator++(){
