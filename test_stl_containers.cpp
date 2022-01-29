@@ -41,10 +41,14 @@ void map_test_insert_iter();
 void map_test_insert_iter_range();
 void map_test_erase();
 void map_test_lower_upper_bound();
+void map_test_operator_access();
+void map_test_swap();
+void map_test_find();
+void map_test_count();
+void map_test_equal_range();
 
 int main()
 {
-
 
 //    tree_test_insert();
 //    tree_test_delete();
@@ -57,6 +61,11 @@ int main()
 //    map_test_insert_iter_range();
 //    map_test_erase();
 //    map_test_lower_upper_bound();
+//    map_test_operator_access();
+//    map_test_swap();
+//    map_test_find();
+//    map_test_count();
+//    map_test_equal_range();
 
 //    sleep(10);
 
@@ -632,5 +641,193 @@ void map_test_lower_upper_bound() {
         // print content:
         for (ft::map<char,int>::iterator it=mymap.begin(); it!=mymap.end(); ++it)
             std::cout << it->first << " => " << it->second << '\n';
+    }
+}
+
+void map_test_operator_access(){
+    {
+        std::map<char,std::string> mymap;
+
+        mymap['a']="an element";
+        mymap['b']="another element";
+        mymap['c']=mymap['b'];
+
+        std::cout << "mymap['a'] is " << mymap['a'] << '\n';
+        std::cout << "mymap['b'] is " << mymap['b'] << '\n';
+        std::cout << "mymap['c'] is " << mymap['c'] << '\n';
+        std::cout << "mymap['d'] is " << mymap['d'] << '\n';
+
+        std::cout << "mymap now contains " << mymap.size() << " elements.\n";
+    }
+    {
+
+        ft::map<char,std::string> mymap;
+
+        mymap['a']="an element";
+        mymap['b']="another element";
+        mymap['c']=mymap['b'];
+
+        std::cout << "mymap['a'] is " << mymap['a'] << '\n';
+        std::cout << "mymap['b'] is " << mymap['b'] << '\n';
+        std::cout << "mymap['c'] is " << mymap['c'] << '\n';
+        std::cout << "mymap['d'] is " << mymap['d'] << '\n';
+
+        std::cout << "mymap now contains " << mymap.size() << " elements.\n";
+    }
+}
+
+void map_test_swap() {
+    {
+        std::map<char,int> foo,bar;
+
+        foo['x']=100;
+        foo['y']=200;
+
+        bar['a']=11;
+        bar['b']=22;
+        bar['c']=33;
+
+        foo.swap(bar);
+
+        std::cout << "foo contains:\n";
+        for (std::map<char,int>::iterator it=foo.begin(); it!=foo.end(); ++it)
+            std::cout << it->first << " => " << it->second << '\n';
+
+        std::cout << "bar contains:\n";
+        for (std::map<char,int>::iterator it=bar.begin(); it!=bar.end(); ++it)
+            std::cout << it->first << " => " << it->second << '\n';
+    }
+    {
+        ft::map<char,int> foo,bar;
+
+        foo['x']=100;
+        foo['y']=200;
+
+        bar['a']=11;
+        bar['b']=22;
+        bar['c']=33;
+
+        foo.swap(bar);
+
+        std::cout << "foo contains:\n";
+        for (ft::map<char,int>::iterator it=foo.begin(); it!=foo.end(); ++it)
+            std::cout << it->first << " => " << it->second << '\n';
+
+        std::cout << "bar contains:\n";
+        for (ft::map<char,int>::iterator it=bar.begin(); it!=bar.end(); ++it)
+            std::cout << it->first << " => " << it->second << '\n';
+    }
+}
+
+void map_test_find(){
+    {
+        std::map<char,int> mymap;
+        std::map<char,int>::iterator it;
+
+        mymap['a']=50;
+        mymap['b']=100;
+        mymap['c']=150;
+        mymap['d']=200;
+
+        it = mymap.find('b');
+        if (it != mymap.end())
+            mymap.erase (it);
+
+        // print content:
+        std::cout << "elements in mymap:" << '\n';
+        std::cout << "a => " << mymap.find('a')->second << '\n';
+        std::cout << "c => " << mymap.find('c')->second << '\n';
+        std::cout << "d => " << mymap.find('d')->second << '\n';
+    }
+    {
+        ft::map<char,int> mymap;
+        ft::map<char,int>::iterator it;
+
+        mymap['a']=50;
+        mymap['b']=100;
+        mymap['c']=150;
+        mymap['d']=200;
+
+        it = mymap.find('b');
+        if (it != mymap.end())
+            mymap.erase (it);
+
+        // print content:
+        std::cout << "elements in mymap:" << '\n';
+        std::cout << "a => " << mymap.find('a')->second << '\n';
+        std::cout << "c => " << mymap.find('c')->second << '\n';
+        std::cout << "d => " << mymap.find('d')->second << '\n';
+    }
+}
+
+void map_test_count(){
+    {
+        std::map<char,int> mymap;
+        char c;
+
+        mymap ['a']=101;
+        mymap ['c']=202;
+        mymap ['f']=303;
+
+        for (c='a'; c<'h'; c++)
+        {
+            std::cout << c;
+            if (mymap.count(c)>0)
+                std::cout << " is an element of mymap.\n";
+            else
+                std::cout << " is not an element of mymap.\n";
+        }
+    }
+    {
+        ft::map<char,int> mymap;
+        char c;
+
+        mymap ['a']=101;
+        mymap ['c']=202;
+        mymap ['f']=303;
+
+        for (c='a'; c<'h'; c++)
+        {
+            std::cout << c;
+            if (mymap.count(c)>0)
+                std::cout << " is an element of mymap.\n";
+            else
+                std::cout << " is not an element of mymap.\n";
+        }
+    }
+}
+
+void map_test_equal_range(){
+    {
+        std::map<char,int> mymap;
+
+        mymap['a']=10;
+        mymap['b']=20;
+        mymap['c']=30;
+
+        std::pair<std::map<char,int>::iterator,std::map<char,int>::iterator> ret;
+        ret = mymap.equal_range('b');
+
+        std::cout << "lower bound points to: ";
+        std::cout << ret.first->first << " => " << ret.first->second << '\n';
+
+        std::cout << "upper bound points to: ";
+        std::cout << ret.second->first << " => " << ret.second->second << '\n';
+    }
+    {
+        ft::map<char,int> mymap;
+
+        mymap['a']=10;
+        mymap['b']=20;
+        mymap['c']=30;
+
+        ft::pair<ft::map<char,int>::iterator,ft::map<char,int>::iterator> ret;
+        ret = mymap.equal_range('b');
+
+        std::cout << "lower bound points to: ";
+        std::cout << ret.first->first << " => " << ret.first->second << '\n';
+
+        std::cout << "upper bound points to: ";
+        std::cout << ret.second->first << " => " << ret.second->second << '\n';
     }
 }

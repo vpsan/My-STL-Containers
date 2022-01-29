@@ -4,7 +4,7 @@
 # include <memory>      // std::allocator<T>
 # include <algorithm>   // min max for IsBalanced
 # include <iostream>    // std::cout for debug
-
+# include "./utility.hpp"
 
 # define Red    1
 # define Black  0
@@ -381,6 +381,12 @@ class red_black_tree {
             return x;
         }
 
+    node_ptr rb_maximum(node_ptr x) const {
+        while(/*x->right_ != nil_*/is_nil(x->right_) == false)
+            x = x->right_;
+        return x;
+    }
+
         node_ptr rb_minimum(node_ptr x) {
             // Мин элемент - элемент без левого потомка в заданном поддерев
             // (если говорить про удаление - то рассматриваем правое поддерево)
@@ -388,6 +394,14 @@ class red_black_tree {
                 x = x->left_;
             return x;
         }
+
+    node_ptr rb_minimum(node_ptr x) const {
+        // Мин элемент - элемент без левого потомка в заданном поддерев
+        // (если говорить про удаление - то рассматриваем правое поддерево)
+        while(/*x->left_ != nil_*/is_nil(x->left_) == false)
+            x = x->left_;
+        return x;
+    }
 
         void rb_delete_fixup(node_ptr x) {
             while(x != root_ && x != NULL && x->color == Black) {
@@ -543,6 +557,10 @@ class red_black_tree {
             return n == nil_ || n == iter_end_ || n == iter_rend_;
         }
 
+    bool is_nil(node_ptr n) const {
+        return n == nil_ || n == iter_end_ || n == iter_rend_;
+    }
+
         ///////////// Wrappers over RedBlackTree ///////////////////////////////
 
         node_ptr init_iter_end() {
@@ -563,6 +581,25 @@ class red_black_tree {
             x->right_ = iter_end_; // FIXME: code from above
             return iter_end_;
         }
+
+    node_ptr init_iter_end() const {
+        if (root_ == NULL) return root_; // FIXME: bottom code
+        if (iter_end_ != NULL) return iter_end_;
+        iter_end_ = reinterpret_cast<node_ptr>(allocator_.allocate(sizeof(node)));
+        iter_end_->color = Black;
+        allocator_.construct(&(iter_end_->value_), value_type());
+        iter_end_->right_ = nil_;
+        iter_end_->left_ = nil_;
+        node_ptr x;
+        if (root_ == NULL){
+            x = root_;
+        } else {
+            x =  rb_maximum(root_);
+        }
+        iter_end_->parent = x;
+        x->right_ = iter_end_; // FIXME: code from above
+        return iter_end_;
+    }
 
         void delete_iter_end() {
             if (iter_end_ == NULL) return;
@@ -603,6 +640,27 @@ class red_black_tree {
             x->left_ = iter_rend_;  // FIXME: code from above
             return iter_rend_;
         }
+
+    node_ptr init_iter_rend() const {
+        if (root_ == NULL) return root_; // FIXME: bottom code
+        if (iter_rend_ != NULL) return iter_rend_;
+        iter_rend_ = reinterpret_cast<node_ptr>(allocator_.allocate(sizeof(node)));
+        iter_rend_->color = Black;
+        allocator_.construct(&(iter_rend_->value_), value_type());
+        iter_rend_->right_ = nil_;
+        iter_rend_->left_ = nil_;
+
+        node_ptr x;
+        if (root_ == NULL) {
+            x = root_;
+        } else {
+            x = rb_minimum(root_);
+        }
+
+        iter_rend_->parent = x;
+        x->left_ = iter_rend_;  // FIXME: code from above
+        return iter_rend_;
+    }
 
         void delete_iter_rend() {
             if (iter_rend_ == NULL) return;
@@ -814,14 +872,52 @@ class red_black_tree {
             node_ptr r = root_;
             while (r != NULL)
             {
-                if (compare_(key, r->value.first))
+                if (compare_(key, r->value_.first))
                     r = r->left_;
-                else if (compare_(r->value.first, key))
+                else if (compare_(r->value_.first, key))
                     r = r->right_;
                 else
                     return 1;
             }
             return 0;
+        }
+
+        template <class Key>
+        pair<iterator, iterator> equal_range(const Key& key) {
+            node_ptr res = init_iter_end();//this->end;
+            node_ptr rt = root_;
+            while (rt != NULL)
+            {
+                if (compare_(key, rt->value_.first))
+                {
+                    res = rt;
+                    rt = rt->left_;
+                }
+                else if (compare_(rt->value_.first, key))
+                    rt = rt->right_;
+                else
+                    return pair<iterator, iterator>(iterator(rt), iterator(rt->right_ != NULL ? rb_minimum(rt->right_) : res));
+            }
+            return pair<iterator, iterator>(iterator(res), iterator(res));
+        }
+
+        template <class Key>
+        pair<iterator, iterator> equal_range(const Key& key) const {
+            node_ptr res = init_iter_end();//this->end;
+            node_ptr rt = root_;
+            while (rt != NULL)
+            {
+                if (compare_(key, rt->value_.first))
+                {
+                    res = rt;
+                    rt = rt->left_;
+                }
+                else if (compare_(rt->value_.first, key))
+                    rt = rt->right_;
+                else
+                    return pair<const_iterator, const_iterator>(const_iterator(rt), const_iterator(rt->right_ != NULL ? rb_minimum(rt->right_) : res));
+            }
+            return pair<const_iterator, const_iterator>(const_iterator(res), const_iterator(res));
         }
 
         ///////////// Trivial helpers //////////////////////////////////////////
@@ -955,7 +1051,25 @@ class red_black_tree {
             return isBalancedUtil(root_, maxh, minh);
         }
 
+        ////////////////// operator==,!=,<,<=,>,>=: ////////////////////////////
+
+//        friend
+//        bool operator<(const red_black_tree& lhs,  const red_black_tree& rhs){
+//            return (std::lexicographical_compare(lhs.begin(), lhs.end(), rhs.begin(), rhs.end()));
+//        }
+//
+//        friend
+//        bool operator>(const red_black_tree& lhs,  const red_black_tree& rhs){
+//            return (lhs < rhs);
+//        }
+//
+//        friend
+//        bool operator==(const red_black_tree& lhs, const red_black_tree& rhs){
+//            return (lhs.size() == rhs.size() && std::equal(lhs.begin(), lhs.end(), rhs.begin()));
+//        }
+
         ////////////////////////////////////////////////////////////////////////
+
 
     private:
         value_comapre       compare_;

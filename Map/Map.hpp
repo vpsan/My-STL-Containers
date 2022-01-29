@@ -41,8 +41,21 @@ class map {
         typedef typename red_black_tree::reverse_iterator       reverse_iterator;
         typedef typename red_black_tree::const_reverse_iterator const_reverse_iterator;
 
+    private:
         ////////////////////////////////////////////////////////////////////////
+        class value_compare {
+            key_compare _compare;
 
+        public:
+            value_compare(const key_compare & compare) : _compare(compare) {}
+
+            bool operator()(const value_type & x, const value_type & y) const{
+                return (_compare(x.first, y.first));
+            }
+        };
+
+        ////////////////////////////////////////////////////////////////////////
+    public:
         explicit map(const key_compare& compare_obj = key_compare(),
                      const allocator_type& allctr_obj = Allocator())
                         : rb_tree_(compare_obj, allctr_obj) {}
@@ -77,6 +90,8 @@ class map {
         }
 
         ///////////// Element access: //////////////////////////////////////////
+
+        mapped_type& operator[] (const key_type& key);
 
         ///////////// Iterators: ///////////////////////////////////////////////
 
@@ -178,6 +193,10 @@ class map {
             }
         }
 
+        void swap (map& other) {
+            rb_tree_.swap(other.rb_tree_);
+        }
+
         ////////////////// Lookup: /////////////////////////////////////////////
 
         iterator find (const key_type& key) {
@@ -200,13 +219,80 @@ class map {
             return rb_tree_.upper_bound(key);
         }
 
+        size_type count (const key_type& key) const {
+            return rb_tree_.count(key);
+        }
+
+        pair<iterator,iterator> equal_range (const key_type& key) {
+            return rb_tree_.equal_range(key);
+        }
+
+        pair<const_iterator,const_iterator> equal_range (const key_type& key) const {
+            return rb_tree_.equal_range(key);
+        }
+
         ////////////////// Observers: //////////////////////////////////////////
+
+
+        key_compare key_comp() const {
+            return rb_tree_.value_comp();
+        }
+
+        value_compare value_comp() const {
+            // return value_compare(rb_tree_.value_comp());
+            return rb_tree_.value_comp();
+        }
+
+        ////////////////// operator==,!=,<,<=,>,>=: ////////////////////////////
+
+//        friend
+//        bool operator==(const map& lhs, const map& rhs){
+//            return (lhs.rb_tree_ == rhs.rb_tree_);
+//        }
+//
+//        friend
+//        bool operator!=(const map& lhs, const map& rhs){
+//            return !(lhs == rhs);
+//        }
+//
+//        friend
+//        bool operator<(const map& lhs, const map& rhs){
+//            return (lhs.rb_tree_ < rhs.rb_tree_);
+//        }
+//
+//        friend
+//        bool operator>(const map& lhs, const map& rhs){
+//            return (rhs < lhs);
+//        }
+//
+//        friend
+//        bool operator<=(const map& lhs, const map& rhs){
+//            return !(lhs > rhs);
+//        }
+//
+//        friend
+//        bool operator>=(const map& lhs, const map& rhs){
+//            return !(lhs < rhs);
+//        }
 
     private:
         red_black_tree rb_tree_;
+
 };
 
 ////////////////// Non-member functions: ///////////////////////////////////////
+
+template <class Key, class T, class Compare, class Allocator>
+typename map<Key, T, Compare, Allocator>::mapped_type&
+map<Key, T, Compare, Allocator>::operator[](const key_type &key) {
+    iterator p = find(key);
+    if (p == end())
+    {
+        insert(value_type(key, mapped_type()));
+        p = find(key);
+    }
+    return p->second;
+}
 
 }  // namespace ft
 
