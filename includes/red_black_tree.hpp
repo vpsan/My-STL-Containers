@@ -126,7 +126,7 @@ class red_black_tree {
             /* LegacyForwardIterator effects: "iter++" ********************** */
             RedBlackTreeBidirectionalIterator operator++(int){
                 RedBlackTreeBidirectionalIterator tmp(*this);
-                ++(*this);
+                ++(*this);//++(tmp);
                 return tmp;
             }
             /* ********** LegacyBidirectionalIterator effects *************** */
@@ -148,7 +148,7 @@ class red_black_tree {
             /* LegacyBidirectionalIterator effects: "iter--" **************** */
             RedBlackTreeBidirectionalIterator operator--(int){
                 RedBlackTreeBidirectionalIterator tmp(*this);
-                --(*this);
+                --(*this);//--(tmp);
                 return tmp;
             }
 
@@ -278,45 +278,45 @@ class red_black_tree {
 
 
                     if(y!= NULL && y->color == Red) { //case 1: (if uncle RED)
+                        // std::cout << "rb_insert-fixup-11" << std::endl;
                         z->parent->color = Black;
                         y->color = Black;
                         z->parent->parent->color = Red;
                         z = z->parent->parent; // z is a grandparent now
-                        // std::cout << "insert-case-11\n";
                     }
-                    else { //case2 or case3
+                    else {
                         if (z == z->parent->right_) { //case2: (if z is right_ child) - make it left_ child
+                            // std::cout << "rb_insert-fixup-12" << std::endl;
                             z = z->parent; //marked z.parent as new z
                             rb_left_rotate(z);
-                            // std::cout << "insert-case-12\n";
                         }
                         //case3: (if z is left_ child)
+                        // std::cout << "rb_insert-fixup-13" << std::endl;
                         z->parent->color = Black; //made parent black
                         z->parent->parent->color = Red; //made parent red
                         rb_right_rotate(z->parent->parent);
-                        // std::cout << "insert-case-13\n";
                     }
                 }
                 else if (/*z->parent->parent != NULL &&*/ z->parent == z->parent->parent->right_) { //z.parent is the right_ child
                     node_ptr y = z->parent->parent->left_; //uncle of z
 
                     if (y != NULL && y->color == Red) {
+                        // std::cout << "rb_insert-fixup-21" << std::endl;
                         z->parent->color = Black;
                         y->color = Black;
                         z->parent->parent->color = Red;
                         z = z->parent->parent;
-                        // std::cout << "insert-case-21\n";
                     }
                     else {
                         if (z == z->parent->left_) {
+                            // std::cout << "rb_insert-fixup-22" << std::endl;
                             z = z->parent; //marked z.parent as new z
                             rb_right_rotate(z);
-                            // std::cout << "insert-case-22\n";
                         }
+                        // std::cout << "rb_insert-fixup-23" << std::endl;
                         z->parent->color = Black; //made parent black
                         z->parent->parent->color = Red; //made parent red
                         rb_left_rotate(z->parent->parent);
-                        // std::cout << "insert-case-23\n";
                     }
                 }
             }
@@ -342,13 +342,17 @@ class red_black_tree {
             z->parent = y;
             // 2. Если Дерево было пустым. То новый узел Z - root
             if(/*y == nil_*/is_nil(y) == true) {
+                // std::cout << "rb_insert-1" << std::endl;
                 root_ = z;
             }
             // 3. Если нет, определяем станет Z правым или левым ребенком
-            else if(z->value_ < y->value_)
+            else if(z->value_ < y->value_) {
+                // std::cout << "rb_insert-2" << std::endl;
                 y->left_ = z;
-            else
+            } else {
+                // std::cout << "rb_insert-3" << std::endl;
                 y->right_ = z;
+            }
             // И зануляем его детей.
             z->right_ = nil_;
             z->left_ = nil_;
@@ -455,11 +459,14 @@ class red_black_tree {
             node_ptr x;
             int y_orignal_color = y->color;
 
+            bool is_allocated = false;
+
             // 1. У Z левый ребенка-NIL?
             //    - Case 1. no children or only right
             //    - Значит он имеет правого ребенка/не имеет детей.
             //    - Тогда просто Z заменяем его правым ребенком, (сохранив его)
             if (/*z->left_ == nil_*/is_nil(z->left_) == true) {
+                // std::cout << "rb_delete-1" << std::endl;
                 x = z->right_;
                 rb_transplant(z, z->right_);
             }
@@ -467,6 +474,7 @@ class red_black_tree {
             //    - Case 2. only left child
             //    - Если да, тогда просто Z заменяем его левым ребенком, (сохранив его)
             else if(/*z->right_ == nil_*/is_nil(z->right_) == true) {
+                // std::cout << "rb_delete-2" << std::endl;
                 x = z->left_;
                 rb_transplant(z, z->left_);
             }
@@ -480,16 +488,22 @@ class red_black_tree {
                 y = rb_minimum(z->right_);
                 y_orignal_color = y->color;
                 x = y->right_; //x = (y->right_ == NULL) ? y : y->right_; // +
+                if (x == NULL) { // случай когда y->right = NULL. И Y - ребенок Z. Тогда в 3.2 нам нужен непустой x
+                    x = reinterpret_cast<node_ptr>(allocator_.allocate(sizeof(node)));
+                    allocator_.construct(&(x->value_), value_type());
+                    is_allocated = true;
+                }
                 // 3.2 Если Y - ребенок Z
-                if (x != NULL && y->parent == z) {
+                if (/*x != NULL &&*/ y->parent == z) {
+                    // std::cout << "rb_delete-3" << std::endl;
                     x->parent = y;//+
-                    // y->parent = y;//+
                 }
                 // 3.3 Если Y - не ребенок Z
                 //     - Вытаскиваем Y и на его место вставляем y->right_
                 //     - Делаем копию правого поддерева Z с узлом Y
                 //     - Делаем копию правого поддерева Z с узлом Y
                 else {
+                    // std::cout << "rb_delete-4" << std::endl;
                     rb_transplant(y, y->right_);
                     y->right_ = z->right_;
                     y->right_->parent = y;
@@ -502,10 +516,14 @@ class red_black_tree {
             }
             // rb_delete_fixup - если у заменяемого элемента цвет был черный,
             //                   то придется менять цвет у него и его ребенка.
-            if (y_orignal_color == Black)
-                rb_delete_fixup(x);
+//            if (y_orignal_color == Black)
+//                rb_delete_fixup(x);
             allocator_.destroy(&z->value_);
             allocator_.deallocate(reinterpret_cast<value_type *>(z), 1);
+            if (is_allocated == true) {
+                allocator_.destroy(&x->value_);
+                allocator_.deallocate(reinterpret_cast<value_type *>(x), 1);
+            }
             z = NULL;
         }
 
