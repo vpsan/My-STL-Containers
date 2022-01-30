@@ -206,7 +206,21 @@ class red_black_tree {
                   nil_(NULL),
 //                  iter_end_(NULL),
 //                  iter_rend_(NULL),
-                  size_(0) {}
+                  size_(0) {
+            tmp_end_ = reinterpret_cast<node_ptr>(allocator_.allocate(sizeof(node)));
+            tmp_end_->is_end = true;
+            tmp_end_->color = Black;
+            allocator_.construct(&(tmp_end_->value_), value_type());
+            tmp_end_->right_ = nil_;
+            tmp_end_->left_ = nil_;
+
+            tmp_rend_ = reinterpret_cast<node_ptr>(allocator_.allocate(sizeof(node)));
+            tmp_rend_->is_end = true;
+            tmp_rend_->color = Black;
+            allocator_.construct(&(tmp_rend_->value_), value_type());
+            tmp_rend_->right_ = nil_;
+            tmp_rend_->left_ = nil_;
+        }
 
         red_black_tree(const red_black_tree& other)
                 : compare_(other.compare_),
@@ -215,7 +229,21 @@ class red_black_tree {
                   nil_(NULL),
 //                  iter_end_(NULL),
 //                  iter_rend_(NULL),
-                  size_(0) {}
+                  size_(0) {
+            tmp_end_ = reinterpret_cast<node_ptr>(allocator_.allocate(sizeof(node)));
+            tmp_end_->is_end = true;
+            tmp_end_->color = Black;
+            allocator_.construct(&(tmp_end_->value_), value_type());
+            tmp_end_->right_ = nil_;
+            tmp_end_->left_ = nil_;
+
+            tmp_rend_ = reinterpret_cast<node_ptr>(allocator_.allocate(sizeof(node)));
+            tmp_rend_->is_end = true;
+            tmp_rend_->color = Black;
+            allocator_.construct(&(tmp_rend_->value_), value_type());
+            tmp_rend_->right_ = nil_;
+            tmp_rend_->left_ = nil_;
+        }
 
         red_black_tree()
                 : compare_(value_comapre()),
@@ -224,10 +252,25 @@ class red_black_tree {
                   nil_(NULL),
 //                  iter_end_(NULL),
 //                  iter_rend_(NULL),
-                  size_(0) {}
+                  size_(0) {
+            tmp_end_ = reinterpret_cast<node_ptr>(allocator_.allocate(sizeof(node)));
+            tmp_end_->is_end = true;
+            tmp_end_->color = Black;
+            allocator_.construct(&(tmp_end_->value_), value_type());
+            tmp_end_->right_ = nil_;
+            tmp_end_->left_ = nil_;
+
+            tmp_rend_ = reinterpret_cast<node_ptr>(allocator_.allocate(sizeof(node)));
+            tmp_rend_->is_end = true;
+            tmp_rend_->color = Black;
+            allocator_.construct(&(tmp_rend_->value_), value_type());
+            tmp_rend_->right_ = nil_;
+            tmp_rend_->left_ = nil_;
+        }
 
         ~red_black_tree() {
             clear();
+            delete_end_rend();
         }
 
         ///////////// RedBlackTree /////////////////////////////////////////////
@@ -575,12 +618,12 @@ class red_black_tree {
             node_ptr end_ptr = x->right_;
             if (end_ptr != NULL) return end_ptr;
 
-            end_ptr =  reinterpret_cast<node_ptr>(allocator_.allocate(sizeof(node)));
-            end_ptr->is_end = true;
-            end_ptr->color = Black;
-            allocator_.construct(&(end_ptr->value_), value_type());
-            end_ptr->right_ = nil_;
-            end_ptr->left_ = nil_;
+            end_ptr =  tmp_end_;//reinterpret_cast<node_ptr>(allocator_.allocate(sizeof(node)));
+//            end_ptr->is_end = true;
+//            end_ptr->color = Black;
+//            allocator_.construct(&(end_ptr->value_), value_type());
+//            end_ptr->right_ = nil_;
+//            end_ptr->left_ = nil_;
             end_ptr->parent = x;
             x->right_ = end_ptr;
             return end_ptr;
@@ -592,12 +635,12 @@ class red_black_tree {
         node_ptr end_ptr = x->right_;
         if (end_ptr != NULL) return end_ptr;
 
-        end_ptr = reinterpret_cast<node_ptr>(allocator_.allocate(sizeof(node)));
-        end_ptr->is_end = true;
-        end_ptr->color = Black;
-        allocator_.construct(&(end_ptr->value_), value_type());
-        end_ptr->right_ = nil_;
-        end_ptr->left_ = nil_;
+        end_ptr =  tmp_end_;//reinterpret_cast<node_ptr>(allocator_.allocate(sizeof(node)));
+//            end_ptr->is_end = true;
+//            end_ptr->color = Black;
+//            allocator_.construct(&(end_ptr->value_), value_type());
+//            end_ptr->right_ = nil_;
+//            end_ptr->left_ = nil_;
         end_ptr->parent = x;
         x->right_ = end_ptr;
         return end_ptr;
@@ -614,8 +657,8 @@ class red_black_tree {
             end_ptr->right_ = NULL;
             // end_ptr->is_end = false;
             x->right_ = nil_;
-            allocator_.destroy(&end_ptr->value_);
-            allocator_.deallocate(reinterpret_cast<value_type *>(end_ptr), 1);
+//            allocator_.destroy(&end_ptr->value_);
+//            allocator_.deallocate(reinterpret_cast<value_type *>(end_ptr), 1);
             end_ptr = NULL;
         }
 
@@ -625,12 +668,12 @@ class red_black_tree {
             node_ptr rend_ptr = x->left_;
             if (rend_ptr != NULL) return rend_ptr;
 
-            rend_ptr =  reinterpret_cast<node_ptr>(allocator_.allocate(sizeof(node)));
-            rend_ptr->is_end = true;
-            rend_ptr->color = Black;
-            allocator_.construct(&(rend_ptr->value_), value_type());
-            rend_ptr->right_ = nil_;
-            rend_ptr->left_ = nil_;
+            rend_ptr =  tmp_rend_;//reinterpret_cast<node_ptr>(allocator_.allocate(sizeof(node)));
+//            rend_ptr->is_end = true;
+//            rend_ptr->color = Black;
+//            allocator_.construct(&(rend_ptr->value_), value_type());
+//            rend_ptr->right_ = nil_;
+//            rend_ptr->left_ = nil_;
             rend_ptr->parent = x;
             x->left_ = rend_ptr;
             return rend_ptr;
@@ -642,12 +685,12 @@ class red_black_tree {
         node_ptr rend_ptr = x->left_;
         if (rend_ptr != NULL) return rend_ptr;
 
-        rend_ptr =  reinterpret_cast<node_ptr>(allocator_.allocate(sizeof(node)));
-        rend_ptr->is_end = true;
-        rend_ptr->color = Black;
-        allocator_.construct(&(rend_ptr->value_), value_type());
-        rend_ptr->right_ = nil_;
-        rend_ptr->left_ = nil_;
+        rend_ptr =  tmp_rend_;//reinterpret_cast<node_ptr>(allocator_.allocate(sizeof(node)));
+//            rend_ptr->is_end = true;
+//            rend_ptr->color = Black;
+//            allocator_.construct(&(rend_ptr->value_), value_type());
+//            rend_ptr->right_ = nil_;
+//            rend_ptr->left_ = nil_;
         rend_ptr->parent = x;
         x->left_ = rend_ptr;
         return rend_ptr;
@@ -664,8 +707,8 @@ class red_black_tree {
             rend_ptr->right_ = NULL;
             // end_ptr->is_end = false;
             x->left_ = nil_;
-            allocator_.destroy(&rend_ptr->value_);
-            allocator_.deallocate(reinterpret_cast<value_type *>(rend_ptr), 1);
+//            allocator_.destroy(&rend_ptr->value_);
+//            allocator_.deallocate(reinterpret_cast<value_type *>(rend_ptr), 1);
             rend_ptr = NULL;
         }
 
@@ -761,7 +804,30 @@ class red_black_tree {
             delete_iter_rend();
             clear_node(root_);
             root_ = NULL; // FIXME: why needed?
+//            if (tmp_end_ != NULL) {
+//                allocator_.destroy(&tmp_end_->value_);
+//                allocator_.deallocate(reinterpret_cast<value_type *>(tmp_end_), 1);
+//                tmp_end_ = NULL;
+//            }
+//            if (tmp_rend_ != NULL) {
+//                allocator_.destroy(&tmp_rend_->value_);
+//                allocator_.deallocate(reinterpret_cast<value_type *>(tmp_rend_), 1);
+//                tmp_rend_ = NULL;
+//            }
             size_ = 0;
+        }
+
+        void delete_end_rend(){
+            if (tmp_end_ != NULL) {
+                allocator_.destroy(&tmp_end_->value_);
+                allocator_.deallocate(reinterpret_cast<value_type *>(tmp_end_), 1);
+                tmp_end_ = NULL;
+            }
+            if (tmp_rend_ != NULL) {
+                allocator_.destroy(&tmp_rend_->value_);
+                allocator_.deallocate(reinterpret_cast<value_type *>(tmp_rend_), 1);
+                tmp_rend_ = NULL;
+            }
         }
 
         void print_sorted_tree(){
@@ -945,6 +1011,8 @@ class red_black_tree {
 //            std::swap(this->iter_end_, other.iter_end_);
 //            std::swap(this->iter_rend_, other.iter_rend_);
             std::swap(this->size_, other.size_);
+            std::swap(this->tmp_end_, other.tmp_end_);
+            std::swap(this->tmp_rend_, other.tmp_rend_);
         }
 
         ///////////// Iterators: ///////////////////////////////////////////////
@@ -1077,6 +1145,8 @@ class red_black_tree {
 //        node_ptr            iter_end_;
 //        node_ptr            iter_rend_;
         size_type           size_;
+        node_ptr            tmp_end_;
+        node_ptr            tmp_rend_;
     };
 
 }  // namespace ft

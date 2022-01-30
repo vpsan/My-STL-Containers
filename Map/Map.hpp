@@ -74,6 +74,7 @@ class map {
 
         ~map() {
             rb_tree_.clear();
+            rb_tree_.delete_end_rend();
         }
 
         map& operator=(const map& other) {
