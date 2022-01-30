@@ -5,45 +5,23 @@
 # include <algorithm>   // min max for IsBalanced
 # include <iostream>    // std::cout for debug
 
-# define Red    1
-# define Black  0
+# define RED    true
+# define BLACK  false
 
 namespace ft {
 
 ///////////////////// struct tree_node: ////////////////////////////////////////
-
 template <class T>
 struct tree_node {
-//    public:
         typedef tree_node<T>*   node_ptr;
         typedef T               value_type;
 
-//    public:
         value_type              value_;
         node_ptr                right_;
         node_ptr                left_;
         node_ptr                parent;
         bool                    is_end;
-        int                     color;
-
-//    public:
-//        tree_node(value_type value)
-//                : value_(value),
-//                  right_(NULL),
-//                  left_(NULL),
-//                  parent(NULL),
-//                  color(Red) {}
-//
-//        tree_node(value_type value,
-//                  node_ptr right_,
-//                  node_ptr left_,
-//                  node_ptr parent,
-//                  int color)
-//                : value_(value),
-//                  right_(right_),
-//                  left_(left_),
-//                  parent(parent),
-//                  color(color) {}
+        bool                    color;
 };
 
 ///////////////////// class red_black_tree: ////////////////////////////////////
@@ -53,7 +31,7 @@ template <class T,
 class red_black_tree {
 
     public:
-        ///////////// typedef part 1: //////////////////////////////////////////
+        ///////////// typedef part 1 (without iterators): //////////////////////
         typedef T                                   value_type;
         typedef Compare                             value_comapre;
         typedef Allocator                           allocator_type;
@@ -126,7 +104,7 @@ class red_black_tree {
             /* LegacyForwardIterator effects: "iter++" ********************** */
             RedBlackTreeBidirectionalIterator operator++(int){
                 RedBlackTreeBidirectionalIterator tmp(*this);
-                ++(*this);//++(tmp);
+                ++(*this);
                 return tmp;
             }
             /* ********** LegacyBidirectionalIterator effects *************** */
@@ -148,7 +126,7 @@ class red_black_tree {
             /* LegacyBidirectionalIterator effects: "iter--" **************** */
             RedBlackTreeBidirectionalIterator operator--(int){
                 RedBlackTreeBidirectionalIterator tmp(*this);
-                --(*this);//--(tmp);
+                --(*this);
                 return tmp;
             }
 
@@ -156,20 +134,21 @@ class red_black_tree {
             node_ptr ptr_;
             node_ptr nil_;
 
+        private:
             node_ptr rb_iter_maximum(node_ptr x) {
-                while(/*x->right_ != nil_*/is_nil(x->right_) == false)
+                while(is_nil(x->right_) == false)
                     x = x->right_;
                 return x;
             }
 
             node_ptr rb_iter_minimum(node_ptr x) {
-                while(/*x->left_ != nil_*/is_nil(x->left_) == false)
+                while(is_nil(x->left_) == false)
                     x = x->left_;
                 return x;
             }
 
             bool is_nil(node_ptr n) {
-                return n == nil_ || n->is_end == true;//|| n == iter_end_ || n == iter_rend_;
+                return n == nil_ || n->is_end == true;
             }
 
         };
@@ -190,33 +169,30 @@ class red_black_tree {
         }
 
     public:
-        ///////////// typedef part 2: //////////////////////////////////////////
+        ///////////// typedef part 2 (iterators): //////////////////////////////
         typedef RedBlackTreeBidirectionalIterator<false>          iterator;
         typedef RedBlackTreeBidirectionalIterator<true>           const_iterator;
         typedef ReverseIterator<iterator>                         reverse_iterator;
         typedef ReverseIterator<const_iterator>                   const_reverse_iterator;
 
-        ////////////////////////////////////////////////////////////////////////
-
+        ///////////// constructor(s)/destructor/operator=: /////////////////////
         explicit red_black_tree(const value_comapre& compare_obj,
                                 const allocator_type& allctr_obj)
                 : compare_(compare_obj),
                   allocator_(allctr_obj),
                   root_(NULL),
                   nil_(NULL),
-//                  iter_end_(NULL),
-//                  iter_rend_(NULL),
                   size_(0) {
             tmp_end_ = reinterpret_cast<node_ptr>(allocator_.allocate(sizeof(node)));
             tmp_end_->is_end = true;
-            tmp_end_->color = Black;
+            tmp_end_->color = BLACK;
             allocator_.construct(&(tmp_end_->value_), value_type());
             tmp_end_->right_ = nil_;
             tmp_end_->left_ = nil_;
 
             tmp_rend_ = reinterpret_cast<node_ptr>(allocator_.allocate(sizeof(node)));
             tmp_rend_->is_end = true;
-            tmp_rend_->color = Black;
+            tmp_rend_->color = BLACK;
             allocator_.construct(&(tmp_rend_->value_), value_type());
             tmp_rend_->right_ = nil_;
             tmp_rend_->left_ = nil_;
@@ -227,19 +203,17 @@ class red_black_tree {
                   allocator_(other.allocator_),
                   root_(NULL),
                   nil_(NULL),
-//                  iter_end_(NULL),
-//                  iter_rend_(NULL),
                   size_(0) {
             tmp_end_ = reinterpret_cast<node_ptr>(allocator_.allocate(sizeof(node)));
             tmp_end_->is_end = true;
-            tmp_end_->color = Black;
+            tmp_end_->color = BLACK;
             allocator_.construct(&(tmp_end_->value_), value_type());
             tmp_end_->right_ = nil_;
             tmp_end_->left_ = nil_;
 
             tmp_rend_ = reinterpret_cast<node_ptr>(allocator_.allocate(sizeof(node)));
             tmp_rend_->is_end = true;
-            tmp_rend_->color = Black;
+            tmp_rend_->color = BLACK;
             allocator_.construct(&(tmp_rend_->value_), value_type());
             tmp_rend_->right_ = nil_;
             tmp_rend_->left_ = nil_;
@@ -250,19 +224,17 @@ class red_black_tree {
                   allocator_(allocator_type()),
                   root_(NULL),
                   nil_(NULL),
-//                  iter_end_(NULL),
-//                  iter_rend_(NULL),
                   size_(0) {
             tmp_end_ = reinterpret_cast<node_ptr>(allocator_.allocate(sizeof(node)));
             tmp_end_->is_end = true;
-            tmp_end_->color = Black;
+            tmp_end_->color = BLACK;
             allocator_.construct(&(tmp_end_->value_), value_type());
             tmp_end_->right_ = nil_;
             tmp_end_->left_ = nil_;
 
             tmp_rend_ = reinterpret_cast<node_ptr>(allocator_.allocate(sizeof(node)));
             tmp_rend_->is_end = true;
-            tmp_rend_->color = Black;
+            tmp_rend_->color = BLACK;
             allocator_.construct(&(tmp_rend_->value_), value_type());
             tmp_rend_->right_ = nil_;
             tmp_rend_->left_ = nil_;
@@ -274,16 +246,15 @@ class red_black_tree {
         }
 
         ///////////// RedBlackTree /////////////////////////////////////////////
-
         void rb_left_rotate(node_ptr x){
             node_ptr y = x->right_; // 1. Обозначаем правого ребенка Y
             x->right_ = y->left_;   // 1. Теперь левый ребенок Y - правый ребенок X
-            if (/*y->left_ != nil_*/is_nil(y->left_) == false) { // 1. Если ребенок "левый ребенок Y" не NIL - то меняем у "левый ребенок Y" родителя на Х
+            if (is_nil(y->left_) == false) { // 1. Если ребенок "левый ребенок Y" не NIL - то меняем у "левый ребенок Y" родителя на Х
                 y->left_->parent = x;
             }
 
             y->parent = x->parent;  // 2. Меняем родителя y на родителя Х
-            if (/*x->parent == nil_*/is_nil(x->parent) == true) {// 3. Если X был - root, то переобозначим Y на root
+            if (is_nil(x->parent) == true) {// 3. Если X был - root, то переобозначим Y на root
                 root_ = y;
             }
             else if (x == x->parent->left_) {// 3. Если X не был - root, то он был либо правым либо левым ребенком. Делаем Y либо правым либо левым ребенком "X.отца"
@@ -302,17 +273,17 @@ class red_black_tree {
             node_ptr y = x->left_;
 
             x->left_ = y->right_;
-            if(/*y->right_ != nil_*/ is_nil(y->right_) == false) {
+            if(is_nil(y->right_) == false) {
                 y->right_->parent = x;
             }
             y->parent = x->parent;
-            if(/*x->parent == nil_*/is_nil(x->parent) == true) { //x is root
+            if(is_nil(x->parent) == true) {
                 root_ = y;
             }
-            else if(x == x->parent->right_) { //x is left_ child
+            else if(x == x->parent->right_) {
                 x->parent->right_ = y;
             }
-            else { //x is right_ child
+            else {
                 x->parent->left_ = y;
             }
             y->right_ = x;
@@ -320,16 +291,16 @@ class red_black_tree {
         }
 
         void rb_insertion_fixup(node_ptr z){
-            while(z != NULL && z->parent != NULL && z->parent->color == Red) {
+            while(z != NULL && z->parent != NULL && z->parent->color == RED) {
                 if(z->parent == z->parent->parent->left_) { //1. z.parent is the left_ child
                     node_ptr y = z->parent->parent->right_; //   Y = uncle of z
 
 
-                    if(y!= NULL && y->color == Red) { //case 1: (if uncle RED)
+                    if(y!= NULL && y->color == RED) { //case 1: (if uncle RED)
                         // std::cout << "rb_insert-fixup-11" << std::endl;
-                        z->parent->color = Black;
-                        y->color = Black;
-                        z->parent->parent->color = Red;
+                        z->parent->color = BLACK;
+                        y->color = BLACK;
+                        z->parent->parent->color = RED;
                         z = z->parent->parent; // z is a grandparent now
                     }
                     else {
@@ -340,19 +311,19 @@ class red_black_tree {
                         }
                         //case3: (if z is left_ child)
                         // std::cout << "rb_insert-fixup-13" << std::endl;
-                        z->parent->color = Black; //made parent black
-                        z->parent->parent->color = Red; //made parent red
+                        z->parent->color = BLACK; //made parent black
+                        z->parent->parent->color = RED; //made parent red
                         rb_right_rotate(z->parent->parent);
                     }
                 }
-                else if (/*z->parent->parent != NULL &&*/ z->parent == z->parent->parent->right_) { //z.parent is the right_ child
+                else if (z->parent == z->parent->parent->right_) { //z.parent is the right_ child
                     node_ptr y = z->parent->parent->left_; //uncle of z
 
-                    if (y != NULL && y->color == Red) {
+                    if (y != NULL && y->color == RED) {
                         // std::cout << "rb_insert-fixup-21" << std::endl;
-                        z->parent->color = Black;
-                        y->color = Black;
-                        z->parent->parent->color = Red;
+                        z->parent->color = BLACK;
+                        y->color = BLACK;
+                        z->parent->parent->color = RED;
                         z = z->parent->parent;
                     }
                     else {
@@ -362,13 +333,13 @@ class red_black_tree {
                             rb_right_rotate(z);
                         }
                         // std::cout << "rb_insert-fixup-23" << std::endl;
-                        z->parent->color = Black; //made parent black
-                        z->parent->parent->color = Red; //made parent red
+                        z->parent->color = BLACK; //made parent black
+                        z->parent->parent->color = RED; //made parent red
                         rb_left_rotate(z->parent->parent);
                     }
                 }
             }
-            root_->color = Black;
+            root_->color = BLACK;
         }
 
         void rb_insert(node_ptr z){
@@ -380,7 +351,7 @@ class red_black_tree {
             node_ptr  temp = root_;
             node_ptr  y = nil_;
 
-            while(/*temp != nil_*/is_nil(temp) == false) {
+            while(is_nil(temp) == false) {
                 y = temp;
                 if(z->value_ < temp->value_)
                     temp = temp->left_;
@@ -389,7 +360,7 @@ class red_black_tree {
             }
             z->parent = y;
             // 2. Если Дерево было пустым. То новый узел Z - root
-            if(/*y == nil_*/is_nil(y) == true) {
+            if(is_nil(y) == true) {
                 // std::cout << "rb_insert-1" << std::endl;
                 root_ = z;
             }
@@ -411,7 +382,7 @@ class red_black_tree {
         void rb_transplant(node_ptr u, node_ptr v) {
             // 1. Является U ли корнем?
             //    - если да, то V - корень
-            if(/*u->parent == nil_*/is_nil(u->parent) == true)
+            if(is_nil(u->parent) == true)
                 root_ = v;
             // 2. Если U левый сын ...
             else if(u == u->parent->left_)
@@ -424,102 +395,98 @@ class red_black_tree {
         }
 
         node_ptr rb_maximum(node_ptr x) {
-            while(/*x->right_ != nil_*/is_nil(x->right_) == false)
+            while(is_nil(x->right_) == false)
                 x = x->right_;
             return x;
         }
 
-    node_ptr rb_maximum(node_ptr x) const {
-        while(/*x->right_ != nil_*/is_nil(x->right_) == false)
-            x = x->right_;
-        return x;
-    }
-
         node_ptr rb_minimum(node_ptr x) {
-            // Мин элемент - элемент без левого потомка в заданном поддерев
-            // (если говорить про удаление - то рассматриваем правое поддерево)
-            while(/*x->left_ != nil_*/is_nil(x->left_) == false)
+            while(is_nil(x->left_) == false)
                 x = x->left_;
             return x;
         }
 
-    node_ptr rb_minimum(node_ptr x) const {
-        // Мин элемент - элемент без левого потомка в заданном поддерев
-        // (если говорить про удаление - то рассматриваем правое поддерево)
-        while(/*x->left_ != nil_*/is_nil(x->left_) == false)
-            x = x->left_;
-        return x;
-    }
+        node_ptr rb_maximum(node_ptr x) const {
+            while(is_nil(x->right_) == false)
+                x = x->right_;
+            return x;
+        }
+
+        node_ptr rb_minimum(node_ptr x) const {
+            while(is_nil(x->left_) == false)
+                x = x->left_;
+            return x;
+        }
 
         void rb_delete_fixup(node_ptr x) {
-            while(x != root_ && x != NULL && x->color == Black) {
+            while(x != root_ && x != NULL && x->color == BLACK) {
                 if (x == x->parent->left_) {
                     node_ptr w = x->parent->right_;
-                    if (w->color == Red) {
+                    if (w->color == RED) {
                         // std::cout << "delete-case-11\n";
-                        w->color = Black;
-                        x->parent->color = Red;
+                        w->color = BLACK;
+                        x->parent->color = RED;
                         rb_left_rotate(x->parent);
                         w = x->parent->right_;
                     }
-                    if(w->left_->color == Black && w->right_->color == Black) {
+                    if(w->left_->color == BLACK && w->right_->color == BLACK) {
                         // std::cout << "delete-case-12\n";
-                        w->color = Red;
+                        w->color = RED;
                         x = x->parent;
                     }
                     else {
-                        if (w->right_->color == Black) {
-                            w->left_->color = Black;
-                            w->color = Red;
+                        if (w->right_->color == BLACK) {
+                            w->left_->color = BLACK;
+                            w->color = RED;
                             rb_right_rotate(w);
                             w = x->parent->right_;
                         }
                         // std::cout << "delete-case-13\n";
                         w->color = x->parent->color;
-                        x->parent->color = Black;
-                        w->right_->color = Black;
+                        x->parent->color = BLACK;
+                        w->right_->color = BLACK;
                         rb_left_rotate(x->parent);
                         x = root_;
                     }
                 }
                 else {
                     node_ptr w = x->parent->left_;
-                    if (w->color == Red) {
+                    if (w->color == RED) {
                         // std::cout << "delete-case-21\n";
-                        w->color = Black;
-                        x->parent->color = Red;
+                        w->color = BLACK;
+                        x->parent->color = RED;
                         rb_right_rotate(x->parent);
                         w = x->parent->left_;
                     }
-                    if (w->right_->color == Black && w->left_->color == Black) {
+                    if (w->right_->color == BLACK && w->left_->color == BLACK) {
                         // std::cout << "delete-case-22\n";
-                        w->color = Red;
+                        w->color = RED;
                         x = x->parent;
                     }
                     else {
-                        if(w->left_->color == Black) {
-                            w->right_->color = Black;
-                            w->color = Red;
+                        if(w->left_->color == BLACK) {
+                            w->right_->color = BLACK;
+                            w->color = RED;
                             rb_left_rotate(w);
                             w = x->parent->left_;
                         }
                         // std::cout << "delete-case-23\n";
                         w->color = x->parent->color;
-                        x->parent->color = Black;
-                        w->left_->color = Black;
+                        x->parent->color = BLACK;
+                        w->left_->color = BLACK;
                         rb_right_rotate(x->parent);
                         x = root_;
                     }
                 }
             }
             if (x == NULL) return;
-            x->color = Black;
+            x->color = BLACK;
         }
 
         void rb_delete(node_ptr z){
             node_ptr y = z;
             node_ptr x;
-            int y_orignal_color = y->color;
+            bool y_orignal_color = y->color;
 
             bool is_allocated = false;
 
@@ -527,7 +494,7 @@ class red_black_tree {
             //    - Case 1. no children or only right
             //    - Значит он имеет правого ребенка/не имеет детей.
             //    - Тогда просто Z заменяем его правым ребенком, (сохранив его)
-            if (/*z->left_ == nil_*/is_nil(z->left_) == true) {
+            if (is_nil(z->left_) == true) {
                 // std::cout << "rb_delete-1" << std::endl;
                 x = z->right_;
                 rb_transplant(z, z->right_);
@@ -535,7 +502,7 @@ class red_black_tree {
             // 2. У Z левый ребенка !=NIL, но правый ребенок - NILL?
             //    - Case 2. only left child
             //    - Если да, тогда просто Z заменяем его левым ребенком, (сохранив его)
-            else if(/*z->right_ == nil_*/is_nil(z->right_) == true) {
+            else if(is_nil(z->right_) == true) {
                 // std::cout << "rb_delete-2" << std::endl;
                 x = z->left_;
                 rb_transplant(z, z->left_);
@@ -557,7 +524,7 @@ class red_black_tree {
                     is_allocated = true;
                 }
                 // 3.2 Если Y - ребенок Z
-                if (/*x != NULL &&*/ y->parent == z) {
+                if (y->parent == z) {
                     // std::cout << "rb_delete-3" << std::endl;
                     x->parent = y;//+
                 }
@@ -579,8 +546,8 @@ class red_black_tree {
             }
             // rb_delete_fixup - если у заменяемого элемента цвет был черный,
             //                   то придется менять цвет у него и его ребенка.
-//            if (y_orignal_color == Black)
-//                rb_delete_fixup(x);
+            // if (y_orignal_color == BLACK)
+            //     rb_delete_fixup(x);
             allocator_.destroy(&z->value_);
             allocator_.deallocate(reinterpret_cast<value_type *>(z), 1);
             if (is_allocated == true) {
@@ -591,60 +558,45 @@ class red_black_tree {
         }
 
         void inorder(node_ptr n) {
-            // delete_iter_end();
-            // delete_iter_rend();
-            if( /*n != nil_*/ is_nil(n) == false) {
+            if(is_nil(n) == false) {
                 inorder(n->left_);
                 std::cout << "value = " << n->value_ << std::endl;
                 inorder(n->right_);
             }
-            // iter_end_ = init_iter_end();
-            // iter_rend_ = init_iter_rend();
         }
 
         bool is_nil(node_ptr n) {
-            return n == nil_ || n->is_end == true;//|| n == iter_end_ || n == iter_rend_;
+            return n == nil_ || n->is_end == true;
         }
 
-    bool is_nil(node_ptr n) const {
-        return n == nil_ || n->is_end == true;//|| n == iter_end_ || n == iter_rend_;
-    }
+        bool is_nil(node_ptr n) const {
+            return n == nil_ || n->is_end == true;
+        }
 
         ///////////// Wrappers over RedBlackTree ///////////////////////////////
-
         node_ptr init_iter_end() {
             if (root_ == NULL) return root_;
             node_ptr x = rb_maximum(root_);
             node_ptr end_ptr = x->right_;
             if (end_ptr != NULL) return end_ptr;
 
-            end_ptr =  tmp_end_;//reinterpret_cast<node_ptr>(allocator_.allocate(sizeof(node)));
-//            end_ptr->is_end = true;
-//            end_ptr->color = Black;
-//            allocator_.construct(&(end_ptr->value_), value_type());
-//            end_ptr->right_ = nil_;
-//            end_ptr->left_ = nil_;
+            end_ptr =  tmp_end_;
             end_ptr->parent = x;
             x->right_ = end_ptr;
             return end_ptr;
         }
 
-    node_ptr init_iter_end() const {
-        if (root_ == NULL) return root_;
-        node_ptr x = rb_maximum(root_);
-        node_ptr end_ptr = x->right_;
-        if (end_ptr != NULL) return end_ptr;
+        node_ptr init_iter_end() const {
+            if (root_ == NULL) return root_;
+            node_ptr x = rb_maximum(root_);
+            node_ptr end_ptr = x->right_;
+            if (end_ptr != NULL) return end_ptr;
 
-        end_ptr =  tmp_end_;//reinterpret_cast<node_ptr>(allocator_.allocate(sizeof(node)));
-//            end_ptr->is_end = true;
-//            end_ptr->color = Black;
-//            allocator_.construct(&(end_ptr->value_), value_type());
-//            end_ptr->right_ = nil_;
-//            end_ptr->left_ = nil_;
-        end_ptr->parent = x;
-        x->right_ = end_ptr;
-        return end_ptr;
-    }
+            end_ptr =  tmp_end_;
+            end_ptr->parent = x;
+            x->right_ = end_ptr;
+            return end_ptr;
+        }
 
         void delete_iter_end() {
             if (root_ == NULL) return;
@@ -655,10 +607,7 @@ class red_black_tree {
             end_ptr->parent = NULL;
             end_ptr->left_ = NULL;
             end_ptr->right_ = NULL;
-            // end_ptr->is_end = false;
             x->right_ = nil_;
-//            allocator_.destroy(&end_ptr->value_);
-//            allocator_.deallocate(reinterpret_cast<value_type *>(end_ptr), 1);
             end_ptr = NULL;
         }
 
@@ -668,33 +617,23 @@ class red_black_tree {
             node_ptr rend_ptr = x->left_;
             if (rend_ptr != NULL) return rend_ptr;
 
-            rend_ptr =  tmp_rend_;//reinterpret_cast<node_ptr>(allocator_.allocate(sizeof(node)));
-//            rend_ptr->is_end = true;
-//            rend_ptr->color = Black;
-//            allocator_.construct(&(rend_ptr->value_), value_type());
-//            rend_ptr->right_ = nil_;
-//            rend_ptr->left_ = nil_;
+            rend_ptr =  tmp_rend_;
             rend_ptr->parent = x;
             x->left_ = rend_ptr;
             return rend_ptr;
         }
 
-    node_ptr init_iter_rend() const {
-        if (root_ == NULL) return root_;
-        node_ptr x = rb_minimum(root_);
-        node_ptr rend_ptr = x->left_;
-        if (rend_ptr != NULL) return rend_ptr;
+        node_ptr init_iter_rend() const {
+            if (root_ == NULL) return root_;
+            node_ptr x = rb_minimum(root_);
+            node_ptr rend_ptr = x->left_;
+            if (rend_ptr != NULL) return rend_ptr;
 
-        rend_ptr =  tmp_rend_;//reinterpret_cast<node_ptr>(allocator_.allocate(sizeof(node)));
-//            rend_ptr->is_end = true;
-//            rend_ptr->color = Black;
-//            allocator_.construct(&(rend_ptr->value_), value_type());
-//            rend_ptr->right_ = nil_;
-//            rend_ptr->left_ = nil_;
-        rend_ptr->parent = x;
-        x->left_ = rend_ptr;
-        return rend_ptr;
-    }
+            rend_ptr =  tmp_rend_;
+            rend_ptr->parent = x;
+            x->left_ = rend_ptr;
+            return rend_ptr;
+        }
 
         void delete_iter_rend() {
             if (root_ == NULL) return;
@@ -705,24 +644,19 @@ class red_black_tree {
             rend_ptr->parent = NULL;
             rend_ptr->left_ = NULL;
             rend_ptr->right_ = NULL;
-            // end_ptr->is_end = false;
             x->left_ = nil_;
-//            allocator_.destroy(&rend_ptr->value_);
-//            allocator_.deallocate(reinterpret_cast<value_type *>(rend_ptr), 1);
             rend_ptr = NULL;
         }
 
         void insert(const value_type& value) {
             node_ptr z = reinterpret_cast<node_ptr>(allocator_.allocate(sizeof(node)));
-            z->color = Red;
+            z->color = RED;
             z->is_end = false;
             allocator_.construct(&(z->value_), value);
             delete_iter_end();
             delete_iter_rend();
             rb_insert(z);
             size_++;
-//            iter_end_ = init_iter_end();
-//            iter_rend_ = init_iter_rend();
             init_iter_end();
             init_iter_rend();
         }
@@ -730,7 +664,7 @@ class red_black_tree {
         template<class InputIterator>
         void insert(InputIterator first, InputIterator last) {
             for (; first != last; ++first)
-                insert(*first); // FIXME: if it = end() then *it is not defined
+                insert(*first);
         }
 
         void erase(const value_type &value) {
@@ -746,15 +680,8 @@ class red_black_tree {
                 else
                     z = z->left_;
             }
-//            if (z == NULL) {
-//                return;
-//                iter_end_ = init_iter_end();
-//                iter_rend_ = init_iter_rend();
-//            }
             rb_delete(z);
             size_--;
-//            iter_end_ = init_iter_end();
-//            iter_rend_ = init_iter_rend();
             init_iter_end();
             init_iter_rend();
         }
@@ -763,7 +690,7 @@ class red_black_tree {
         void erase(InputIterator it) {
             if (root_ == NULL) return ;
             node_ptr z = root_;
-            value_type value = *it; // FIXME: if it = end() then *it is not defined
+            value_type value = *it;
 
             delete_iter_end();
             delete_iter_rend();
@@ -774,15 +701,8 @@ class red_black_tree {
                 else
                     z = z->left_;
             }
-//            if (z == NULL) {
-//                return;
-//                iter_end_ = init_iter_end();
-//                iter_rend_ = init_iter_rend();
-//            }
             rb_delete(z);
             size_--;
-//            iter_end_ = init_iter_end();
-//            iter_rend_ = init_iter_rend();
             init_iter_end();
             init_iter_rend();
         }
@@ -804,16 +724,6 @@ class red_black_tree {
             delete_iter_rend();
             clear_node(root_);
             root_ = NULL; // FIXME: why needed?
-//            if (tmp_end_ != NULL) {
-//                allocator_.destroy(&tmp_end_->value_);
-//                allocator_.deallocate(reinterpret_cast<value_type *>(tmp_end_), 1);
-//                tmp_end_ = NULL;
-//            }
-//            if (tmp_rend_ != NULL) {
-//                allocator_.destroy(&tmp_rend_->value_);
-//                allocator_.deallocate(reinterpret_cast<value_type *>(tmp_rend_), 1);
-//                tmp_rend_ = NULL;
-//            }
             size_ = 0;
         }
 
@@ -834,12 +744,9 @@ class red_black_tree {
             delete_iter_end();
             delete_iter_rend();
             inorder(root_);
-            // iter_end_ = init_iter_end();
-            // iter_rend_ = init_iter_rend();
         }
 
         ///////////// Key methods / Map Lookup /////////////////////////////////
-
         template <class Key>
         iterator get_upper_bound(const Key &key, node_ptr root, node_ptr result) {
             while (root != NULL) {
@@ -942,7 +849,7 @@ class red_black_tree {
 
         template <class Key>
         pair<iterator, iterator> equal_range(const Key& key) {
-            node_ptr res = init_iter_end();//this->end;
+            node_ptr res = init_iter_end();
             node_ptr rt = root_;
             while (rt != NULL) {
                 if (compare_(key, rt->value_.first)) {
@@ -962,7 +869,7 @@ class red_black_tree {
 
         template <class Key>
         pair<iterator, iterator> equal_range(const Key& key) const {
-            node_ptr res = init_iter_end();//this->end;
+            node_ptr res = init_iter_end();
             node_ptr rt = root_;
             while (rt != NULL) {
                 if (compare_(key, rt->value_.first)) {
@@ -982,7 +889,6 @@ class red_black_tree {
         }
 
         ///////////// Trivial helpers //////////////////////////////////////////
-
         size_type size() const {
             return size_;
         }
@@ -1008,40 +914,25 @@ class red_black_tree {
             std::swap(this->allocator_, other.allocator_);
             std::swap(this->root_, other.root_);
             std::swap(this->nil_, other.nil_);
-//            std::swap(this->iter_end_, other.iter_end_);
-//            std::swap(this->iter_rend_, other.iter_rend_);
             std::swap(this->size_, other.size_);
             std::swap(this->tmp_end_, other.tmp_end_);
             std::swap(this->tmp_rend_, other.tmp_rend_);
         }
 
         ///////////// Iterators: ///////////////////////////////////////////////
-
         iterator begin() {
             return iterator( size_ == 0 ? root_ : rb_minimum(root_) );
         }
+
         iterator end() {
-//            if (iter_end_ == NULL) {
-//                iter_end_ = init_iter_end();
-//                return iterator(iter_end_);
-//            }
-//            else {
-//                return iterator(iter_end_);
-//            }
             return iterator(init_iter_end());
         }
 
         const_iterator begin() const {
             return iterator( size_ == 0 ? root_ : rb_minimum(root_) );
         }
+
         const_iterator end() const {
-//            if (iter_end_ == NULL) {
-//                iter_end_ = init_iter_end();
-//                return const_iterator(iter_end_);
-//            }
-//            else {
-//                return const_iterator(iter_end_);
-//            }
             return const_iterator(init_iter_end());
         }
 
@@ -1050,13 +941,6 @@ class red_black_tree {
         }
 
         reverse_iterator rend() {
-//            if (iter_rend_ == NULL) {
-//                iter_rend_ = init_iter_rend();
-//                return reverse_iterator(iterator(iter_rend_));;
-//            }
-//            else {
-//                return reverse_iterator(iterator(iter_rend_));;
-//            }
             return reverse_iterator(init_iter_rend());
         }
 
@@ -1065,25 +949,16 @@ class red_black_tree {
         }
 
         const_reverse_iterator rend() const {
-//            if (iter_rend_ == NULL) {
-//                iter_rend_ = init_iter_rend();
-//                return const_reverse_iterator(iterator(iter_rend_));;
-//            }
-//            else {
-//                return const_reverse_iterator(iterator(iter_rend_));;
-//            }
             return const_reverse_iterator(init_iter_rend());
         }
 
         ///////////// isBalanced ///////////////////////////////////////////////
-
-        // Returns true if the Binary tree is balanced like a Red-Black tree.
+        // Returns true if the Binary tree is balanced like a RED-BLACK tree.
         // This function also sets value in maxh and minh (passed by reference).
         // "maxh" and "minh" are set as maximum and minimum heights of root.
         bool isBalancedUtil(node_ptr root, int &maxh, int &minh) {
             // Base case
-            if (root == NULL)
-            {
+            if (root == NULL) {
                 maxh = minh = 0;
                 return true;
             }
@@ -1135,19 +1010,18 @@ class red_black_tree {
 //            return (lhs.size() == rhs.size() && std::equal(lhs.begin(), lhs.end(), rhs.begin()));
 //        }
 
-        ////////////////////////////////////////////////////////////////////////
-
     private:
+        ///////////// data fields: /////////////////////////////////////////////
         value_comapre       compare_;
         allocator_type      allocator_;
         node_ptr            root_;
         node_ptr            nil_;
-//        node_ptr            iter_end_;
-//        node_ptr            iter_rend_;
         size_type           size_;
         node_ptr            tmp_end_;
         node_ptr            tmp_rend_;
     };
+
+///////////////////// end of class red_black_tree //////////////////////////////
 
 }  // namespace ft
 
