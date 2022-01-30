@@ -993,22 +993,21 @@ class red_black_tree {
             return isBalancedUtil(root_, maxh, minh);
         }
 
-//        ////////////// operator==,!=,<,<=,>,>=: //////////////////////////////
-//
-//        friend
-//        bool operator<(const red_black_tree& lhs,  const red_black_tree& rhs){
-//            return (std::lexicographical_compare(lhs.begin(), lhs.end(), rhs.begin(), rhs.end()));
-//        }
-//
-//        friend
-//        bool operator>(const red_black_tree& lhs,  const red_black_tree& rhs){
-//            return (lhs < rhs);
-//        }
-//
-//        friend
-//        bool operator==(const red_black_tree& lhs, const red_black_tree& rhs){
-//            return (lhs.size() == rhs.size() && std::equal(lhs.begin(), lhs.end(), rhs.begin()));
-//        }
+        ////////////// operator==,!=,<,<=,>,>=: ////////////////////////////////
+        friend
+        bool operator==(const red_black_tree& lhs, const red_black_tree& rhs){
+            return (lhs.size() == rhs.size() && std::equal(lhs.begin(), lhs.end(), rhs.begin()));
+        }
+
+        friend
+        bool operator<(const red_black_tree& lhs,  const red_black_tree& rhs){
+            return (std::lexicographical_compare(lhs.begin(), lhs.end(), rhs.begin(), rhs.end()));
+        }
+
+        friend
+        bool operator>(const red_black_tree& lhs,  const red_black_tree& rhs){
+            return (lhs < rhs);
+        }
 
     private:
         ///////////// data fields: /////////////////////////////////////////////

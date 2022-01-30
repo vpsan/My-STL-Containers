@@ -47,6 +47,7 @@ void map_test_find();
 void map_test_count();
 void map_test_equal_range();
 void map_test_copy();
+void map_test_operators();
 
 int main()
 {
@@ -68,6 +69,7 @@ int main()
 //    map_test_count();
 //    map_test_equal_range();
 //    map_test_copy();
+//    map_test_operators();
 
 //    sleep(10);
 
@@ -852,4 +854,31 @@ void map_test_copy(){
     std::cout << "---iterator---\n";
     for (ft::map<char, int>::iterator it = mymap1.begin(); it!=mymap1.end(); ++it)
         std::cout << it->first << " => " << it->second << '\n';
+}
+
+void map_test_operators(){
+    ft::map<char, int> mymap;
+    mymap.insert(ft::pair<char, int>('a', 10));
+    mymap.insert(ft::pair<char, int>('b', 20));
+    mymap.insert(ft::pair<char, int>('c', 30));
+    mymap.insert(ft::pair<char, int>('d', 40));
+    mymap.insert(ft::pair<char, int>('e', 50));
+
+    std::cout << "PART 1\n";
+    std::cout << "---iterator---\n";
+    for (ft::map<char, int>::iterator it = mymap.begin(); it!=mymap.end(); ++it)
+        std::cout << it->first << " => " << it->second << '\n';
+
+    ft::map<char, int> mymap1 = mymap;
+    std::cout << "PART 1\n";
+    std::cout << "---iterator---\n";
+    for (ft::map<char, int>::iterator it = mymap1.begin(); it!=mymap1.end(); ++it)
+        std::cout << it->first << " => " << it->second << '\n';
+
+    std::cout << "== ? - " << (mymap == mymap1) << std::endl;
+    std::cout << "!= ? - " << (mymap != mymap1) << std::endl;
+    std::cout << ">  ? - " << (mymap > mymap1) << std::endl;
+    std::cout << ">= ? - " << (mymap >= mymap1) << std::endl;
+    std::cout << "<= ? - " << (mymap < mymap1) << std::endl;
+    std::cout << "<= ? - " << (mymap <= mymap1) << std::endl;
 }
