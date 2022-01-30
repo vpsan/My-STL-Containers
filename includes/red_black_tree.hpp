@@ -23,6 +23,7 @@ struct tree_node {
         node_ptr                right_;
         node_ptr                left_;
         node_ptr                parent;
+        bool                    is_end;
         int                     color;
 
 //    public:
@@ -156,16 +157,21 @@ class red_black_tree {
             node_ptr nil_;
 
             node_ptr rb_iter_maximum(node_ptr x) {
-                while(x->right_ != nil_)
+                while(/*x->right_ != nil_*/is_nil(x->right_) == false)
                     x = x->right_;
                 return x;
             }
 
             node_ptr rb_iter_minimum(node_ptr x) {
-                while(x->left_ != nil_)
+                while(/*x->left_ != nil_*/is_nil(x->left_) == false)
                     x = x->left_;
                 return x;
             }
+
+            bool is_nil(node_ptr n) {
+                return n == nil_ || n->is_end == true;//|| n == iter_end_ || n == iter_rend_;
+            }
+
         };
 
         /* LegacyInputIterator effects: iter == iter ************************ */
@@ -198,8 +204,8 @@ class red_black_tree {
                   allocator_(allctr_obj),
                   root_(NULL),
                   nil_(NULL),
-                  iter_end_(NULL),
-                  iter_rend_(NULL),
+//                  iter_end_(NULL),
+//                  iter_rend_(NULL),
                   size_(0) {}
 
         red_black_tree(const red_black_tree& other)
@@ -207,8 +213,8 @@ class red_black_tree {
                   allocator_(other.allocator_),
                   root_(NULL),
                   nil_(NULL),
-                  iter_end_(NULL),
-                  iter_rend_(NULL),
+//                  iter_end_(NULL),
+//                  iter_rend_(NULL),
                   size_(0) {}
 
         red_black_tree()
@@ -216,8 +222,8 @@ class red_black_tree {
                   allocator_(allocator_type()),
                   root_(NULL),
                   nil_(NULL),
-                  iter_end_(NULL),
-                  iter_rend_(NULL),
+//                  iter_end_(NULL),
+//                  iter_rend_(NULL),
                   size_(0) {}
 
         ~red_black_tree() {
@@ -504,6 +510,7 @@ class red_black_tree {
                 if (x == NULL) { // случай когда y->right = NULL. И Y - ребенок Z. Тогда в 3.2 нам нужен непустой x
                     x = reinterpret_cast<node_ptr>(allocator_.allocate(sizeof(node)));
                     allocator_.construct(&(x->value_), value_type());
+                    x->is_end = false;
                     is_allocated = true;
                 }
                 // 3.2 Если Y - ребенок Z
@@ -553,143 +560,128 @@ class red_black_tree {
         }
 
         bool is_nil(node_ptr n) {
-            return n == nil_ || n == iter_end_ || n == iter_rend_;
+            return n == nil_ || n->is_end == true;//|| n == iter_end_ || n == iter_rend_;
         }
 
     bool is_nil(node_ptr n) const {
-        return n == nil_ || n == iter_end_ || n == iter_rend_;
+        return n == nil_ || n->is_end == true;//|| n == iter_end_ || n == iter_rend_;
     }
 
         ///////////// Wrappers over RedBlackTree ///////////////////////////////
 
         node_ptr init_iter_end() {
-            if (root_ == NULL) return root_; // FIXME: bottom code
-            if (iter_end_ != NULL) return iter_end_;
-            iter_end_ = reinterpret_cast<node_ptr>(allocator_.allocate(sizeof(node)));
-            iter_end_->color = Black;
-            allocator_.construct(&(iter_end_->value_), value_type());
-            iter_end_->right_ = nil_;
-            iter_end_->left_ = nil_;
-            node_ptr x;
-            if (root_ == NULL){
-                x = root_;
-            } else {
-                x =  rb_maximum(root_);
-            }
-            iter_end_->parent = x;
-            x->right_ = iter_end_; // FIXME: code from above
-            return iter_end_;
+            if (root_ == NULL) return root_;
+            node_ptr x = rb_maximum(root_);
+            node_ptr end_ptr = x->right_;
+            if (end_ptr != NULL) return end_ptr;
+
+            end_ptr =  reinterpret_cast<node_ptr>(allocator_.allocate(sizeof(node)));
+            end_ptr->is_end = true;
+            end_ptr->color = Black;
+            allocator_.construct(&(end_ptr->value_), value_type());
+            end_ptr->right_ = nil_;
+            end_ptr->left_ = nil_;
+            end_ptr->parent = x;
+            x->right_ = end_ptr;
+            return end_ptr;
         }
 
     node_ptr init_iter_end() const {
-        if (root_ == NULL) return root_; // FIXME: bottom code
-        if (iter_end_ != NULL) return iter_end_;
-        iter_end_ = reinterpret_cast<node_ptr>(allocator_.allocate(sizeof(node)));
-        iter_end_->color = Black;
-        allocator_.construct(&(iter_end_->value_), value_type());
-        iter_end_->right_ = nil_;
-        iter_end_->left_ = nil_;
-        node_ptr x;
-        if (root_ == NULL){
-            x = root_;
-        } else {
-            x =  rb_maximum(root_);
-        }
-        iter_end_->parent = x;
-        x->right_ = iter_end_; // FIXME: code from above
-        return iter_end_;
+        if (root_ == NULL) return root_;
+        node_ptr x = rb_maximum(root_);
+        node_ptr end_ptr = x->right_;
+        if (end_ptr != NULL) return end_ptr;
+
+        end_ptr = reinterpret_cast<node_ptr>(allocator_.allocate(sizeof(node)));
+        end_ptr->is_end = true;
+        end_ptr->color = Black;
+        allocator_.construct(&(end_ptr->value_), value_type());
+        end_ptr->right_ = nil_;
+        end_ptr->left_ = nil_;
+        end_ptr->parent = x;
+        x->right_ = end_ptr;
+        return end_ptr;
     }
 
         void delete_iter_end() {
-            if (iter_end_ == NULL) return;
-            node_ptr x;
-            if (root_ == NULL) {
-                x = root_;
-                return; // FIXME: code from above
-            } else {
-                x = rb_maximum(root_);
-            }
+            if (root_ == NULL) return;
+            node_ptr x = rb_maximum(root_);
+            node_ptr end_ptr = x->right_;
+            if (end_ptr == NULL) return;
 
-            iter_end_->parent = NULL;
-            iter_end_->left_ = NULL;
-            iter_end_->right_ = NULL;
+            end_ptr->parent = NULL;
+            end_ptr->left_ = NULL;
+            end_ptr->right_ = NULL;
+            // end_ptr->is_end = false;
             x->right_ = nil_;
-            allocator_.destroy(&iter_end_->value_);
-            allocator_.deallocate(reinterpret_cast<value_type *>(iter_end_), 1);
-            iter_end_ = NULL;
+            allocator_.destroy(&end_ptr->value_);
+            allocator_.deallocate(reinterpret_cast<value_type *>(end_ptr), 1);
+            end_ptr = NULL;
         }
 
         node_ptr init_iter_rend() {
-            if (root_ == NULL) return root_; // FIXME: bottom code
-            if (iter_rend_ != NULL) return iter_rend_;
-            iter_rend_ = reinterpret_cast<node_ptr>(allocator_.allocate(sizeof(node)));
-            iter_rend_->color = Black;
-            allocator_.construct(&(iter_rend_->value_), value_type());
-            iter_rend_->right_ = nil_;
-            iter_rend_->left_ = nil_;
+            if (root_ == NULL) return root_;
+            node_ptr x = rb_minimum(root_);
+            node_ptr rend_ptr = x->left_;
+            if (rend_ptr != NULL) return rend_ptr;
 
-            node_ptr x;
-            if (root_ == NULL) {
-                x = root_;
-            } else {
-                x = rb_minimum(root_);
-            }
-
-            iter_rend_->parent = x;
-            x->left_ = iter_rend_;  // FIXME: code from above
-            return iter_rend_;
+            rend_ptr =  reinterpret_cast<node_ptr>(allocator_.allocate(sizeof(node)));
+            rend_ptr->is_end = true;
+            rend_ptr->color = Black;
+            allocator_.construct(&(rend_ptr->value_), value_type());
+            rend_ptr->right_ = nil_;
+            rend_ptr->left_ = nil_;
+            rend_ptr->parent = x;
+            x->left_ = rend_ptr;
+            return rend_ptr;
         }
 
     node_ptr init_iter_rend() const {
-        if (root_ == NULL) return root_; // FIXME: bottom code
-        if (iter_rend_ != NULL) return iter_rend_;
-        iter_rend_ = reinterpret_cast<node_ptr>(allocator_.allocate(sizeof(node)));
-        iter_rend_->color = Black;
-        allocator_.construct(&(iter_rend_->value_), value_type());
-        iter_rend_->right_ = nil_;
-        iter_rend_->left_ = nil_;
+        if (root_ == NULL) return root_;
+        node_ptr x = rb_minimum(root_);
+        node_ptr rend_ptr = x->left_;
+        if (rend_ptr != NULL) return rend_ptr;
 
-        node_ptr x;
-        if (root_ == NULL) {
-            x = root_;
-        } else {
-            x = rb_minimum(root_);
-        }
-
-        iter_rend_->parent = x;
-        x->left_ = iter_rend_;  // FIXME: code from above
-        return iter_rend_;
+        rend_ptr =  reinterpret_cast<node_ptr>(allocator_.allocate(sizeof(node)));
+        rend_ptr->is_end = true;
+        rend_ptr->color = Black;
+        allocator_.construct(&(rend_ptr->value_), value_type());
+        rend_ptr->right_ = nil_;
+        rend_ptr->left_ = nil_;
+        rend_ptr->parent = x;
+        x->left_ = rend_ptr;
+        return rend_ptr;
     }
 
         void delete_iter_rend() {
-            if (iter_rend_ == NULL) return;
-            node_ptr x;
-            if (root_ == NULL) {
-                x = root_;
-                return; // FIXME: code from above
-            } else {
-                x = rb_minimum(root_);
-            }
+            if (root_ == NULL) return;
+            node_ptr x = rb_minimum(root_);
+            node_ptr rend_ptr = x->left_;
+            if (rend_ptr == NULL) return;
 
-            iter_rend_->parent = NULL;
-            iter_rend_->left_ = NULL;
-            iter_rend_->right_ = NULL;
+            rend_ptr->parent = NULL;
+            rend_ptr->left_ = NULL;
+            rend_ptr->right_ = NULL;
+            // end_ptr->is_end = false;
             x->left_ = nil_;
-            allocator_.destroy(&iter_rend_->value_);
-            allocator_.deallocate(reinterpret_cast<value_type *>(iter_rend_), 1);
-            iter_rend_ = NULL;
+            allocator_.destroy(&rend_ptr->value_);
+            allocator_.deallocate(reinterpret_cast<value_type *>(rend_ptr), 1);
+            rend_ptr = NULL;
         }
 
         void insert(const value_type& value) {
             node_ptr z = reinterpret_cast<node_ptr>(allocator_.allocate(sizeof(node)));
             z->color = Red;
+            z->is_end = false;
             allocator_.construct(&(z->value_), value);
             delete_iter_end();
             delete_iter_rend();
             rb_insert(z);
             size_++;
-            iter_end_ = init_iter_end();
-            iter_rend_ = init_iter_rend();
+//            iter_end_ = init_iter_end();
+//            iter_rend_ = init_iter_rend();
+            init_iter_end();
+            init_iter_rend();
         }
 
         template<class InputIterator>
@@ -718,8 +710,10 @@ class red_black_tree {
 //            }
             rb_delete(z);
             size_--;
-            iter_end_ = init_iter_end();
-            iter_rend_ = init_iter_rend();
+//            iter_end_ = init_iter_end();
+//            iter_rend_ = init_iter_rend();
+            init_iter_end();
+            init_iter_rend();
         }
 
         template<class InputIterator>
@@ -744,8 +738,10 @@ class red_black_tree {
 //            }
             rb_delete(z);
             size_--;
-            iter_end_ = init_iter_end();
-            iter_rend_ = init_iter_rend();
+//            iter_end_ = init_iter_end();
+//            iter_rend_ = init_iter_rend();
+            init_iter_end();
+            init_iter_rend();
         }
 
         void clear_node(node_ptr z) {
@@ -836,27 +832,27 @@ class red_black_tree {
 
         template<class Key>
         iterator upper_bound(const Key& key) {
-            return get_upper_bound(key, root_, iter_end_);
+            return get_upper_bound(key, root_, init_iter_end());
         }
 
         template<class Key>
         iterator lower_bound(const Key& key) {
-            return get_lower_bound(key, root_, iter_end_);
+            return get_lower_bound(key, root_, init_iter_end());
         }
 
         template<class Key>
         const_iterator upper_bound(const Key& key) const {
-            return get_upper_bound(key, root_, iter_end_);
+            return get_upper_bound(key, root_, init_iter_end());
         }
 
         template<class Key>
         const_iterator lower_bound(const Key& key) const {
-            return get_lower_bound(key, root_, iter_end_);
+            return get_lower_bound(key, root_, init_iter_end());
         }
 
         template <class Key>
         iterator find(const Key &key) {
-            iterator p = get_lower_bound(key, root_, iter_end_);
+            iterator p = get_lower_bound(key, root_, init_iter_end());
             if (p != end() && compare_(key, (*p).first) == false) {
                 return p;
             }
@@ -946,8 +942,8 @@ class red_black_tree {
             std::swap(this->allocator_, other.allocator_);
             std::swap(this->root_, other.root_);
             std::swap(this->nil_, other.nil_);
-            std::swap(this->iter_end_, other.iter_end_);
-            std::swap(this->iter_rend_, other.iter_rend_);
+//            std::swap(this->iter_end_, other.iter_end_);
+//            std::swap(this->iter_rend_, other.iter_rend_);
             std::swap(this->size_, other.size_);
         }
 
@@ -957,26 +953,28 @@ class red_black_tree {
             return iterator( size_ == 0 ? root_ : rb_minimum(root_) );
         }
         iterator end() {
-            if (iter_end_ == NULL) {
-                iter_end_ = init_iter_end();
-                return iterator(iter_end_);
-            }
-            else {
-                return iterator(iter_end_);
-            }
+//            if (iter_end_ == NULL) {
+//                iter_end_ = init_iter_end();
+//                return iterator(iter_end_);
+//            }
+//            else {
+//                return iterator(iter_end_);
+//            }
+            return iterator(init_iter_end());
         }
 
         const_iterator begin() const {
             return iterator( size_ == 0 ? root_ : rb_minimum(root_) );
         }
         const_iterator end() const {
-            if (iter_end_ == NULL) {
-                iter_end_ = init_iter_end();
-                return const_iterator(iter_end_);
-            }
-            else {
-                return const_iterator(iter_end_);
-            }
+//            if (iter_end_ == NULL) {
+//                iter_end_ = init_iter_end();
+//                return const_iterator(iter_end_);
+//            }
+//            else {
+//                return const_iterator(iter_end_);
+//            }
+            return const_iterator(init_iter_end());
         }
 
         reverse_iterator rbegin() {
@@ -984,13 +982,14 @@ class red_black_tree {
         }
 
         reverse_iterator rend() {
-            if (iter_rend_ == NULL) {
-                iter_rend_ = init_iter_rend();
-                return reverse_iterator(iterator(iter_rend_));;
-            }
-            else {
-                return reverse_iterator(iterator(iter_rend_));;
-            }
+//            if (iter_rend_ == NULL) {
+//                iter_rend_ = init_iter_rend();
+//                return reverse_iterator(iterator(iter_rend_));;
+//            }
+//            else {
+//                return reverse_iterator(iterator(iter_rend_));;
+//            }
+            return reverse_iterator(init_iter_rend());
         }
 
         const_reverse_iterator rbegin() const {
@@ -998,13 +997,14 @@ class red_black_tree {
         }
 
         const_reverse_iterator rend() const {
-            if (iter_rend_ == NULL) {
-                iter_rend_ = init_iter_rend();
-                return const_reverse_iterator(iterator(iter_rend_));;
-            }
-            else {
-                return const_reverse_iterator(iterator(iter_rend_));;
-            }
+//            if (iter_rend_ == NULL) {
+//                iter_rend_ = init_iter_rend();
+//                return const_reverse_iterator(iterator(iter_rend_));;
+//            }
+//            else {
+//                return const_reverse_iterator(iterator(iter_rend_));;
+//            }
+            return const_reverse_iterator(init_iter_rend());
         }
 
         ///////////// isBalanced ///////////////////////////////////////////////
@@ -1074,8 +1074,8 @@ class red_black_tree {
         allocator_type      allocator_;
         node_ptr            root_;
         node_ptr            nil_;
-        node_ptr            iter_end_;
-        node_ptr            iter_rend_;
+//        node_ptr            iter_end_;
+//        node_ptr            iter_rend_;
         size_type           size_;
     };
 

@@ -68,21 +68,21 @@ class map {
             rb_tree_.insert(first, last);
         }
 
-        // map(const map& other) : /* FIXME */ {
-        //     /* FIXME */
-        // }
+         map(const map& other) : rb_tree_(other.rb_tree_) {
+             rb_tree_.insert(other.begin(), other.end());
+        }
 
         ~map() {
             rb_tree_.clear();
         }
 
-//        map& operator=(const map& other) {
-//            if (this == &other) return *this;
-//            rb_tree_.clear();
-//            this = rb_tree_(other);
-//            insert(other.begin(), other.end());
-//            return *this;
-//        }
+        map& operator=(const map& other) {
+            if (this == &other) return *this;
+            rb_tree_.clear();
+            this = rb_tree_(other);
+            insert(other.begin(), other.end());
+            return *this;
+        }
 
         allocator_type get_allocator() const {
             return rb_tree_.get_allocator();
