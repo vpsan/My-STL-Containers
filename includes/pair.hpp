@@ -15,20 +15,17 @@ struct pair {
     pair()  : first(first_type()),
               second(second_type()) {}
 
-    pair (const first_type& obj1, const second_type& obj2)
-            : first(obj1),
-            second(obj2){}
+    pair (const first_type& obj1, const second_type& obj2) : first(obj1),
+                                                             second(obj2) {}
 
-    template<class U1, class U2> 
-    pair (const pair<U1, U2>& obj)
-            : first(first_type(obj.first)),
-            second(second_type(obj.second)) {}
+    template<class U1, class U2>
+    pair (const pair<U1, U2>& obj) : first(first_type(obj.first)),
+                                     second(second_type(obj.second)) {}
 
-    pair& operator=(const pair& obj) {
-        if(this == &obj)
-            return *this;
-        first = obj.first;
-        second = obj.second;
+    pair& operator=(const pair& other) {
+        if(this == &other) return *this;
+        first = other.first;
+        second = other.second;
         return *this;
     }
 };
@@ -64,8 +61,8 @@ bool operator>=(const pair<T1,T2>& lhs, const pair<T1,T2>& rhs) {
     return !(lhs < rhs);
 }
 
-template <class T1, class T2> 
-pair<T1, T2> make_pair(const T1& obj1, const T2& obj2) {
+template <class T1, class T2>
+pair<T1, T2> make_pair(T1 obj1, T2 obj2) {
     return pair<T1,T2>(obj1, obj2);
 }
 
