@@ -4,7 +4,6 @@
 # include <memory>      // std::allocator<T>
 # include <algorithm>   // min max for IsBalanced
 # include <iostream>    // std::cout for debug
-# include "./utility.hpp"
 
 # define Red    1
 # define Black  0
@@ -781,60 +780,56 @@ class red_black_tree {
 
         template <class Key>
         iterator get_upper_bound(const Key &key, node_ptr root, node_ptr result) {
-            while (root != NULL)
-            {
-                if (compare_(key, root->value_.first) == true)
-                {
+            while (root != NULL) {
+                if (compare_(key, root->value_.first) == true) {
                     result = root;
                     root = root->left_;
                 }
-                else
+                else {
                     root = root->right_;
+                }
             }
             return (iterator)(result);
         }
 
         template <class Key>
         iterator get_lower_bound(const Key &key, node_ptr root, node_ptr result) {
-            while (root != NULL)
-            {
-                if (compare_(root->value_.first, key) == false)
-                {
+            while (root != NULL) {
+                if (compare_(root->value_.first, key) == false) {
                     result = root;
                     root = root->left_;
                 }
-                else
+                else {
                     root = root->right_;
+                }
             }
             return (iterator)(result);
         }
 
         template <class Key>
         const_iterator get_upper_bound(const Key &key, node_ptr root, node_ptr result) const {
-            while (root != NULL)
-            {
-                if (compare_(key, root->value.first) == true)
-                {
+            while (root != NULL) {
+                if (compare_(key, root->value.first) == true) {
                     result = root;
                     root = root->left_;
                 }
-                else
+                else {
                     root = root->right_;
+                }
             }
             return (iterator)(result);
         }
 
         template <class Key>
         const_iterator get_lower_bound(const Key &key, node_ptr root, node_ptr result) const {
-            while (root != NULL)
-            {
-                if (compare_(root->value_.first, key) == false)
-                {
+            while (root != NULL) {
+                if (compare_(root->value_.first, key) == false) {
                     result = root;
                     root = root->left_;
                 }
-                else
+                else {
                     root = root->right_;
+                }
             }
             return (iterator)(result);
         }
@@ -862,22 +857,23 @@ class red_black_tree {
         template <class Key>
         iterator find(const Key &key) {
             iterator p = get_lower_bound(key, root_, iter_end_);
-            if (p != end() && compare_(key, (*p).first) == false)
+            if (p != end() && compare_(key, (*p).first) == false) {
                 return p;
+            }
             return end();
         }
 
         template <class Key>
         size_type count(const Key &key) const {
             node_ptr r = root_;
-            while (r != NULL)
-            {
-                if (compare_(key, r->value_.first))
+            while (r != NULL) {
+                if (compare_(key, r->value_.first)) {
                     r = r->left_;
-                else if (compare_(r->value_.first, key))
+                }
+                else if (compare_(r->value_.first, key)) {
                     r = r->right_;
-                else
-                    return 1;
+                }
+                else return 1;
             }
             return 0;
         }
@@ -886,17 +882,18 @@ class red_black_tree {
         pair<iterator, iterator> equal_range(const Key& key) {
             node_ptr res = init_iter_end();//this->end;
             node_ptr rt = root_;
-            while (rt != NULL)
-            {
-                if (compare_(key, rt->value_.first))
-                {
+            while (rt != NULL) {
+                if (compare_(key, rt->value_.first)) {
                     res = rt;
                     rt = rt->left_;
                 }
-                else if (compare_(rt->value_.first, key))
+                else if (compare_(rt->value_.first, key)) {
                     rt = rt->right_;
-                else
-                    return pair<iterator, iterator>(iterator(rt), iterator(rt->right_ != NULL ? rb_minimum(rt->right_) : res));
+                }
+                else {
+                    return pair<iterator, iterator>(iterator(rt),
+                                                    iterator(rt->right_ != NULL ? rb_minimum(rt->right_) : res));
+                }
             }
             return pair<iterator, iterator>(iterator(res), iterator(res));
         }
@@ -905,19 +902,21 @@ class red_black_tree {
         pair<iterator, iterator> equal_range(const Key& key) const {
             node_ptr res = init_iter_end();//this->end;
             node_ptr rt = root_;
-            while (rt != NULL)
-            {
-                if (compare_(key, rt->value_.first))
-                {
+            while (rt != NULL) {
+                if (compare_(key, rt->value_.first)) {
                     res = rt;
                     rt = rt->left_;
                 }
-                else if (compare_(rt->value_.first, key))
+                else if (compare_(rt->value_.first, key)) {
                     rt = rt->right_;
-                else
-                    return pair<const_iterator, const_iterator>(const_iterator(rt), const_iterator(rt->right_ != NULL ? rb_minimum(rt->right_) : res));
+                }
+                else {
+                    return pair<const_iterator, const_iterator>(const_iterator(rt),
+                                                                const_iterator(rt->right_ != NULL ? rb_minimum(rt->right_) : res));
+                }
             }
-            return pair<const_iterator, const_iterator>(const_iterator(res), const_iterator(res));
+            return pair<const_iterator, const_iterator>(const_iterator(res),
+                                                        const_iterator(res));
         }
 
         ///////////// Trivial helpers //////////////////////////////////////////
@@ -1051,8 +1050,8 @@ class red_black_tree {
             return isBalancedUtil(root_, maxh, minh);
         }
 
-        ////////////////// operator==,!=,<,<=,>,>=: ////////////////////////////
-
+//        ////////////// operator==,!=,<,<=,>,>=: //////////////////////////////
+//
 //        friend
 //        bool operator<(const red_black_tree& lhs,  const red_black_tree& rhs){
 //            return (std::lexicographical_compare(lhs.begin(), lhs.end(), rhs.begin(), rhs.end()));
@@ -1069,7 +1068,6 @@ class red_black_tree {
 //        }
 
         ////////////////////////////////////////////////////////////////////////
-
 
     private:
         value_comapre       compare_;

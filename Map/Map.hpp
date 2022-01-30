@@ -4,10 +4,9 @@
 # include <memory> // std::allocator<T>
 
 # include "../includes/pair.hpp"
+# include "../includes/red_black_tree.hpp"
 # include "../includes/conditional.hpp"
 # include "../includes/ReverseIterator.hpp"
-
-# include "../includes/red_black_tree.hpp"
 
 namespace ft {
 
@@ -233,50 +232,50 @@ class map {
 
         ////////////////// Observers: //////////////////////////////////////////
 
-
         key_compare key_comp() const {
-            return rb_tree_.value_comp();
+            return rb_tree_.get_value_compare();
         }
 
         value_compare value_comp() const {
-            // return value_compare(rb_tree_.value_comp());
-            return rb_tree_.value_comp();
+            return value_compare(rb_tree_.get_value_compare());
         }
 
-        ////////////////// operator==,!=,<,<=,>,>=: ////////////////////////////
-
+//        ////////////////// operator==,!=,<,<=,>,>=: //////////////////////////
+//
 //        friend
-//        bool operator==(const map& lhs, const map& rhs){
+//        bool operator==(const map& lhs, const map& rhs) {
 //            return (lhs.rb_tree_ == rhs.rb_tree_);
 //        }
 //
 //        friend
-//        bool operator!=(const map& lhs, const map& rhs){
+//        bool operator!=(const map& lhs, const map& rhs) {
 //            return !(lhs == rhs);
 //        }
 //
 //        friend
-//        bool operator<(const map& lhs, const map& rhs){
+//        bool operator<(const map& lhs, const map& rhs) {
 //            return (lhs.rb_tree_ < rhs.rb_tree_);
 //        }
 //
 //        friend
-//        bool operator>(const map& lhs, const map& rhs){
+//        bool operator>(const map& lhs, const map& rhs) {
 //            return (rhs < lhs);
 //        }
 //
 //        friend
-//        bool operator<=(const map& lhs, const map& rhs){
+//        bool operator<=(const map& lhs, const map& rhs) {
 //            return !(lhs > rhs);
 //        }
 //
 //        friend
-//        bool operator>=(const map& lhs, const map& rhs){
+//        bool operator>=(const map& lhs, const map& rhs) {
 //            return !(lhs < rhs);
 //        }
 
-    private:
-        red_black_tree rb_tree_;
+        ////////////////////////////////////////////////////////////////////////
+
+        private:
+            red_black_tree rb_tree_;
 
 };
 
@@ -286,8 +285,7 @@ template <class Key, class T, class Compare, class Allocator>
 typename map<Key, T, Compare, Allocator>::mapped_type&
 map<Key, T, Compare, Allocator>::operator[](const key_type &key) {
     iterator p = find(key);
-    if (p == end())
-    {
+    if (p == end()) {
         insert(value_type(key, mapped_type()));
         p = find(key);
     }
