@@ -13,7 +13,7 @@
 
 #include "includes/ReverseIterator.hpp"
 
-#include "includes/red_black_tree.hpp"
+#include "includes/RedBlackTree.hpp"
 
 template <typename T>
 std::ostream& operator<<(std::ostream& os, const std::vector<T>& v)
@@ -77,7 +77,7 @@ int main()
 }
 
 void tree_test_insert(){
-    ft::red_black_tree<int> t = ft::red_black_tree<int>();
+    ft::RedBlackTree<int> t = ft::RedBlackTree<int>();
     t.insert(1);
     std::cout << "is_isBalanced = " << t.isBalanced() << std::endl;
     t.insert(10);
@@ -109,7 +109,7 @@ void tree_test_insert(){
 // Проблемы - c удалением повторно/несуществующего элемента.
 // Но стоит ли это править тут? Скорее нет, это задача класса map
 void tree_test_delete(){
-    ft::red_black_tree<int> t = ft::red_black_tree<int>();
+    ft::RedBlackTree<int> t = ft::RedBlackTree<int>();
     t.insert(1);
     t.insert(2);
     t.insert(3);
@@ -180,7 +180,7 @@ void tree_test_delete(){
 
 void rbtree_test_insert_erase_isbalanced(){
     {
-        ft::red_black_tree<int> t = ft::red_black_tree<int>();
+        ft::RedBlackTree<int> t = ft::RedBlackTree<int>();
         std::cout << "is_isBalanced = " << t.isBalanced() << std::endl;
         std::cout << "--Start-Print--\n"; t.print_sorted_tree(); std::cout << "--End-Print--\n";
 
@@ -211,58 +211,28 @@ void rbtree_test_insert_erase_isbalanced(){
         std::cout << "is_isBalanced = " << t.isBalanced() << std::endl;
         std::cout << "--Start-Print--\n"; t.print_sorted_tree(); std::cout << "--End-Print--\n";
 
-        ft::red_black_tree<int>::RedBlackTreeBidirectionalIterator<false> it = t.begin();
-        ft::red_black_tree<int>::RedBlackTreeBidirectionalIterator<true> c_it = t.begin();
+        ft::RedBlackTree<int>::BidirectionalIterator<false> it = t.begin();
+        ft::RedBlackTree<int>::BidirectionalIterator<true> c_it = t.begin();
         c_it = it;
         for (; it != t.end(); ++it){
             std::cout<< *it << std::endl;
         }
 
-        ft::red_black_tree<int>::reverse_iterator rit = t.rbegin();
+        ft::RedBlackTree<int>::reverse_iterator rit = t.rbegin();
         for (; rit != t.rend(); ++rit){
             std::cout<< *rit << std::endl;
         }
 
-        ft::red_black_tree<int>::RedBlackTreeBidirectionalIterator<false> iter = t.begin();
+        ft::RedBlackTree<int>::BidirectionalIterator<false> iter = t.begin();
         t.erase(iter);
         std::cout << "is_isBalanced = " << t.isBalanced() << std::endl;
         std::cout << "--Start-Print--\n"; t.print_sorted_tree(); std::cout << "--End-Print--\n";
     }
-//    {
-//        // test for insert other iter elements
-//        ft::red_black_tree<int> h = ft::red_black_tree<int>();
-//        h.insert(-1);
-//        h.insert(1000);
-//        h.insert(2000);
-//        h.insert(3000);
-//        h.insert(4000);
-//        ft::red_black_tree<int>::RedBlackTreeBidirectionalIterator<false> iter_11 = h.begin();
-//        ft::red_black_tree<int>::RedBlackTreeBidirectionalIterator<false> iter_12 = (--h.end());
-//
-//        ft::red_black_tree<int> t = ft::red_black_tree<int>();
-//        t.insert(iter_11, iter_12);
-//        std::cout << "is_isBalanced = " << t.isBalanced() << std::endl;
-//        std::cout << "--Start-Print--\n"; t.print_sorted_tree(); std::cout << "--End-Print--\n";
-//
-////        ft::red_black_tree<int>::RedBlackTreeBidirectionalIterator<false> iter_21 = t.begin();
-////        ft::red_black_tree<int>::RedBlackTreeBidirectionalIterator<false> iter_22 = (--t.end()); // t.end()
-////        std::cout << *iter_21 << std::endl;
-////        std::cout << *iter_22 << std::endl;
-////        std::cout << "-------\n";
-////        t.insert(iter_21, iter_22);
-////        std::cout << "2\n";
-////        std::cout << "is_isBalanced = " << t.isBalanced() << std::endl;
-////        std::cout << "--Start-Print--\n"; t.print_sorted_tree(); std::cout << "--End-Print--\n";
-//
-//        ft::red_black_tree<int>::iterator iter = t.begin();
-//        std::cout << *iter << std::endl;
-//        std::cout << *(iter++) << std::endl;
-//    }
 }
 
 void rbtree_test_iterators(){
     {
-         ft::red_black_tree<int> t = ft::red_black_tree<int>();
+         ft::RedBlackTree<int> t = ft::RedBlackTree<int>();
          t.insert(1);
          t.insert(2);
          t.insert(3);
@@ -274,61 +244,61 @@ void rbtree_test_iterators(){
 
         std::cout << "PART 1\n";
          std::cout << "---iterator---\n";
-         for (ft::red_black_tree<int>::iterator it = t.begin(); it!=t.end(); ++it)
+         for (ft::RedBlackTree<int>::iterator it = t.begin(); it!=t.end(); ++it)
              std::cout << *it << std::endl;
          std::cout << "---const_iterator---\n";
-         for (ft::red_black_tree<int>::const_iterator it = t.begin(); it!=t.end(); ++it)
+         for (ft::RedBlackTree<int>::const_iterator it = t.begin(); it!=t.end(); ++it)
              std::cout << *it << std::endl;
          std::cout << "---reverse_iterator---\n";
-         for (ft::red_black_tree<int>::reverse_iterator it = t.rbegin(); it!=t.rend(); ++it)
+         for (ft::RedBlackTree<int>::reverse_iterator it = t.rbegin(); it!=t.rend(); ++it)
              std::cout << *it << std::endl;
          std::cout << "---const_reverse_iterator---\n";
-         for (ft::red_black_tree<int>::const_reverse_iterator it = t.rbegin(); it!=t.rend(); ++it)
+         for (ft::RedBlackTree<int>::const_reverse_iterator it = t.rbegin(); it!=t.rend(); ++it)
              std::cout << *it << std::endl;
          std::cout << "size = " << t.size() << std::endl;
 
         std::cout << "PART 2\n";
          std::cout << "---iterator---\n";
-         for (ft::red_black_tree<int>::iterator it = t.begin(); it!=t.end(); it++)
+         for (ft::RedBlackTree<int>::iterator it = t.begin(); it!=t.end(); it++)
              std::cout << *it << std::endl;
          std::cout << "---const_iterator---\n";
-         for (ft::red_black_tree<int>::const_iterator it = t.begin(); it!=t.end(); it++)
+         for (ft::RedBlackTree<int>::const_iterator it = t.begin(); it!=t.end(); it++)
              std::cout << *it << std::endl;
          std::cout << "---reverse_iterator---\n";
-         for (ft::red_black_tree<int>::reverse_iterator it = t.rbegin(); it!=t.rend(); it++)
+         for (ft::RedBlackTree<int>::reverse_iterator it = t.rbegin(); it!=t.rend(); it++)
              std::cout << *it << std::endl;
          std::cout << "---const_reverse_iterator---\n";
-         for (ft::red_black_tree<int>::const_reverse_iterator it = t.rbegin(); it!=t.rend(); it++)
+         for (ft::RedBlackTree<int>::const_reverse_iterator it = t.rbegin(); it!=t.rend(); it++)
              std::cout << *it << std::endl;
          std::cout << "size = " << t.size() << std::endl;
 
         std::cout << "PART 3\n";
          std::cout << "---iterator---\n";
-         for (ft::red_black_tree<int>::iterator it = --t.end(); it!=t.begin(); --it)
+         for (ft::RedBlackTree<int>::iterator it = --t.end(); it!=t.begin(); --it)
              std::cout << *it << std::endl;
          std::cout << "---const_iterator---\n";
-         for (ft::red_black_tree<int>::const_iterator it = --t.end(); it!=t.begin(); --it)
+         for (ft::RedBlackTree<int>::const_iterator it = --t.end(); it!=t.begin(); --it)
              std::cout << *it << std::endl;
          std::cout << "---reverse_iterator---\n";
-         for (ft::red_black_tree<int>::reverse_iterator it = --t.rend(); it!=t.rbegin(); --it)
+         for (ft::RedBlackTree<int>::reverse_iterator it = --t.rend(); it!=t.rbegin(); --it)
              std::cout << *it << std::endl;
          std::cout << "---const_reverse_iterator---\n";
-         for (ft::red_black_tree<int>::const_reverse_iterator it = --t.rend(); it!=t.rbegin(); --it)
+         for (ft::RedBlackTree<int>::const_reverse_iterator it = --t.rend(); it!=t.rbegin(); --it)
              std::cout << *it << std::endl;
          std::cout << "size = " << t.size() << std::endl;
 
         std::cout << "PART 4\n";
          std::cout << "---iterator---\n";
-         for (ft::red_black_tree<int>::iterator it = --t.end(); it!=t.begin(); it--)
+         for (ft::RedBlackTree<int>::iterator it = --t.end(); it!=t.begin(); it--)
              std::cout << *it << std::endl;
          std::cout << "---const_iterator---\n";
-         for (ft::red_black_tree<int>::const_iterator it = --t.end(); it!=t.begin(); it--)
+         for (ft::RedBlackTree<int>::const_iterator it = --t.end(); it!=t.begin(); it--)
              std::cout << *it << std::endl;
          std::cout << "---reverse_iterator---\n";
-         for (ft::red_black_tree<int>::reverse_iterator it = --t.rend(); it!=t.rbegin(); it--)
+         for (ft::RedBlackTree<int>::reverse_iterator it = --t.rend(); it!=t.rbegin(); it--)
              std::cout << *it << std::endl;
          std::cout << "---const_reverse_iterator---\n";
-         for (ft::red_black_tree<int>::const_reverse_iterator it = --t.rend(); it!=t.rbegin(); it--)
+         for (ft::RedBlackTree<int>::const_reverse_iterator it = --t.rend(); it!=t.rbegin(); it--)
              std::cout << *it << std::endl;
          std::cout << "size = " << t.size() << std::endl;
     }

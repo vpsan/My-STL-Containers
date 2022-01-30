@@ -1,11 +1,11 @@
-#ifndef Map_hpp
-# define Map_hpp
+#ifndef _FT_MAP_
+# define _FT_MAP_
 
 # include <memory> // std::allocator<T>
 
 # include "../includes/pair.hpp"
-# include "../includes/red_black_tree.hpp"
 # include "../includes/conditional.hpp"
+# include "../includes/RedBlackTree.hpp"
 # include "../includes/ReverseIterator.hpp"
 
 namespace ft {
@@ -17,39 +17,43 @@ template <class Key,
 class map {
     public:
         ///////////// typedef: /////////////////////////////////////////////////
-        typedef Key                                             key_type;
-        typedef T                                               mapped_type;
-        typedef typename ft::pair<const Key, T>                 value_type;
+        typedef Key                                   key_type;
+        typedef T                                     mapped_type;
+        typedef typename ft::pair<const Key, T>       value_type;
 
-        typedef Compare                                         key_compare;
-        typedef Allocator                                       allocator_type;
-        typedef typename Allocator::pointer                     pointer;
-        typedef typename Allocator::const_pointer               const_pointer;
-        typedef typename Allocator::reference                   reference;
-        typedef typename Allocator::const_reference             const_reference;
-        typedef typename Allocator::size_type                   size_type;
-        typedef typename Allocator::difference_type             difference_type;
+        typedef Compare                               key_compare;
+        typedef Allocator                             allocator_type;
+        typedef typename Allocator::pointer           pointer;
+        typedef typename Allocator::const_pointer     const_pointer;
+        typedef typename Allocator::reference         reference;
+        typedef typename Allocator::const_reference   const_reference;
+        typedef typename Allocator::size_type         size_type;
+        typedef typename Allocator::difference_type   difference_type;
 
     private:
-        typedef red_black_tree<value_type,
+        typedef RedBlackTree<value_type,
                                key_compare,
-                               allocator_type>                  red_black_tree;
+                               allocator_type>        RedBlackTree_type;
 
     public:
-        typedef typename red_black_tree::iterator               iterator;
-        typedef typename red_black_tree::const_iterator         const_iterator;
-        typedef typename red_black_tree::reverse_iterator       reverse_iterator;
-        typedef typename red_black_tree::const_reverse_iterator const_reverse_iterator;
+        typedef typename
+            RedBlackTree_type::iterator               iterator;
+        typedef typename
+            RedBlackTree_type::const_iterator         const_iterator;
+        typedef typename
+            RedBlackTree_type::reverse_iterator       reverse_iterator;
+        typedef typename
+            RedBlackTree_type::const_reverse_iterator const_reverse_iterator;
 
     private:
         ///////////// class value_compare: /////////////////////////////////////
         class value_compare {
 
             public:
-                value_compare(const key_compare &cmpr_obj) : vc_compare_(cmpr_obj) {}
+                value_compare(const key_compare& cmpr) : vc_compare_(cmpr) {}
 
-                bool operator()(const value_type &obj1,
-                                const value_type &obj2) const {
+                bool operator()(const value_type& obj1,
+                                const value_type& obj2) const {
                     return (vc_compare_(obj1.first, obj2.first));
                 }
 
@@ -159,8 +163,7 @@ class map {
             iterator i = find(value.first);
             bool is_exist = false;
 
-            if (i == end())
-            {
+            if (i == end()) {
                 rb_tree_.insert(value);
                 is_exist = true;
             }
@@ -181,8 +184,7 @@ class map {
 
         size_type erase(const key_type& key) {
             iterator position = find(key);
-            if (position == end())
-                return 0;
+            if (position == end()) return 0;
             rb_tree_.erase(position);
             return 1;
         }
@@ -193,8 +195,7 @@ class map {
 
         void erase(iterator first, iterator last) {
             iterator tmp;
-            while (first != last)
-            {
+            while (first != last) {
                 tmp = first;
                 ++first;
                 rb_tree_.erase(tmp);
@@ -280,23 +281,10 @@ class map {
 
         ///////////// data fields: /////////////////////////////////////////////
         private:
-            red_black_tree rb_tree_;
+            RedBlackTree_type rb_tree_;
 
 };
 
-////////////////// Non-member functions: ///////////////////////////////////////
-
-//template <class Key, class T, class Compare, class Allocator>
-//typename map<Key, T, Compare, Allocator>::mapped_type&
-//map<Key, T, Compare, Allocator>::operator[](const key_type &key) {
-//    iterator p = find(key);
-//    if (p == end()) {
-//        insert(value_type(key, mapped_type()));
-//        p = find(key);
-//    }
-//    return p->second;
-//}
-
 }  // namespace ft
 
-#endif
+#endif // _FT_MAP_

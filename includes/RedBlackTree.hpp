@@ -24,11 +24,11 @@ struct node {
         bool                is_end_rend;
 };
 
-///////////////////// class red_black_tree: ////////////////////////////////////
+///////////////////// class RedBlackTree: ////////////////////////////////////
 template <class T,
         class Compare = std::less<T>,
         class Allocator = std::allocator<T> >
-class red_black_tree {
+class RedBlackTree {
 
     public:
         ///////////// typedef part 1 (without iterators): //////////////////////
@@ -42,7 +42,7 @@ class red_black_tree {
     public:
         ///////////// Iterators: ///////////////////////////////////////////////
         template<bool IsConst>
-        class RedBlackTreeBidirectionalIterator {
+        class BidirectionalIterator {
         public:
             typedef typename
                 ft::conditional<IsConst, const T, T>::type  value_type;
@@ -52,20 +52,20 @@ class red_black_tree {
             typedef	std::bidirectional_iterator_tag         iterator_category;
 
         public:
-            RedBlackTreeBidirectionalIterator() : ptr_(NULL), nil_(NULL) {}
-            RedBlackTreeBidirectionalIterator(node_ptr ptr) : ptr_(ptr), nil_(NULL) {};
-            RedBlackTreeBidirectionalIterator(const RedBlackTreeBidirectionalIterator& other) {
+            BidirectionalIterator() : ptr_(NULL), nil_(NULL) {}
+            BidirectionalIterator(node_ptr ptr) : ptr_(ptr), nil_(NULL) {};
+            BidirectionalIterator(const BidirectionalIterator& other) {
                 ptr_ = other.getPtr();
                 nil_ = NULL;
             }
-            RedBlackTreeBidirectionalIterator& operator=(const RedBlackTreeBidirectionalIterator& other) {
+            BidirectionalIterator& operator=(const BidirectionalIterator& other) {
                 if (this == &other) return *this;
                 ptr_ = other.getPtr();
                 return *this;
             }
             // effect:      const_iter = iter,
             // not effect:  iter = const_iter
-            operator RedBlackTreeBidirectionalIterator<true>() const {
+            operator BidirectionalIterator<true>() const {
                 return ptr_;
             }
             node_ptr getPtr() const {
@@ -81,7 +81,7 @@ class red_black_tree {
                 return &(ptr_->value);
             }
             /* LegacyInputIterator effects: "++iter" ************************ */
-            RedBlackTreeBidirectionalIterator& operator++(){
+            BidirectionalIterator& operator++(){
                 if (ptr_->right != nil_) {
                     ptr_ = rb_iter_minimum(ptr_->right);
                     return *this;
@@ -97,14 +97,14 @@ class red_black_tree {
             }
             /* ********** LegacyForwardIterator effects ********************* */
             /* LegacyForwardIterator effects: "iter++" ********************** */
-            RedBlackTreeBidirectionalIterator operator++(int){
-                RedBlackTreeBidirectionalIterator tmp(*this);
+            BidirectionalIterator operator++(int){
+                BidirectionalIterator tmp(*this);
                 ++(*this);
                 return tmp;
             }
             /* ********** LegacyBidirectionalIterator effects *************** */
             /* LegacyBidirectionalIterator effects: "--iter" **************** */
-            RedBlackTreeBidirectionalIterator& operator--(){
+            BidirectionalIterator& operator--(){
                 if (ptr_->left != nil_) {
                     ptr_ = rb_iter_maximum(ptr_->left);
                     return *this;
@@ -119,8 +119,8 @@ class red_black_tree {
                 return *this;
             }
             /* LegacyBidirectionalIterator effects: "iter--" **************** */
-            RedBlackTreeBidirectionalIterator operator--(int){
-                RedBlackTreeBidirectionalIterator tmp(*this);
+            BidirectionalIterator operator--(int){
+                BidirectionalIterator tmp(*this);
                 --(*this);
                 return tmp;
             }
@@ -151,27 +151,27 @@ class red_black_tree {
         /* LegacyInputIterator effects: iter == iter ************************ */
         template <bool IsConst_l, bool IsConst_r>
         friend bool
-        operator==(const RedBlackTreeBidirectionalIterator<IsConst_l>& lhs,
-                   const RedBlackTreeBidirectionalIterator<IsConst_r>& rhs) {
+        operator==(const BidirectionalIterator<IsConst_l>& lhs,
+                   const BidirectionalIterator<IsConst_r>& rhs) {
             return lhs.getPtr() == rhs.getPtr();
         }
         /* LegacyInputIterator effects: iter != iter ************************ */
         template <bool IsConst_l, bool IsConst_r>
         friend bool
-        operator!=(const RedBlackTreeBidirectionalIterator<IsConst_l>& lhs,
-                   const RedBlackTreeBidirectionalIterator<IsConst_r>& rhs) {
+        operator!=(const BidirectionalIterator<IsConst_l>& lhs,
+                   const BidirectionalIterator<IsConst_r>& rhs) {
             return lhs.getPtr() != rhs.getPtr();
         }
 
     public:
         ///////////// typedef part 2 (iterators): //////////////////////////////
-        typedef RedBlackTreeBidirectionalIterator<false>          iterator;
-        typedef RedBlackTreeBidirectionalIterator<true>           const_iterator;
-        typedef ReverseIterator<iterator>                         reverse_iterator;
-        typedef ReverseIterator<const_iterator>                   const_reverse_iterator;
+        typedef BidirectionalIterator<false>          iterator;
+        typedef BidirectionalIterator<true>           const_iterator;
+        typedef ReverseIterator<iterator>             reverse_iterator;
+        typedef ReverseIterator<const_iterator>       const_reverse_iterator;
 
         ///////////// constructor(s)/destructor/operator=: /////////////////////
-        explicit red_black_tree(const value_comapre& compare_obj,
+        explicit RedBlackTree(const value_comapre& compare_obj,
                                 const allocator_type& allctr_obj)
                 : compare_(compare_obj),
                   allocator_(allctr_obj),
@@ -193,7 +193,7 @@ class red_black_tree {
             rend_allocated_->left = nil_;
         }
 
-        red_black_tree(const red_black_tree& other)
+        RedBlackTree(const RedBlackTree& other)
                 : compare_(other.compare_),
                   allocator_(other.allocator_),
                   root_(NULL),
@@ -214,7 +214,7 @@ class red_black_tree {
             rend_allocated_->left = nil_;
         }
 
-        red_black_tree()
+        RedBlackTree()
                 : compare_(value_comapre()),
                   allocator_(allocator_type()),
                   root_(NULL),
@@ -235,7 +235,7 @@ class red_black_tree {
             rend_allocated_->left = nil_;
         }
 
-        ~red_black_tree() {
+        ~RedBlackTree() {
             clear();
             delete_end_rend();
         }
@@ -904,7 +904,7 @@ class red_black_tree {
             return allocator_;
         }
 
-        void swap(red_black_tree& other) {
+        void swap(RedBlackTree& other) {
             std::swap(this->compare_, other.compare_);
             std::swap(this->allocator_, other.allocator_);
             std::swap(this->root_, other.root_);
@@ -990,17 +990,17 @@ class red_black_tree {
 
         ////////////// operator==,!=,<,<=,>,>=: ////////////////////////////////
         friend
-        bool operator==(const red_black_tree& lhs, const red_black_tree& rhs){
+        bool operator==(const RedBlackTree& lhs, const RedBlackTree& rhs){
             return (lhs.size() == rhs.size() && std::equal(lhs.begin(), lhs.end(), rhs.begin()));
         }
 
         friend
-        bool operator<(const red_black_tree& lhs,  const red_black_tree& rhs){
+        bool operator<(const RedBlackTree& lhs,  const RedBlackTree& rhs){
             return (std::lexicographical_compare(lhs.begin(), lhs.end(), rhs.begin(), rhs.end()));
         }
 
         friend
-        bool operator>(const red_black_tree& lhs,  const red_black_tree& rhs){
+        bool operator>(const RedBlackTree& lhs,  const RedBlackTree& rhs){
             return (lhs < rhs);
         }
 
@@ -1015,7 +1015,7 @@ class red_black_tree {
         node_ptr            rend_allocated_;
     };
 
-///////////////////// end of class red_black_tree //////////////////////////////
+///////////////////// end of class RedBlackTree //////////////////////////////
 
 }  // namespace ft
 
