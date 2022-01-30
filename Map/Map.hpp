@@ -10,11 +10,13 @@
 
 namespace ft {
 
+///////////////////// class map: ///////////////////////////////////////////////
 template <class Key,
           class T,
           class Compare = std::less<Key>,
           class Allocator = std::allocator< ft::pair<const Key, T> > >
 class map {
+
     public:
         ///////////// typedef: /////////////////////////////////////////////////
         typedef Key                                   key_type;
@@ -83,7 +85,7 @@ class map {
 
         ~map() {
             rb_tree_.clear();
-            rb_tree_.delete_end_rend();
+            rb_tree_.deallocate_end_rend();
         }
 
         map& operator=(const map& other) {
@@ -99,13 +101,21 @@ class map {
         }
 
         ///////////// Element access: //////////////////////////////////////////
-        mapped_type& operator[] (const key_type& key) {
-            iterator p = find(key);
-            if (p == end()) {
+        mapped_type& operator[](const key_type& key) {
+            iterator iter = find(key);
+            if (iter == rb_tree_.end()) {
                 insert(value_type(key, mapped_type()));
-                p = find(key);
+                iter = find(key);
             }
-            return p->second;
+            return iter->second;
+        }
+
+        mapped_type& at(const Key &key) {
+            iterator iter = find(key);
+            if (iter == rb_tree_.end()) {
+                throw std::out_of_range("map::at:  key not found");
+            }
+            return iter->second;
         }
 
         ///////////// Iterators: ///////////////////////////////////////////////
@@ -159,7 +169,7 @@ class map {
             rb_tree_.clear();
         }
 
-        pair<iterator,bool> insert (const value_type& value) {
+        pair<iterator,bool> insert(const value_type& value) {
             iterator i = find(value.first);
             bool is_exist = false;
 
@@ -170,22 +180,22 @@ class map {
             return pair<iterator, bool>(find(value.first), is_exist);
         }
 
-        iterator insert (iterator hint, const value_type& value) {
-            (void)hint;
+        iterator insert(iterator position, const value_type& value) {
+            (void)position;
             insert(value);
             return find(value.first);
         }
 
         template <class InputIterator>
-        void insert (InputIterator first, InputIterator last) {
+        void insert(InputIterator first, InputIterator last) {
             for (; first != last; ++first)
                 insert(*first);
         }
 
         size_type erase(const key_type& key) {
-            iterator position = find(key);
-            if (position == end()) return 0;
-            rb_tree_.erase(position);
+            iterator iter = find(key);
+            if (iter == end()) return 0;
+            rb_tree_.erase(iter);
             return 1;
         }
 
@@ -202,40 +212,40 @@ class map {
             }
         }
 
-        void swap (map& other) {
+        void swap(map& other) {
             rb_tree_.swap(other.rb_tree_);
         }
 
-        ///////////// Lookup: //////////////////////////////////////////////////
-        iterator find (const key_type& key) {
+        ///////////// Key methods / Lookup: ////////////////////////////////////
+        iterator find(const key_type& key) {
             return rb_tree_.find(key);
         }
 
-        iterator lower_bound (const key_type& key) {
+        iterator lower_bound(const key_type& key) {
             return rb_tree_.lower_bound(key);
         }
 
-        const_iterator lower_bound (const key_type& key) const {
+        const_iterator lower_bound(const key_type& key) const {
             rb_tree_.lower_bound(key);
         }
 
-        iterator upper_bound (const key_type& key) {
+        iterator upper_bound(const key_type& key) {
             return rb_tree_.upper_bound(key);
         }
 
-        const_iterator upper_bound (const key_type& key) const {
+        const_iterator upper_bound(const key_type& key) const {
             return rb_tree_.upper_bound(key);
         }
 
-        size_type count (const key_type& key) const {
+        size_type count(const key_type& key) const {
             return rb_tree_.count(key);
         }
 
-        pair<iterator,iterator> equal_range (const key_type& key) {
+        pair<iterator,iterator> equal_range(const key_type& key) {
             return rb_tree_.equal_range(key);
         }
 
-        pair<const_iterator,const_iterator> equal_range (const key_type& key) const {
+        pair<const_iterator,const_iterator> equal_range(const key_type& key) const {
             return rb_tree_.equal_range(key);
         }
 
@@ -282,8 +292,9 @@ class map {
         ///////////// data fields: /////////////////////////////////////////////
         private:
             RedBlackTree_type rb_tree_;
-
 };
+
+///////////////////// end of map ///////////////////////////////////////////////
 
 }  // namespace ft
 

@@ -30,8 +30,8 @@ std::ostream& operator<<(std::ostream& os, const std::vector<T>& v)
     return os;
 }
 
-void tree_test_insert();
-void tree_test_delete();
+void rbtree_test_insert();
+void rbtree_test_delete();
 void rbtree_test_insert_erase_isbalanced();
 void rbtree_test_iterators();
 void map_test_iterators();
@@ -44,6 +44,7 @@ void map_test_lower_upper_bound();
 void map_test_operator_access();
 void map_test_swap();
 void map_test_find();
+void map_test_at();
 void map_test_count();
 void map_test_equal_range();
 void map_test_copy();
@@ -52,8 +53,8 @@ void map_test_operators();
 int main()
 {
 
-//    tree_test_insert();
-//    tree_test_delete();
+//    rbtree_test_insert();
+//    rbtree_test_delete();
 //    rbtree_test_insert_erase_isbalanced();
 //    rbtree_test_iterators();
 //    map_test_iterators();
@@ -66,17 +67,18 @@ int main()
 //    map_test_operator_access();
 //    map_test_swap();
 //    map_test_find();
+//    map_test_at();
 //    map_test_count();
 //    map_test_equal_range();
 //    map_test_copy();
 //    map_test_operators();
-
+//
 //    sleep(10);
 
     return 0;
 }
 
-void tree_test_insert(){
+void rbtree_test_insert(){
     ft::RedBlackTree<int> t = ft::RedBlackTree<int>();
     t.insert(1);
     std::cout << "is_isBalanced = " << t.isBalanced() << std::endl;
@@ -108,7 +110,7 @@ void tree_test_insert(){
 
 // Проблемы - c удалением повторно/несуществующего элемента.
 // Но стоит ли это править тут? Скорее нет, это задача класса map
-void tree_test_delete(){
+void rbtree_test_delete(){
     ft::RedBlackTree<int> t = ft::RedBlackTree<int>();
     t.insert(1);
     t.insert(2);
@@ -734,6 +736,39 @@ void map_test_find(){
     }
 }
 
+void map_test_at() {
+    {
+        std::map<char,int> mymap;
+        std::map<char,int>::iterator it;
+
+        mymap['a']=50;
+        mymap['b']=100;
+        mymap['c']=150;
+        mymap['d']=200;
+        try {
+            std::cout << mymap.at('a') << std::endl;
+            std::cout << mymap.at('z') << std::endl;
+        } catch (const std::exception& e) {
+            std::cout << e.what() << std::endl;
+        }
+    }
+    {
+        ft::map<char,int> mymap;
+        ft::map<char,int>::iterator it;
+
+        mymap['a']=50;
+        mymap['b']=100;
+        mymap['c']=150;
+        mymap['d']=200;
+        try {
+            std::cout << mymap.at('a') << std::endl;
+            std::cout << mymap.at('z') << std::endl;
+        } catch (const std::exception& e) {
+            std::cout << e.what() << std::endl;
+        }
+    }
+}
+
 void map_test_count(){
     {
         std::map<char,int> mymap;
@@ -819,7 +854,7 @@ void map_test_copy(){
     for (ft::map<char, int>::iterator it = mymap.begin(); it!=mymap.end(); ++it)
         std::cout << it->first << " => " << it->second << '\n';
 
-    ft::map<char, int> mymap1 = mymap;
+    ft::map<char, int> mymap1(mymap);// ft::map<char, int> mymap1 = mymap;
     std::cout << "PART 1\n";
     std::cout << "---iterator---\n";
     for (ft::map<char, int>::iterator it = mymap1.begin(); it!=mymap1.end(); ++it)

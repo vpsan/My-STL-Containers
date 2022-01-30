@@ -1,16 +1,16 @@
-#ifndef RED_BLACK_TREE
-# define RED_BLACK_TREE
+#ifndef _FT_REDBLACKTREE_
+# define _FT_REDBLACKTREE_
 
 # include <memory>      // std::allocator<T>
 # include <algorithm>   // min max for IsBalanced
-# include <iostream>    // std::cout for debug
+# include <iostream>    // std::cout for debug/print methods
 
 # define RED    true
 # define BLACK  false
 
 namespace ft {
 
-///////////////////// struct node: ////////////////////////////////////////
+///////////////////// struct node: /////////////////////////////////////////////
 template <class T>
 struct node {
         typedef node<T>*    node_ptr;
@@ -24,7 +24,7 @@ struct node {
         bool                is_end_rend;
 };
 
-///////////////////// class RedBlackTree: ////////////////////////////////////
+///////////////////// class RedBlackTree: //////////////////////////////////////
 template <class T,
         class Compare = std::less<T>,
         class Allocator = std::allocator<T> >
@@ -237,45 +237,47 @@ class RedBlackTree {
 
         ~RedBlackTree() {
             clear();
-            delete_end_rend();
+            deallocate_end_rend();
         }
 
         ///////////// RedBlackTree /////////////////////////////////////////////
-        void rb_left_rotate(node_ptr x){
-            node_ptr y = x->right; // 1. Обозначаем правого ребенка Y
-            x->right = y->left;   // 1. Теперь левый ребенок Y - правый ребенок X
-            if (is_nil(y->left) == false) { // 1. Если ребенок "левый ребенок Y" не NIL - то меняем у "левый ребенок Y" родителя на Х
+        void rb_left_rotate(node_ptr x) {
+            node_ptr y = x->right; // Обозначаем правого ребенка Y
+            x->right = y->left;    // Теперь левый ребенок Y - правый ребенок X
+            // 1. Если левый ребенок Y !=NIL
+            //    Тогда меняем у левого ребенок Y родителя на Х
+            if (is_nil(y->left) == false) {
                 y->left->parent = x;
             }
-
-            y->parent = x->parent;  // 2. Меняем родителя y на родителя Х
-            if (is_nil(x->parent) == true) {// 3. Если X был - root, то переобозначим Y на root
+            y->parent = x->parent;  // Меняем родителя y на родителя Х
+            // 2. Если X был - root, то Y становится root
+            if (is_nil(x->parent) == true) {
                 root_ = y;
             }
-            else if (x == x->parent->left) {// 3. Если X не был - root, то он был либо правым либо левым ребенком. Делаем Y либо правым либо левым ребенком "X.отца"
+            // 3. Если X не был - root
+            //    Тогда он был либо правым, либо левым ребенком.
+            //    Делаем Y либо правым, либо левым ребенком отца X
+            else if (x == x->parent->left) {
                 x->parent->left = y;
             }
             else {
                 x->parent->right = y;
             }
-
-            y->left = x;   // 4. Выставляем Y ребенка, а у Х отца
-            x->parent = y;  // 4. Выставляем Y ребенка, а у Х отца
+            y->left = x;   // Выставляем у Y ребенка, а у Х отца
+            x->parent = y; // Выставляем у Y ребенка, а у Х отца
         }
 
-
-        void rb_right_rotate(node_ptr x){
+        void rb_right_rotate(node_ptr x) {
             node_ptr y = x->left;
-
             x->left = y->right;
-            if(is_nil(y->right) == false) {
+            if (is_nil(y->right) == false) {
                 y->right->parent = x;
             }
             y->parent = x->parent;
-            if(is_nil(x->parent) == true) {
+            if (is_nil(x->parent) == true) {
                 root_ = y;
             }
-            else if(x == x->parent->right) {
+            else if (x == x->parent->right) {
                 x->parent->right = y;
             }
             else {
@@ -285,35 +287,37 @@ class RedBlackTree {
             x->parent = y;
         }
 
-        void rb_insertion_fixup(node_ptr z){
+        void rb_insertion_fixup(node_ptr z) {
             while(z != NULL && z->parent != NULL && z->parent->color == RED) {
-                if(z->parent == z->parent->parent->left) { //1. z.parent is the left child
-                    node_ptr y = z->parent->parent->right; //   Y = uncle of z
-
-
-                    if(y!= NULL && y->color == RED) { //case 1: (if uncle RED)
+                // 1.0 Отец Z - левый ребенок
+                if (z->parent == z->parent->parent->left) {
+                    node_ptr y = z->parent->parent->right;
+                    // 1.1 Если дядя красный (case 1)
+                    if (y!= NULL && y->color == RED) {
                         // std::cout << "rb_insert-fixup-11" << std::endl;
                         z->parent->color = BLACK;
                         y->color = BLACK;
                         z->parent->parent->color = RED;
-                        z = z->parent->parent; // z is a grandparent now
+                        z = z->parent->parent;
                     }
                     else {
-                        if (z == z->parent->right) { //case2: (if z is right child) - make it left child
+                        // 1.2 Если Z - правый ребенок, делаем его левым (case 2)
+                        if (z == z->parent->right) {
                             // std::cout << "rb_insert-fixup-12" << std::endl;
-                            z = z->parent; //marked z.parent as new z
+                            z = z->parent;
                             rb_left_rotate(z);
                         }
-                        //case3: (if z is left child)
+                        // 1.3 Если Z - левый ребенок (case 3)
                         // std::cout << "rb_insert-fixup-13" << std::endl;
                         z->parent->color = BLACK; //made parent black
                         z->parent->parent->color = RED; //made parent red
                         rb_right_rotate(z->parent->parent);
                     }
                 }
-                else if (z->parent == z->parent->parent->right) { //z.parent is the right child
-                    node_ptr y = z->parent->parent->left; //uncle of z
-
+                // 2.0 Отец Z - правый ребенок
+                else if (z->parent == z->parent->parent->right) {
+                    node_ptr y = z->parent->parent->left;
+                    // 2.1 Если дядя красный (case 1)
                     if (y != NULL && y->color == RED) {
                         // std::cout << "rb_insert-fixup-21" << std::endl;
                         z->parent->color = BLACK;
@@ -322,14 +326,16 @@ class RedBlackTree {
                         z = z->parent->parent;
                     }
                     else {
+                        // 2.2 Если Z - левый ребенок, делаем его правым (case 2)
                         if (z == z->parent->left) {
                             // std::cout << "rb_insert-fixup-22" << std::endl;
-                            z = z->parent; //marked z.parent as new z
+                            z = z->parent;
                             rb_right_rotate(z);
                         }
+                        // 2.3 Если Z - правый ребенок (case 3)
                         // std::cout << "rb_insert-fixup-23" << std::endl;
-                        z->parent->color = BLACK; //made parent black
-                        z->parent->parent->color = RED; //made parent red
+                        z->parent->color = BLACK;
+                        z->parent->parent->color = RED;
                         rb_left_rotate(z->parent->parent);
                     }
                 }
@@ -337,84 +343,86 @@ class RedBlackTree {
             root_->color = BLACK;
         }
 
-        void rb_insert(node_ptr z){
-            // 1. Итерируемся от root.
-            //    tmp - итератор.
+        void rb_insert(node_ptr z) {
+            // 1. Итерируемся от root указателем tmp.
             //    Y после итераций окажется родителем новой ноды Z.
             //    Для этого мы сохраняем итеративный шаг,
             //    каждый раз опускаясь ниже, чтоб не потерять его
             node_ptr  temp = root_;
             node_ptr  y = nil_;
 
-            while(is_nil(temp) == false) {
+            while (is_nil(temp) == false) {
                 y = temp;
-                if(z->value < temp->value)
+                if (z->value < temp->value)
                     temp = temp->left;
                 else
                     temp = temp->right;
             }
             z->parent = y;
             // 2. Если Дерево было пустым. То новый узел Z - root
-            if(is_nil(y) == true) {
+            if (is_nil(y) == true) {
                 // std::cout << "rb_insert-1" << std::endl;
                 root_ = z;
             }
-            // 3. Если нет, определяем станет Z правым или левым ребенком
-            else if(z->value < y->value) {
+            // 3. Если нет, определяем, станет Z правым или левым ребенком
+            else if (z->value < y->value) {
                 // std::cout << "rb_insert-2" << std::endl;
                 y->left = z;
-            } else {
+            }
+            else {
                 // std::cout << "rb_insert-3" << std::endl;
                 y->right = z;
             }
-            // И зануляем его детей.
+            // 4. Зануляем детей нового элемента Z
             z->right = nil_;
             z->left = nil_;
-
             rb_insertion_fixup(z);
         }
 
         void rb_transplant(node_ptr u, node_ptr v) {
-            // 1. Является U ли корнем?
-            //    - если да, то V - корень
-            if(is_nil(u->parent) == true)
+            // 1. Является ли U корнем?
+            //    Если да, то V - корень.
+            if (is_nil(u->parent) == true) {
                 root_ = v;
+            }
             // 2. Если U левый сын ...
-            else if(u == u->parent->left)
+            else if (u == u->parent->left) {
                 u->parent->left = v;
+            }
             // 3. Если U правый сын ...
-            else
+            else {
                 u->parent->right = v;
+            }
             if (v == NULL || u == NULL) return;
             v->parent = u->parent;
         }
 
         node_ptr rb_maximum(node_ptr x) {
-            while(is_nil(x->right) == false)
+            while (is_nil(x->right) == false)
                 x = x->right;
             return x;
         }
 
         node_ptr rb_minimum(node_ptr x) {
-            while(is_nil(x->left) == false)
+            while (is_nil(x->left) == false)
                 x = x->left;
             return x;
         }
 
         node_ptr rb_maximum(node_ptr x) const {
-            while(is_nil(x->right) == false)
+            while (is_nil(x->right) == false)
                 x = x->right;
             return x;
         }
 
         node_ptr rb_minimum(node_ptr x) const {
-            while(is_nil(x->left) == false)
+            while (is_nil(x->left) == false)
                 x = x->left;
             return x;
         }
 
         void rb_delete_fixup(node_ptr x) {
-            while(x != root_ && x != NULL && x->color == BLACK) {
+            while (x != root_ && x != NULL && x->color == BLACK) {
                 if (x == x->parent->left) {
                     node_ptr w = x->parent->right;
                     if (w->color == RED) {
@@ -424,7 +432,7 @@ class RedBlackTree {
                         rb_left_rotate(x->parent);
                         w = x->parent->right;
                     }
-                    if(w->left->color == BLACK && w->right->color == BLACK) {
+                    if (w->left->color == BLACK && w->right->color == BLACK) {
                         // std::cout << "delete-case-12\n";
                         w->color = RED;
                         x = x->parent;
@@ -459,7 +467,7 @@ class RedBlackTree {
                         x = x->parent;
                     }
                     else {
-                        if(w->left->color == BLACK) {
+                        if (w->left->color == BLACK) {
                             w->right->color = BLACK;
                             w->color = RED;
                             rb_left_rotate(w);
@@ -478,82 +486,86 @@ class RedBlackTree {
             x->color = BLACK;
         }
 
-        void rb_delete(node_ptr z){
+        void rb_delete(node_ptr z) {
             node_ptr y = z;
             node_ptr x;
             bool y_orignal_color = y->color;
 
             bool is_allocated = false;
 
-            // 1. У Z левый ребенка-NIL?
-            //    - Case 1. no children or only right
-            //    - Значит он имеет правого ребенка/не имеет детей.
-            //    - Тогда просто Z заменяем его правым ребенком, (сохранив его)
+            // 1. У Z левый ребенок-NIL?
+            //    Case 1. no children or only right
+            //    Значит он имеет правого ребенка/не имеет детей.
+            //    Просто заменяем Z его правым ребенком, (сохранив его)
             if (is_nil(z->left) == true) {
                 // std::cout << "rb_delete-1" << std::endl;
                 x = z->right;
                 rb_transplant(z, z->right);
             }
-            // 2. У Z левый ребенка !=NIL, но правый ребенок - NILL?
-            //    - Case 2. only left child
-            //    - Если да, тогда просто Z заменяем его левым ребенком, (сохранив его)
-            else if(is_nil(z->right) == true) {
+            // 2. У Z левый ребенка !=NIL, но правый ребенок-NIL?
+            //    Case 2. only left child
+            //    Если да, тогда Z заменяем его левым ребенком, (сохранив его)
+            else if (is_nil(z->right) == true) {
                 // std::cout << "rb_delete-2" << std::endl;
                 x = z->left;
                 rb_transplant(z, z->left);
             }
-            // 3. У Z есть оба ребенка != NIL
-            //    - Case 3. both children
-            //    - Находим минимальный элемент справа (Y)
-            //    - Минимальный элемент встанет на место Z. Но не сразу
+            // 3. У Z есть оба ребенка !=NIL
+            //    Case 3. both children
+            //    Находим минимальный элемент справа (Y)
+            //    Минимальный элемент встанет на место Z. Но не сразу
             else {
-                // 3.1 Пусть Y - это минимальный такой элемент справа от Z
-                //     Сохраняем его правого ребенка и цвет.
+                // 3.1 Пусть Y - это минимальный элемент справа от Z
+                //     Сохраняем его правого ребенка и цвет Y.
                 y = rb_minimum(z->right);
                 y_orignal_color = y->color;
-                x = y->right; //x = (y->right == NULL) ? y : y->right; // +
-                if (x == NULL) { // случай когда y->right = NULL. И Y - ребенок Z. Тогда в 3.2 нам нужен непустой x
+                x = y->right;
+                // 3.2 Cлучай когда y->right = NULL.
+                //     И Y - ребенок Z. Тогда в 3.2 нам нужен непустой Х
+                //     (Костыль, не по книжке Кормена)
+                if (x == NULL) {
                     x = reinterpret_cast<node_ptr>(allocator_.allocate(sizeof(node)));
                     allocator_.construct(&(x->value), value_type());
                     x->is_end_rend = false;
                     is_allocated = true;
                 }
-                // 3.2 Если Y - ребенок Z
+                // 3.3 Если Y - ребенок Z
                 if (y->parent == z) {
                     // std::cout << "rb_delete-3" << std::endl;
                     x->parent = y;//+
                 }
-                // 3.3 Если Y - не ребенок Z
-                //     - Вытаскиваем Y и на его место вставляем y->right
-                //     - Делаем копию правого поддерева Z с узлом Y
-                //     - Делаем копию правого поддерева Z с узлом Y
+                // 3.4 Если Y - не ребенок Z
+                //     Вытаскиваем Y и на его место вставляем y->right
+                //     Делаем копию правого поддерева Z с узлом Y
+                //     Делаем копию правого поддерева Z с узлом Y
                 else {
                     // std::cout << "rb_delete-4" << std::endl;
                     rb_transplant(y, y->right);
                     y->right = z->right;
                     y->right->parent = y;
                 }
-                // Меняем два дерева Z и Y местами
+                // 3.5 Меняем два дерева Z и Y местами
                 rb_transplant(z, y);
                 y->left = z->left;
                 y->left->parent = y;
                 y->color = z->color;
             }
-            // rb_delete_fixup - если у заменяемого элемента цвет был черный,
-            //                   то придется менять цвет у него и его ребенка.
+            // 3.6 Если у заменяемого элемента цвет был черный.
+            //     Тогда придется менять цвет у него и его ребенка. И не только.
             // if (y_orignal_color == BLACK)
             //     rb_delete_fixup(x);
             allocator_.destroy(&z->value);
             allocator_.deallocate(reinterpret_cast<value_type *>(z), 1);
+            z = NULL;
             if (is_allocated == true) {
                 allocator_.destroy(&x->value);
                 allocator_.deallocate(reinterpret_cast<value_type *>(x), 1);
+                x = NULL;
             }
-            z = NULL;
         }
 
         void inorder(node_ptr n) {
-            if(is_nil(n) == false) {
+            if (is_nil(n) == false) {
                 inorder(n->left);
                 std::cout << "value = " << n->value << std::endl;
                 inorder(n->right);
@@ -718,11 +730,11 @@ class RedBlackTree {
             unlink_end_value();
             unlink_rend_value();
             clear_node(root_);
-            root_ = NULL; // FIXME: why needed?
+            root_ = NULL;
             size_ = 0;
         }
 
-        void delete_end_rend(){
+        void deallocate_end_rend() {
             if (end_allocated_ != NULL) {
                 allocator_.destroy(&end_allocated_->value);
                 allocator_.deallocate(reinterpret_cast<value_type *>(end_allocated_), 1);
@@ -735,107 +747,95 @@ class RedBlackTree {
             }
         }
 
-        void print_sorted_tree(){
+        void print_sorted_tree() {
             unlink_end_value();
             unlink_rend_value();
             inorder(root_);
         }
 
         ///////////// Key methods / Map Lookup /////////////////////////////////
-        template <class Key>
-        iterator get_upper_bound(const Key &key, node_ptr root, node_ptr result) {
-            while (root != NULL) {
-                if (compare_(key, root->value.first) == true) {
-                    result = root;
-                    root = root->left;
-                }
-                else {
-                    root = root->right;
-                }
-            }
-            return (iterator)(result);
-        }
-
-        template <class Key>
-        iterator get_lower_bound(const Key &key, node_ptr root, node_ptr result) {
-            while (root != NULL) {
-                if (compare_(root->value.first, key) == false) {
-                    result = root;
-                    root = root->left;
-                }
-                else {
-                    root = root->right;
-                }
-            }
-            return (iterator)(result);
-        }
-
-        template <class Key>
-        const_iterator get_upper_bound(const Key &key, node_ptr root, node_ptr result) const {
-            while (root != NULL) {
-                if (compare_(key, root->value.first) == true) {
-                    result = root;
-                    root = root->left;
-                }
-                else {
-                    root = root->right;
-                }
-            }
-            return (iterator)(result);
-        }
-
-        template <class Key>
-        const_iterator get_lower_bound(const Key &key, node_ptr root, node_ptr result) const {
-            while (root != NULL) {
-                if (compare_(root->value.first, key) == false) {
-                    result = root;
-                    root = root->left;
-                }
-                else {
-                    root = root->right;
-                }
-            }
-            return (iterator)(result);
-        }
-
         template<class Key>
         iterator upper_bound(const Key& key) {
-            return get_upper_bound(key, root_, link_end_value());
+            node_ptr tmp = root_;
+            node_ptr result = link_end_value();
+            while (tmp != NULL) {
+                if (compare_(key, tmp->value.first) == true) {
+                    result = tmp;
+                    tmp = tmp->left;
+                }
+                else {
+                    tmp = tmp->right;
+                }
+            }
+            return (iterator)(result);
         }
 
         template<class Key>
         iterator lower_bound(const Key& key) {
-            return get_lower_bound(key, root_, link_end_value());
+            node_ptr tmp = root_;
+            node_ptr result = link_end_value();
+            while (tmp != NULL) {
+                if (compare_(tmp->value.first, key) == false) {
+                    result = tmp;
+                    tmp = tmp->left;
+                }
+                else {
+                    tmp = tmp->right;
+                }
+            }
+            return (iterator)(result);
         }
 
         template<class Key>
         const_iterator upper_bound(const Key& key) const {
-            return get_upper_bound(key, root_, link_end_value());
+            node_ptr tmp = root_;
+            node_ptr result = link_end_value();
+            while (tmp != NULL) {
+                if (compare_(key, tmp->value.first) == true) {
+                    result = tmp;
+                    tmp = tmp->left;
+                }
+                else {
+                    tmp = tmp->right;
+                }
+            }
+            return (const_iterator)(result);
         }
 
         template<class Key>
         const_iterator lower_bound(const Key& key) const {
-            return get_lower_bound(key, root_, link_end_value());
+            node_ptr tmp = root_;
+            node_ptr result = link_end_value();
+            while (tmp != NULL) {
+                if (compare_(tmp->value.first, key) == false) {
+                    result = tmp;
+                    tmp = tmp->left;
+                }
+                else {
+                    tmp = tmp->right;
+                }
+            }
+            return (const_iterator)(result);
         }
 
         template <class Key>
         iterator find(const Key &key) {
-            iterator p = get_lower_bound(key, root_, link_end_value());
-            if (p != end() && compare_(key, (*p).first) == false) {
-                return p;
+            iterator iter = lower_bound(key);
+            if (iter != end() && compare_(key, (*iter).first) == false) {
+                return iter;
             }
             return end();
         }
 
         template <class Key>
         size_type count(const Key &key) const {
-            node_ptr r = root_;
-            while (r != NULL) {
-                if (compare_(key, r->value.first)) {
-                    r = r->left;
+            node_ptr tmp = root_;
+            while (tmp != NULL) {
+                if (compare_(key, tmp->value.first)) {
+                    tmp = tmp->left;
                 }
-                else if (compare_(r->value.first, key)) {
-                    r = r->right;
+                else if (compare_(tmp->value.first, key)) {
+                    tmp = tmp->right;
                 }
                 else return 1;
             }
@@ -844,19 +844,19 @@ class RedBlackTree {
 
         template <class Key>
         pair<iterator, iterator> equal_range(const Key& key) {
+            node_ptr tmp = root_;
             node_ptr res = link_end_value();
-            node_ptr rt = root_;
-            while (rt != NULL) {
-                if (compare_(key, rt->value.first)) {
-                    res = rt;
-                    rt = rt->left;
+            while (tmp != NULL) {
+                if (compare_(key, tmp->value.first)) {
+                    res = tmp;
+                    tmp = tmp->left;
                 }
-                else if (compare_(rt->value.first, key)) {
-                    rt = rt->right;
+                else if (compare_(tmp->value.first, key)) {
+                    tmp = tmp->right;
                 }
                 else {
-                    return pair<iterator, iterator>(iterator(rt),
-                                                    iterator(rt->right != NULL ? rb_minimum(rt->right) : res));
+                    return pair<iterator, iterator>(iterator(tmp),
+                                                    iterator(tmp->right != NULL ? rb_minimum(tmp->right) : res));
                 }
             }
             return pair<iterator, iterator>(iterator(res), iterator(res));
@@ -864,19 +864,19 @@ class RedBlackTree {
 
         template <class Key>
         pair<iterator, iterator> equal_range(const Key& key) const {
+            node_ptr tmp = root_;
             node_ptr res = link_end_value();
-            node_ptr rt = root_;
-            while (rt != NULL) {
-                if (compare_(key, rt->value.first)) {
-                    res = rt;
-                    rt = rt->left;
+            while (tmp != NULL) {
+                if (compare_(key, tmp->value.first)) {
+                    res = tmp;
+                    tmp = tmp->left;
                 }
-                else if (compare_(rt->value.first, key)) {
-                    rt = rt->right;
+                else if (compare_(tmp->value.first, key)) {
+                    tmp = tmp->right;
                 }
                 else {
-                    return pair<const_iterator, const_iterator>(const_iterator(rt),
-                                                                const_iterator(rt->right != NULL ? rb_minimum(rt->right) : res));
+                    return pair<const_iterator, const_iterator>(const_iterator(tmp),
+                                                                const_iterator(tmp->right != NULL ? rb_minimum(tmp->right) : res));
                 }
             }
             return pair<const_iterator, const_iterator>(const_iterator(res),
@@ -990,17 +990,19 @@ class RedBlackTree {
 
         ////////////// operator==,!=,<,<=,>,>=: ////////////////////////////////
         friend
-        bool operator==(const RedBlackTree& lhs, const RedBlackTree& rhs){
-            return (lhs.size() == rhs.size() && std::equal(lhs.begin(), lhs.end(), rhs.begin()));
+        bool operator==(const RedBlackTree& lhs, const RedBlackTree& rhs) {
+            return (lhs.size() == rhs.size() &&
+                    std::equal(lhs.begin(), lhs.end(), rhs.begin()));
         }
 
         friend
-        bool operator<(const RedBlackTree& lhs,  const RedBlackTree& rhs){
-            return (std::lexicographical_compare(lhs.begin(), lhs.end(), rhs.begin(), rhs.end()));
+        bool operator<(const RedBlackTree& lhs,  const RedBlackTree& rhs) {
+            return (std::lexicographical_compare(lhs.begin(), lhs.end(),
+                                                 rhs.begin(), rhs.end()));
         }
 
         friend
-        bool operator>(const RedBlackTree& lhs,  const RedBlackTree& rhs){
+        bool operator>(const RedBlackTree& lhs,  const RedBlackTree& rhs) {
             return (lhs < rhs);
         }
 
@@ -1013,10 +1015,10 @@ class RedBlackTree {
         size_type           size_;
         node_ptr            end_allocated_;
         node_ptr            rend_allocated_;
-    };
+};
 
-///////////////////// end of class RedBlackTree //////////////////////////////
+///////////////////// end of RedBlackTree //////////////////////////////////////
 
 }  // namespace ft
 
-#endif
+#endif // _FT_REDBLACKTREE_
