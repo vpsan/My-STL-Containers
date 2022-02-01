@@ -5,6 +5,9 @@
 # include <algorithm>   // min max for IsBalanced
 # include <iostream>    // std::cout for debug/print methods
 
+# include "../includes/lexicographical_compare.hpp"
+# include "../includes/equal.hpp"
+
 # define RED    true
 # define BLACK  false
 
@@ -992,12 +995,12 @@ class RedBlackTree {
         friend
         bool operator==(const RedBlackTree& lhs, const RedBlackTree& rhs) {
             return (lhs.size() == rhs.size() &&
-                    std::equal(lhs.begin(), lhs.end(), rhs.begin()));
+                    ft::equal(lhs.begin(), lhs.end(), rhs.begin()));
         }
 
         friend
         bool operator<(const RedBlackTree& lhs,  const RedBlackTree& rhs) {
-            return (std::lexicographical_compare(lhs.begin(), lhs.end(),
+            return (ft::lexicographical_compare(lhs.begin(), lhs.end(),
                                                  rhs.begin(), rhs.end()));
         }
 

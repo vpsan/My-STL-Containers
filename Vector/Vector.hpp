@@ -4,6 +4,9 @@
 # include <memory> // std::allocator<T>
 # include "../includes/ReverseIterator.hpp"
 # include "../includes/conditional.hpp"
+# include "../includes/lexicographical_compare.hpp"
+# include "../includes/equal.hpp"
+# include "../includes/enable_if.hpp"
 
 namespace ft {
 
@@ -205,7 +208,7 @@ class vector {
         vector(InputIt first,
                InputIt last,
                const allocator_type& allctr_obj = allocator_type(),
-               typename std::enable_if<!std::is_integral<InputIt>::value, bool>::type* = 0)
+               typename ft::enable_if<!ft::is_integral<InputIt>::value, bool>::type* = 0)
                     : allocator_(allctr_obj) {
             // if (first > last) throw;
             size_ = static_cast<size_type>(last - first);
@@ -270,7 +273,7 @@ class vector {
         template<class InputIt>
         void assign(InputIt first,
                     InputIt last,
-                    typename std::enable_if<!std::is_integral<InputIt>::value, bool>::type* = 0) {
+                    typename ft::enable_if<!ft::is_integral<InputIt>::value, bool>::type* = 0) {
             difference_type count = last - first;
             this->clear();
             this->reserve(count);
@@ -478,7 +481,7 @@ class vector {
         void insert(iterator pos,
                     InputIt first,
                     InputIt last,
-                    typename std::enable_if<!std::is_integral<InputIt>::value, bool>::type* = 0) {
+                    typename ft::enable_if<!ft::is_integral<InputIt>::value, bool>::type* = 0) {
             if (pos < begin() || pos > end()) return;
             difference_type start = pos - begin();
             difference_type count = last - first;
@@ -545,7 +548,7 @@ template<class T, class Allocator>
 bool operator==(const ft::vector<T,Allocator>& lhs,
                 const ft::vector<T,Allocator>& rhs){
     return (lhs.size() == rhs.size()
-            && std::equal( lhs.begin(), lhs.end(), rhs.begin() ));
+            && ft::equal( lhs.begin(), lhs.end(), rhs.begin() ));
 }
 
 template<class T, class Allocator>
@@ -557,7 +560,7 @@ bool operator!=(const ft::vector<T,Allocator>& lhs,
 template<class T, class Allocator>
 bool operator<(const ft::vector<T,Allocator>& lhs,
                const ft::vector<T,Allocator>& rhs){
-    return std::lexicographical_compare(lhs.begin(), lhs.end(),
+    return ft::lexicographical_compare(lhs.begin(), lhs.end(),
                                         rhs.begin(), rhs.end());
 }
 
@@ -570,7 +573,7 @@ bool operator<=(const ft::vector<T,Allocator>& lhs,
 template<class T, class Allocator>
 bool operator>(const ft::vector<T,Allocator>& lhs,
                const ft::vector<T,Allocator>& rhs){
-    return !std::lexicographical_compare(lhs.begin(), lhs.end(),
+    return !ft::lexicographical_compare(lhs.begin(), lhs.end(),
                                          rhs.begin(), rhs.end());
 }
 
