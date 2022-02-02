@@ -5,6 +5,7 @@
 # include <algorithm>   // min max for IsBalanced
 # include <iostream>    // std::cout for debug/print methods
 
+# include "../includes/ReverseIterator.hpp"
 # include "../includes/lexicographical_compare.hpp"
 # include "../includes/equal.hpp"
 
@@ -13,7 +14,7 @@
 
 namespace ft {
 
-///////////////////// struct node: /////////////////////////////////////////////
+///////////////////// Struct node: /////////////////////////////////////////////
 template <class T>
 struct node {
         typedef node<T>*    node_ptr;
@@ -27,14 +28,14 @@ struct node {
         bool                is_end_rend;
 };
 
-///////////////////// class RedBlackTree: //////////////////////////////////////
+///////////////////// Class RedBlackTree: //////////////////////////////////////
 template <class T,
-        class Compare = std::less<T>,
-        class Allocator = std::allocator<T> >
+          class Compare = std::less<T>,
+          class Allocator = std::allocator<T> >
 class RedBlackTree {
 
     public:
-        ///////////// typedef part 1 (without iterators): //////////////////////
+        ///////////// Typedef part 1 (without iterators): //////////////////////
         typedef T                                   value_type;
         typedef Compare                             value_comapre;
         typedef Allocator                           allocator_type;
@@ -42,7 +43,7 @@ class RedBlackTree {
         typedef node<T>                             node;
         typedef typename node::node_ptr             node_ptr;
 
-    public:
+    private:
         ///////////// Iterators: ///////////////////////////////////////////////
         template<bool IsConst>
         class BidirectionalIterator {
@@ -138,17 +139,14 @@ class RedBlackTree {
                     x = x->right;
                 return x;
             }
-
             node_ptr rb_iter_minimum(node_ptr x) {
                 while(is_nil(x->left) == false)
                     x = x->left;
                 return x;
             }
-
             bool is_nil(node_ptr n) {
                 return n == nil_ || n->is_end_rend == true;
             }
-
         };
 
         /* LegacyInputIterator effects: iter == iter ************************ */
@@ -167,13 +165,13 @@ class RedBlackTree {
         }
 
     public:
-        ///////////// typedef part 2 (iterators): //////////////////////////////
+        ///////////// Typedef part 2 (iterators): //////////////////////////////
         typedef BidirectionalIterator<false>          iterator;
         typedef BidirectionalIterator<true>           const_iterator;
         typedef ReverseIterator<iterator>             reverse_iterator;
         typedef ReverseIterator<const_iterator>       const_reverse_iterator;
 
-        ///////////// constructor(s)/destructor/operator=: /////////////////////
+        ///////////// Constructor(s) / Destructor / Operator=: /////////////////
         explicit RedBlackTree(const value_comapre& compare_obj,
                                 const allocator_type& allctr_obj)
                 : compare_(compare_obj),
@@ -243,6 +241,7 @@ class RedBlackTree {
             deallocate_end_rend();
         }
 
+    private:
         ///////////// RedBlackTree /////////////////////////////////////////////
         void rb_left_rotate(node_ptr x) {
             node_ptr y = x->right; // Обозначаем правого ребенка Y
@@ -583,6 +582,7 @@ class RedBlackTree {
             return n == nil_ || n->is_end_rend == true;
         }
 
+    public:
         ///////////// Wrappers over RedBlackTree ///////////////////////////////
         node_ptr link_end_value() {
             if (root_ == NULL) return root_;
@@ -756,6 +756,7 @@ class RedBlackTree {
             inorder(root_);
         }
 
+    public:
         ///////////// Key methods / Map Lookup /////////////////////////////////
         template<class Key>
         iterator upper_bound(const Key& key) {
@@ -886,6 +887,7 @@ class RedBlackTree {
                                                         const_iterator(res));
         }
 
+    public:
         ///////////// Trivial helpers //////////////////////////////////////////
         size_type size() const {
             return size_;
@@ -917,6 +919,7 @@ class RedBlackTree {
             std::swap(this->rend_allocated_, other.rend_allocated_);
         }
 
+    public:
         ///////////// Iterators: ///////////////////////////////////////////////
         iterator begin() {
             return iterator( size_ == 0 ? root_ : rb_minimum(root_) );
@@ -950,6 +953,7 @@ class RedBlackTree {
             return const_reverse_iterator(link_rend_value());
         }
 
+    public:
         ///////////// isBalanced ///////////////////////////////////////////////
         // Returns true if the Binary tree is balanced like a RED-BLACK tree.
         // This function also sets value in maxh and minh (passed by reference).
@@ -991,7 +995,8 @@ class RedBlackTree {
             return isBalancedUtil(root_, maxh, minh);
         }
 
-        ////////////// operator==,!=,<,<=,>,>=: ////////////////////////////////
+    public:
+        ////////////// Operator==,!=,<,<=,>,>=: ////////////////////////////////
         friend
         bool operator==(const RedBlackTree& lhs, const RedBlackTree& rhs) {
             return (lhs.size() == rhs.size() &&
@@ -1010,7 +1015,7 @@ class RedBlackTree {
         }
 
     private:
-        ///////////// data fields: /////////////////////////////////////////////
+        ///////////// Data fields: /////////////////////////////////////////////
         value_comapre       compare_;
         allocator_type      allocator_;
         node_ptr            root_;
@@ -1019,8 +1024,6 @@ class RedBlackTree {
         node_ptr            end_allocated_;
         node_ptr            rend_allocated_;
 };
-
-///////////////////// end of RedBlackTree //////////////////////////////////////
 
 }  // namespace ft
 

@@ -1,12 +1,10 @@
-#ifndef CONDITIONAL_HPP
-# define CONDITIONAL_HPP
+#ifndef _FT_CONDITIONAL_
+# define _FT_CONDITIONAL_
 
 namespace ft {
 
 template<bool B, class T, class U>
-struct conditional {
-
-};
+struct conditional {};
 
 template<class T, class U>
 struct conditional<true, T, U> {
@@ -20,4 +18,4 @@ struct conditional<false, T, U> {
 
 }  // namespace ft
 
-#endif
+#endif // _FT_CONDITIONAL_

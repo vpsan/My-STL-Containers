@@ -1,5 +1,5 @@
-#ifndef PAIR_HPP
-# define PAIR_HPP
+#ifndef _FT_PAIR_
+# define _FT_PAIR_
 
 namespace ft {
 
@@ -68,4 +68,4 @@ pair<T1, T2> make_pair(T1 obj1, T2 obj2) {
 
 } // namespace ft
 
-#endif
+#endif // _FT_PAIR_

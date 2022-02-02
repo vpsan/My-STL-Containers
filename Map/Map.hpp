@@ -10,7 +10,7 @@
 
 namespace ft {
 
-///////////////////// class map: ///////////////////////////////////////////////
+///////////////////// Class map: ///////////////////////////////////////////////
 template <class Key,
           class T,
           class Compare = std::less<Key>,
@@ -18,7 +18,7 @@ template <class Key,
 class map {
 
     public:
-        ///////////// typedef: /////////////////////////////////////////////////
+        ///////////// Typedef: /////////////////////////////////////////////////
         typedef Key                                   key_type;
         typedef T                                     mapped_type;
         typedef typename ft::pair<const Key, T>       value_type;
@@ -48,9 +48,8 @@ class map {
             RedBlackTree_type::const_reverse_iterator const_reverse_iterator;
 
     private:
-        ///////////// class value_compare: /////////////////////////////////////
+        ///////////// value_compare: ///////////////////////////////////////////
         class value_compare {
-
             public:
                 value_compare(const key_compare& cmpr) : vc_compare_(cmpr) {}
 
@@ -58,14 +57,13 @@ class map {
                                 const value_type& obj2) const {
                     return (vc_compare_(obj1.first, obj2.first));
                 }
-
             private:
                 key_compare vc_compare_;
 
         };
 
     public:
-        ///////////// constructor(s)/destructor/operator=: /////////////////////
+        ///////////// Constructor(s) / Destructor / Operator=: /////////////////
         explicit map(const key_compare& compare_obj = key_compare(),
                      const allocator_type& allctr_obj = Allocator())
                         : rb_tree_(compare_obj, allctr_obj) {}
@@ -249,7 +247,7 @@ class map {
             return rb_tree_.equal_range(key);
         }
 
-        ////////////////// Observers: //////////////////////////////////////////
+        ///////////// Observers: ///////////////////////////////////////////////
         key_compare key_comp() const {
             return rb_tree_.get_value_compare();
         }
@@ -258,43 +256,35 @@ class map {
             return value_compare(rb_tree_.get_value_compare());
         }
 
-        ////////////////// operator==,!=,<,<=,>,>=: ////////////////////////////
-        friend
-        bool operator==(const map& lhs, const map& rhs) {
+        ///////////// Operator==,!=,<,<=,>,>=: /////////////////////////////////
+        friend bool operator==(const map& lhs, const map& rhs) {
             return (lhs.rb_tree_ == rhs.rb_tree_);
         }
 
-        friend
-        bool operator!=(const map& lhs, const map& rhs) {
+        friend bool operator!=(const map& lhs, const map& rhs) {
             return !(lhs == rhs);
         }
 
-        friend
-        bool operator<(const map& lhs, const map& rhs) {
+        friend bool operator<(const map& lhs, const map& rhs) {
             return (lhs.rb_tree_ < rhs.rb_tree_);
         }
 
-        friend
-        bool operator>(const map& lhs, const map& rhs) {
+        friend bool operator>(const map& lhs, const map& rhs) {
             return (rhs < lhs);
         }
 
-        friend
-        bool operator<=(const map& lhs, const map& rhs) {
+        friend bool operator<=(const map& lhs, const map& rhs) {
             return !(lhs > rhs);
         }
 
-        friend
-        bool operator>=(const map& lhs, const map& rhs) {
+        friend bool operator>=(const map& lhs, const map& rhs) {
             return !(lhs < rhs);
         }
 
-        ///////////// data fields: /////////////////////////////////////////////
-        private:
-            RedBlackTree_type rb_tree_;
+    private:
+        ///////////// Data fields: /////////////////////////////////////////////
+        RedBlackTree_type rb_tree_;
 };
-
-///////////////////// end of map ///////////////////////////////////////////////
 
 }  // namespace ft
 

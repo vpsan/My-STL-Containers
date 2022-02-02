@@ -1,7 +1,8 @@
-#ifndef VECTOR_HPP
-# define VECTOR_HPP
+#ifndef _FT_VECTOR_
+# define _FT_VECTOR_
 
 # include <memory> // std::allocator<T>
+
 # include "../includes/ReverseIterator.hpp"
 # include "../includes/conditional.hpp"
 # include "../includes/lexicographical_compare.hpp"
@@ -10,11 +11,23 @@
 
 namespace ft {
 
+///////////////////// Class Vector: ////////////////////////////////////////////
 template<class T, class Allocator = std::allocator<T> >
 class vector {
 
     public:
+        ///////////// Typedef part 1 (without iterators): //////////////////////
+        typedef Allocator                           allocator_type;
+        typedef T                                   value_type;
+        typedef typename Allocator::pointer         pointer;
+        typedef typename Allocator::const_pointer   const_pointer;
+        typedef typename Allocator::reference       reference;
+        typedef typename Allocator::const_reference const_reference;
+        typedef typename Allocator::size_type       size_type;
+        typedef typename Allocator::difference_type difference_type;
 
+    public:
+        ///////////// Iterators: ///////////////////////////////////////////////
         template<bool IsConst>
         class RandomAccessIterator{
             public:
@@ -163,21 +176,13 @@ class vector {
         }
 
     public:
-        typedef Allocator                           allocator_type;
-        typedef T                                   value_type;
-        typedef typename Allocator::pointer         pointer;
-        typedef typename Allocator::const_pointer   const_pointer;
-        typedef typename Allocator::reference       reference;
-        typedef typename Allocator::const_reference const_reference;
-        typedef typename Allocator::size_type       size_type;
-        typedef typename Allocator::difference_type difference_type;
-
+        ///////////// Typedef part 2 (iterators): //////////////////////////////
         typedef RandomAccessIterator<false>         iterator;
         typedef RandomAccessIterator<true>          const_iterator;
         typedef ReverseIterator<iterator>           reverse_iterator;
         typedef ReverseIterator<const_iterator>     const_reverse_iterator;
 
-        ////////////////////////////////////////////////////////////////////////
+        ///////////// Constructor(s) / Destructor / Operator=: /////////////////
         explicit vector(const allocator_type& allctr_obj = allocator_type())
                             : begin_(NULL),
                             size_(0),
@@ -402,7 +407,7 @@ class vector {
             capacity_ = new_cap;
         }
 
-        ////////////////// Modifiers: //////////////////////////////////////////
+        ///////////// Modifiers: ///////////////////////////////////////////////
         void resize(size_type count, value_type value = value_type()){
             if (count > size_){
                 if (count > capacity_) {
@@ -537,6 +542,7 @@ class vector {
         // }
 
     private:
+        ///////////// Data fields: /////////////////////////////////////////////
         pointer         begin_;
         size_type       size_;
         size_type       capacity_;
@@ -585,4 +591,4 @@ bool operator>=(const ft::vector<T,Allocator>& lhs,
 
 }  // namespace ft
 
-#endif
+#endif // _FT_VECTOR_

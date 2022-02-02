@@ -32,7 +32,6 @@ std::ostream& operator<<(std::ostream& os, const std::vector<T>& v)
 
 void rbtree_test_insert();
 void rbtree_test_delete();
-void rbtree_test_insert_erase_isbalanced();
 void rbtree_test_iterators();
 void map_test_iterators();
 void map_test_base();
@@ -49,13 +48,13 @@ void map_test_count();
 void map_test_equal_range();
 void map_test_copy();
 void map_test_operators();
+void map_test_iterator_invalidation();
 
 int main()
 {
 
 //    rbtree_test_insert();
 //    rbtree_test_delete();
-//    rbtree_test_insert_erase_isbalanced();
 //    rbtree_test_iterators();
 //    map_test_iterators();
 //    map_test_base();
@@ -72,7 +71,8 @@ int main()
 //    map_test_equal_range();
 //    map_test_copy();
 //    map_test_operators();
-//
+//    map_test_iterator_invalidation();
+
 //    sleep(10);
 
     return 0;
@@ -178,58 +178,6 @@ void rbtree_test_delete(){
 //    std::cout << "size=" << t.size() << " is_isBalanced = " << t.isBalanced() << std::endl;
 //    t.erase(8);
 //    std::cout << "size=" << t.size() << " is_isBalanced = " << t.isBalanced() << std::endl;
-}
-
-void rbtree_test_insert_erase_isbalanced(){
-    {
-        ft::RedBlackTree<int> t = ft::RedBlackTree<int>();
-        std::cout << "is_isBalanced = " << t.isBalanced() << std::endl;
-        std::cout << "--Start-Print--\n"; t.print_sorted_tree(); std::cout << "--End-Print--\n";
-
-        t.insert(1);
-        t.insert(10);
-        t.insert(2);
-        t.insert(3);
-        t.insert(4);
-        t.insert(20);
-        t.insert(15);
-        std::cout << "is_isBalanced = " << t.isBalanced() << std::endl;
-        std::cout << "--Start-Print--\n"; t.print_sorted_tree(); std::cout << "--End-Print--\n";
-
-        t.insert(2);
-        t.insert(10);
-        t.insert(15);
-        t.insert(200);
-        std::cout << "is_isBalanced = " << t.isBalanced() << std::endl;
-        std::cout << "--Start-Print--\n"; t.print_sorted_tree(); std::cout << "--End-Print--\n";
-
-        t.erase(2);
-        std::cout << "is_isBalanced = " << t.isBalanced() << std::endl;
-        t.erase(10);
-        std::cout << "is_isBalanced = " << t.isBalanced() << std::endl;
-        t.erase(15);
-        std::cout << "is_isBalanced = " << t.isBalanced() << std::endl;
-        t.erase(3);
-        std::cout << "is_isBalanced = " << t.isBalanced() << std::endl;
-        std::cout << "--Start-Print--\n"; t.print_sorted_tree(); std::cout << "--End-Print--\n";
-
-        ft::RedBlackTree<int>::BidirectionalIterator<false> it = t.begin();
-        ft::RedBlackTree<int>::BidirectionalIterator<true> c_it = t.begin();
-        c_it = it;
-        for (; it != t.end(); ++it){
-            std::cout<< *it << std::endl;
-        }
-
-        ft::RedBlackTree<int>::reverse_iterator rit = t.rbegin();
-        for (; rit != t.rend(); ++rit){
-            std::cout<< *rit << std::endl;
-        }
-
-        ft::RedBlackTree<int>::BidirectionalIterator<false> iter = t.begin();
-        t.erase(iter);
-        std::cout << "is_isBalanced = " << t.isBalanced() << std::endl;
-        std::cout << "--Start-Print--\n"; t.print_sorted_tree(); std::cout << "--End-Print--\n";
-    }
 }
 
 void rbtree_test_iterators(){
@@ -886,4 +834,33 @@ void map_test_operators(){
     std::cout << ">= ? - " << (mymap >= mymap1) << std::endl;
     std::cout << "<= ? - " << (mymap < mymap1) << std::endl;
     std::cout << "<= ? - " << (mymap <= mymap1) << std::endl;
+}
+
+void map_test_iterator_invalidation(){
+    {
+        ft::map<char, int> mymap;
+        mymap.insert(ft::pair<char, int>('b', 20));
+
+        ft::map<char, int>::iterator it = mymap.begin();
+        mymap.insert(ft::pair<char, int>('a', 10));
+        mymap.insert(ft::pair<char, int>('c', 30));
+        mymap.insert(ft::pair<char, int>('d', 40));
+        mymap.insert(ft::pair<char, int>('e', 50));
+        for (; it!= mymap.end(); ++it){
+            std::cout << it->first << " => " << it->second << '\n';
+        }
+    }
+    {
+        std::map<char, int> mymap;
+        mymap.insert(std::pair<char, int>('b', 20));
+
+        std::map<char, int>::iterator it = mymap.begin();
+        mymap.insert(std::pair<char, int>('a', 10));
+        mymap.insert(std::pair<char, int>('c', 30));
+        mymap.insert(std::pair<char, int>('d', 40));
+        mymap.insert(std::pair<char, int>('e', 50));
+        for (; it!= mymap.end(); ++it){
+            std::cout << it->first << " => " << it->second << '\n';
+        }
+    }
 }
