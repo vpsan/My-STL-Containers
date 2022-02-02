@@ -36,12 +36,14 @@ class RedBlackTree {
 
     public:
         ///////////// Typedef part 1 (without iterators): //////////////////////
-        typedef T                                   value_type;
-        typedef Compare                             value_comapre;
-        typedef Allocator                           allocator_type;
-        typedef typename allocator_type::size_type  size_type;
-        typedef node<T>                             node;
-        typedef typename node::node_ptr             node_ptr;
+        typedef T                                          value_type;
+        typedef Compare                                    value_comapre;
+        typedef Allocator                                  allocator_value_type;
+        typedef typename allocator_value_type::size_type   size_type;
+        typedef node<T>                                    node;
+        typedef typename node::node_ptr                    node_ptr;
+        typedef typename Allocator::template
+                                rebind<node>::other        allocator_node_type;
 
     private:
         ///////////// Iterators: ///////////////////////////////////////////////
@@ -173,67 +175,67 @@ class RedBlackTree {
 
         ///////////// Constructor(s) / Destructor / Operator=: /////////////////
         explicit RedBlackTree(const value_comapre& compare_obj,
-                                const allocator_type& allctr_obj)
+                                const allocator_value_type& allctr_obj)
                 : compare_(compare_obj),
-                  allocator_(allctr_obj),
+                  value_allocator_(allctr_obj),
                   root_(NULL),
                   nil_(NULL),
                   size_(0) {
-            end_allocated_ = reinterpret_cast<node_ptr>(allocator_.allocate(sizeof(node)));
-            end_allocated_->is_end_rend = true;
-            end_allocated_->color = BLACK;
-            allocator_.construct(&(end_allocated_->value), value_type());
-            end_allocated_->right = nil_;
-            end_allocated_->left = nil_;
+            end_ = node_allocator_.allocate(1);
+            end_->is_end_rend = true;
+            end_->color = BLACK;
+            value_allocator_.construct(&(end_->value), value_type());
+            end_->right = nil_;
+            end_->left = nil_;
 
-            rend_allocated_ = reinterpret_cast<node_ptr>(allocator_.allocate(sizeof(node)));
-            rend_allocated_->is_end_rend = true;
-            rend_allocated_->color = BLACK;
-            allocator_.construct(&(rend_allocated_->value), value_type());
-            rend_allocated_->right = nil_;
-            rend_allocated_->left = nil_;
+            rend_ = node_allocator_.allocate(1);
+            rend_->is_end_rend = true;
+            rend_->color = BLACK;
+            value_allocator_.construct(&(rend_->value), value_type());
+            rend_->right = nil_;
+            rend_->left = nil_;
         }
 
         RedBlackTree(const RedBlackTree& other)
                 : compare_(other.compare_),
-                  allocator_(other.allocator_),
+                  value_allocator_(other.value_allocator_),
                   root_(NULL),
                   nil_(NULL),
                   size_(0) {
-            end_allocated_ = reinterpret_cast<node_ptr>(allocator_.allocate(sizeof(node)));
-            end_allocated_->is_end_rend = true;
-            end_allocated_->color = BLACK;
-            allocator_.construct(&(end_allocated_->value), value_type());
-            end_allocated_->right = nil_;
-            end_allocated_->left = nil_;
+            end_ = node_allocator_.allocate(1);
+            end_->is_end_rend = true;
+            end_->color = BLACK;
+            value_allocator_.construct(&(end_->value), value_type());
+            end_->right = nil_;
+            end_->left = nil_;
 
-            rend_allocated_ = reinterpret_cast<node_ptr>(allocator_.allocate(sizeof(node)));
-            rend_allocated_->is_end_rend = true;
-            rend_allocated_->color = BLACK;
-            allocator_.construct(&(rend_allocated_->value), value_type());
-            rend_allocated_->right = nil_;
-            rend_allocated_->left = nil_;
+            rend_ = node_allocator_.allocate(1);
+            rend_->is_end_rend = true;
+            rend_->color = BLACK;
+            value_allocator_.construct(&(rend_->value), value_type());
+            rend_->right = nil_;
+            rend_->left = nil_;
         }
 
         RedBlackTree()
                 : compare_(value_comapre()),
-                  allocator_(allocator_type()),
+                  value_allocator_(allocator_value_type()),
                   root_(NULL),
                   nil_(NULL),
                   size_(0) {
-            end_allocated_ = reinterpret_cast<node_ptr>(allocator_.allocate(sizeof(node)));
-            end_allocated_->is_end_rend = true;
-            end_allocated_->color = BLACK;
-            allocator_.construct(&(end_allocated_->value), value_type());
-            end_allocated_->right = nil_;
-            end_allocated_->left = nil_;
+            end_ = node_allocator_.allocate(1);
+            end_->is_end_rend = true;
+            end_->color = BLACK;
+            value_allocator_.construct(&(end_->value), value_type());
+            end_->right = nil_;
+            end_->left = nil_;
 
-            rend_allocated_ = reinterpret_cast<node_ptr>(allocator_.allocate(sizeof(node)));
-            rend_allocated_->is_end_rend = true;
-            rend_allocated_->color = BLACK;
-            allocator_.construct(&(rend_allocated_->value), value_type());
-            rend_allocated_->right = nil_;
-            rend_allocated_->left = nil_;
+            rend_ = node_allocator_.allocate(1);
+            rend_->is_end_rend = true;
+            rend_->color = BLACK;
+            value_allocator_.construct(&(rend_->value), value_type());
+            rend_->right = nil_;
+            rend_->left = nil_;
         }
 
         ~RedBlackTree() {
@@ -526,8 +528,8 @@ class RedBlackTree {
                 //     И Y - ребенок Z. Тогда в 3.2 нам нужен непустой Х
                 //     (Костыль, не по книжке Кормена)
                 if (x == NULL) {
-                    x = reinterpret_cast<node_ptr>(allocator_.allocate(sizeof(node)));
-                    allocator_.construct(&(x->value), value_type());
+                    x = node_allocator_.allocate(1);
+                    value_allocator_.construct(&(x->value), value_type());
                     x->is_end_rend = false;
                     is_allocated = true;
                 }
@@ -556,12 +558,12 @@ class RedBlackTree {
             //     Тогда придется менять цвет у него и его ребенка. И не только.
             // if (y_orignal_color == BLACK)
             //     rb_delete_fixup(x);
-            allocator_.destroy(&z->value);
-            allocator_.deallocate(reinterpret_cast<value_type *>(z), 1);
+            value_allocator_.destroy(&z->value);
+            node_allocator_.deallocate(z, 1);
             z = NULL;
             if (is_allocated == true) {
-                allocator_.destroy(&x->value);
-                allocator_.deallocate(reinterpret_cast<value_type *>(x), 1);
+                value_allocator_.destroy(&x->value);
+                node_allocator_.deallocate(x, 1);
                 x = NULL;
             }
         }
@@ -590,7 +592,7 @@ class RedBlackTree {
             node_ptr end_ptr = x->right;
             if (end_ptr != NULL) return end_ptr;
 
-            end_ptr =  end_allocated_;
+            end_ptr =  end_;
             end_ptr->parent = x;
             x->right = end_ptr;
             return end_ptr;
@@ -602,7 +604,7 @@ class RedBlackTree {
             node_ptr end_ptr = x->right;
             if (end_ptr != NULL) return end_ptr;
 
-            end_ptr =  end_allocated_;
+            end_ptr =  end_;
             end_ptr->parent = x;
             x->right = end_ptr;
             return end_ptr;
@@ -627,7 +629,7 @@ class RedBlackTree {
             node_ptr rend_ptr = x->left;
             if (rend_ptr != NULL) return rend_ptr;
 
-            rend_ptr =  rend_allocated_;
+            rend_ptr =  rend_;
             rend_ptr->parent = x;
             x->left = rend_ptr;
             return rend_ptr;
@@ -639,7 +641,7 @@ class RedBlackTree {
             node_ptr rend_ptr = x->left;
             if (rend_ptr != NULL) return rend_ptr;
 
-            rend_ptr =  rend_allocated_;
+            rend_ptr =  rend_;
             rend_ptr->parent = x;
             x->left = rend_ptr;
             return rend_ptr;
@@ -659,10 +661,10 @@ class RedBlackTree {
         }
 
         void insert(const value_type& value) {
-            node_ptr z = reinterpret_cast<node_ptr>(allocator_.allocate(sizeof(node)));
+            node_ptr z = node_allocator_.allocate(1);
             z->color = RED;
             z->is_end_rend = false;
-            allocator_.construct(&(z->value), value);
+            value_allocator_.construct(&(z->value), value);
             unlink_end_value();
             unlink_rend_value();
             rb_insert(z);
@@ -724,8 +726,8 @@ class RedBlackTree {
             z->parent = NULL;
             z->right = NULL;
             z->left = NULL;
-            allocator_.destroy(&z->value);
-            allocator_.deallocate(reinterpret_cast<value_type *>(z), 1);
+            value_allocator_.destroy(&z->value);
+            node_allocator_.deallocate(z, 1);
             z = NULL;
         }
 
@@ -738,15 +740,15 @@ class RedBlackTree {
         }
 
         void deallocate_end_rend() {
-            if (end_allocated_ != NULL) {
-                allocator_.destroy(&end_allocated_->value);
-                allocator_.deallocate(reinterpret_cast<value_type *>(end_allocated_), 1);
-                end_allocated_ = NULL;
+            if (end_ != NULL) {
+                value_allocator_.destroy(&end_->value);
+                node_allocator_.deallocate(end_, 1);
+                end_ = NULL;
             }
-            if (rend_allocated_ != NULL) {
-                allocator_.destroy(&rend_allocated_->value);
-                allocator_.deallocate(reinterpret_cast<value_type *>(rend_allocated_), 1);
-                rend_allocated_ = NULL;
+            if (rend_ != NULL) {
+                value_allocator_.destroy(&rend_->value);
+                node_allocator_.deallocate(rend_, 1);
+                rend_ = NULL;
             }
         }
 
@@ -898,25 +900,25 @@ class RedBlackTree {
         }
 
         size_type max_size() const {
-            return allocator_.max_size();
+            return value_allocator_.max_size();
         }
 
         value_comapre get_value_compare() const {
             return compare_;
         }
 
-        allocator_type get_allocator() const {
-            return allocator_;
+        allocator_value_type get_allocator() const {
+            return value_allocator_;
         }
 
         void swap(RedBlackTree& other) {
             std::swap(this->compare_, other.compare_);
-            std::swap(this->allocator_, other.allocator_);
+            std::swap(this->value_allocator_, other.value_allocator_);
             std::swap(this->root_, other.root_);
             std::swap(this->nil_, other.nil_);
             std::swap(this->size_, other.size_);
-            std::swap(this->end_allocated_, other.end_allocated_);
-            std::swap(this->rend_allocated_, other.rend_allocated_);
+            std::swap(this->end_, other.end_);
+            std::swap(this->rend_, other.rend_);
         }
 
     public:
@@ -1016,13 +1018,14 @@ class RedBlackTree {
 
     private:
         ///////////// Data fields: /////////////////////////////////////////////
-        value_comapre       compare_;
-        allocator_type      allocator_;
-        node_ptr            root_;
-        node_ptr            nil_;
-        size_type           size_;
-        node_ptr            end_allocated_;
-        node_ptr            rend_allocated_;
+        value_comapre           compare_;
+        allocator_value_type    value_allocator_;
+        allocator_node_type     node_allocator_;
+        node_ptr                root_;
+        node_ptr                nil_; // = NULL; for readability added only
+        size_type               size_;
+        node_ptr                end_;
+        node_ptr                rend_;
 };
 
 }  // namespace ft
