@@ -295,14 +295,14 @@ class vector {
         ///////////// Element access: //////////////////////////////////////////
         reference at(size_type pos){
             if (pos >= size_){
-                throw std::out_of_range("_ft::vector_");
+                throw std::out_of_range("vector");
             }
             return *(begin_ + pos);
         }
 
         const_reference at(size_type pos) const{
             if (pos > size_){
-                throw std::out_of_range("_ft::vector_");
+                throw std::out_of_range("vector");
             }
             return *(begin_ + pos);
         }
