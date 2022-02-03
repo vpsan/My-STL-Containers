@@ -794,7 +794,7 @@ void map_test_operators(){
         std::cout << "!= ? - " << (mymap != mymap1) << std::endl;
         std::cout << ">  ? - " << (mymap > mymap1) << std::endl;
         std::cout << ">= ? - " << (mymap >= mymap1) << std::endl;
-        std::cout << "<= ? - " << (mymap < mymap1) << std::endl;
+        std::cout << "<  ? - " << (mymap < mymap1) << std::endl;
         std::cout << "<= ? - " << (mymap <= mymap1) << std::endl;
         std::cout << "\033[0m";
     }
@@ -812,7 +812,7 @@ void map_test_operators(){
         std::cout << "!= ? - " << (mymap != mymap1) << std::endl;
         std::cout << ">  ? - " << (mymap > mymap1) << std::endl;
         std::cout << ">= ? - " << (mymap >= mymap1) << std::endl;
-        std::cout << "<= ? - " << (mymap < mymap1) << std::endl;
+        std::cout << "<  ? - " << (mymap < mymap1) << std::endl;
         std::cout << "<= ? - " << (mymap <= mymap1) << std::endl;
         std::cout << "\033[0m";
     }

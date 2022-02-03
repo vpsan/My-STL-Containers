@@ -579,8 +579,7 @@ bool operator<=(const ft::vector<T,Allocator>& lhs,
 template<class T, class Allocator>
 bool operator>(const ft::vector<T,Allocator>& lhs,
                const ft::vector<T,Allocator>& rhs){
-    return !ft::lexicographical_compare(lhs.begin(), lhs.end(),
-                                         rhs.begin(), rhs.end());
+    return rhs < lhs;
 }
 
 template<class T, class Allocator>

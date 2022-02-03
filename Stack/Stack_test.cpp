@@ -238,7 +238,7 @@ void stack_test_operators(){
         std::cout << "!= ? - " << (mystack != mystac1) << std::endl;
         std::cout << ">  ? - " << (mystack > mystac1) << std::endl;
         std::cout << ">= ? - " << (mystack >= mystac1) << std::endl;
-        std::cout << "<= ? - " << (mystack < mystac1) << std::endl;
+        std::cout << "<  ? - " << (mystack < mystac1) << std::endl;
         std::cout << "<= ? - " << (mystack <= mystac1) << std::endl;
         std::cout << "\033[0m";
     }
@@ -251,7 +251,7 @@ void stack_test_operators(){
         std::cout << "!= ? - " << (mystack != mystac1) << std::endl;
         std::cout << ">  ? - " << (mystack > mystac1) << std::endl;
         std::cout << ">= ? - " << (mystack >= mystac1) << std::endl;
-        std::cout << "<= ? - " << (mystack < mystac1) << std::endl;
+        std::cout << "<  ? - " << (mystack < mystac1) << std::endl;
         std::cout << "<= ? - " << (mystack <= mystac1) << std::endl;
         std::cout << "\033[0m";
     }

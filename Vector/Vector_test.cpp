@@ -847,7 +847,7 @@ void vector_test_operators(){
         std::cout << "!= ? - " << (vec != vec1) << std::endl;
         std::cout << ">  ? - " << (vec > vec1) << std::endl;
         std::cout << ">= ? - " << (vec >= vec1) << std::endl;
-        std::cout << "<= ? - " << (vec < vec1) << std::endl;
+        std::cout << "<  ? - " << (vec < vec1) << std::endl;
         std::cout << "<= ? - " << (vec <= vec1) << std::endl;
         std::cout << "\033[0m";
     }
@@ -860,7 +860,7 @@ void vector_test_operators(){
         std::cout << "!= ? - " << (vec != vec1) << std::endl;
         std::cout << ">  ? - " << (vec > vec1) << std::endl;
         std::cout << ">= ? - " << (vec >= vec1) << std::endl;
-        std::cout << "<= ? - " << (vec < vec1) << std::endl;
+        std::cout << "<  ? - " << (vec < vec1) << std::endl;
         std::cout << "<= ? - " << (vec <= vec1) << std::endl;
         std::cout << "\033[0m";
     }
